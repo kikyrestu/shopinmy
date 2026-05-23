@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
                     'services.google' => [
                         'client_id' => $googleClientId,
                         'client_secret' => $googleClientSecret,
-                        'redirect' => url('/auth/google/callback'),
+                        'redirect' => rtrim(config('app.url'), '/') . '/auth/google/callback',
                     ],
                 ]);
             }
