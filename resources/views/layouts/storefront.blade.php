@@ -108,7 +108,7 @@
     </style>
     @stack('styles')
 </head>
-<body class="text-gray-800 antialiased pb-20 md:pb-0">
+<body class="text-gray-800 antialiased pb-20 md:pb-0 overflow-x-hidden">
 
     <!-- ==========================================
          GLASSMORPHISM HEADER (WEB3 STYLE)

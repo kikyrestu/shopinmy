@@ -196,7 +196,7 @@
             </a>
         </div>
 
-        <div class="flex sm:grid sm:grid-cols-3 md:grid-cols-4 gap-4 overflow-x-auto snap-inline hide-scrollbar -mx-6 px-6 sm:mx-0 sm:px-0 pb-4">
+        <div class="flex sm:grid sm:grid-cols-3 md:grid-cols-4 gap-4 overflow-x-auto snap-inline hide-scrollbar -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 pb-4">
             @php
                 $categoryIcons = ['ph-t-shirt', 'ph-sneaker', 'ph-device-mobile', 'ph-laptop', 'ph-headphones', 'ph-watch', 'ph-handbag', 'ph-cooking-pot'];
                 $categoryColors = [
@@ -241,7 +241,7 @@
         </div>
 
         <!-- Product Grid -->
-        <div class="flex md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 overflow-x-auto snap-inline hide-scrollbar -mx-6 px-6 md:mx-0 md:px-0 pb-4">
+        <div class="flex md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 overflow-x-auto snap-inline hide-scrollbar -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 pb-4">
             @foreach($recommendedProducts as $product)
             <!-- Product Card -->
             <a href="{{ route('product.show', $product->slug) }}" class="snap-item w-[160px] flex-shrink-0 md:w-auto product-card group bg-white rounded-2xl p-3 border border-gray-100 flex flex-col relative h-full">
