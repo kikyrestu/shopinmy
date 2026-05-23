@@ -21,6 +21,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Force HTTPS in production or if APP_URL uses https
+        if (config('app.env') === 'production' || str_contains(config('app.url'), 'https://')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         Setting::observe(SettingObserver::class);
         \App\Models\Order::observe(\App\Observers\OrderObserver::class);
 
@@ -33,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
                     'services.google' => [
                         'client_id' => $googleClientId,
                         'client_secret' => $googleClientSecret,
-                        'redirect' => rtrim(config('app.url'), '/') . '/auth/google/callback',
+                        'redirect' => url('/auth/google/callback'),
                     ],
                 ]);
             }
