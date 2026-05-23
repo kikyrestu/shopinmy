@@ -101,10 +101,14 @@
             transform: translateY(-6px);
             box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1);
         }
+        /* Mobile Native Feel Utilities */
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        .snap-inline { scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+        .snap-item { scroll-snap-align: start; }
     </style>
     @stack('styles')
 </head>
-<body class="text-gray-800 antialiased">
+<body class="text-gray-800 antialiased pb-20 md:pb-0">
 
     <!-- ==========================================
          GLASSMORPHISM HEADER (WEB3 STYLE)
@@ -466,6 +470,32 @@
     </footer>
 
     @include('storefront.whatsapp-button')
+    
+    <!-- ==========================================
+         MOBILE BOTTOM NAVIGATION (APP-LIKE UX)
+         ========================================== -->
+    <div class="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-100 md:hidden flex justify-around items-center px-2 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+        <a href="{{ route('home') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('home') ? 'text-brand-600' : 'text-gray-400 hover:text-brand-500' }} transition">
+            <i class="{{ request()->routeIs('home') ? 'ph-fill' : 'ph' }} ph-house text-2xl mb-0.5"></i>
+            <span class="text-[10px] font-semibold">Home</span>
+        </a>
+        <a href="{{ route('products.index') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('products.index') ? 'text-brand-600' : 'text-gray-400 hover:text-brand-500' }} transition">
+            <i class="{{ request()->routeIs('products.index') ? 'ph-fill' : 'ph' }} ph-magnifying-glass text-2xl mb-0.5"></i>
+            <span class="text-[10px] font-medium">Search</span>
+        </a>
+        <a href="{{ route('cart.index') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('cart.index') ? 'text-brand-600' : 'text-gray-400 hover:text-brand-500' }} transition relative">
+            <div class="relative">
+                <i class="{{ request()->routeIs('cart.index') ? 'ph-fill' : 'ph' }} ph-shopping-cart text-2xl mb-0.5"></i>
+                <livewire:storefront.components.cart-badge />
+            </div>
+            <span class="text-[10px] font-medium">Cart</span>
+        </a>
+        <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('dashboard*') ? 'text-brand-600' : 'text-gray-400 hover:text-brand-500' }} transition">
+            <i class="{{ request()->routeIs('dashboard*') ? 'ph-fill' : 'ph' }} ph-user text-2xl mb-0.5"></i>
+            <span class="text-[10px] font-medium">Account</span>
+        </a>
+    </div>
+
     @stack('scripts')
 </body>
 </html>

@@ -117,10 +117,10 @@
             </a>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 relative z-10">
+        <div class="flex sm:grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 relative z-10 overflow-x-auto snap-inline hide-scrollbar -mx-6 px-6 sm:mx-0 sm:px-0 pb-4">
             @foreach($activeFlashSale->products as $product)
-            <a href="{{ route('product.show', $product->slug) }}" class="group bg-white rounded-2xl p-3 flex flex-col relative h-full hover:-translate-y-1 transition-transform">
-                <div class="absolute top-0 right-0 z-10 px-3 py-1 bg-accent-500 text-white text-xs font-bold rounded-bl-xl rounded-tr-2xl">
+            <a href="{{ route('product.show', $product->slug) }}" class="snap-item w-[150px] flex-shrink-0 sm:w-auto group bg-white rounded-2xl p-3 flex flex-col relative h-full hover:-translate-y-1 transition-transform shadow-sm">
+                <div class="absolute top-0 right-0 z-10 px-3 py-1 bg-accent-500 text-white text-[10px] font-bold rounded-bl-xl rounded-tr-2xl">
                     -{{ round((($product->price - $product->pivot->sale_price) / $product->price) * 100) }}%
                 </div>
                 <!-- Image -->
@@ -196,7 +196,7 @@
             </a>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div class="flex sm:grid sm:grid-cols-3 md:grid-cols-4 gap-4 overflow-x-auto snap-inline hide-scrollbar -mx-6 px-6 sm:mx-0 sm:px-0 pb-4">
             @php
                 $categoryIcons = ['ph-t-shirt', 'ph-sneaker', 'ph-device-mobile', 'ph-laptop', 'ph-headphones', 'ph-watch', 'ph-handbag', 'ph-cooking-pot'];
                 $categoryColors = [
@@ -215,7 +215,7 @@
                     $color = $categoryColors[$index % count($categoryColors)];
                     $icon = $categoryIcons[$index % count($categoryIcons)];
                 @endphp
-                <a href="{{ route('products.index', ['category' => $cat->slug]) }}" class="group {{ $color[0] }} border {{ $color[2] }} rounded-2xl p-5 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                <a href="{{ route('products.index', ['category' => $cat->slug]) }}" class="snap-item w-[140px] flex-shrink-0 sm:w-auto group {{ $color[0] }} border {{ $color[2] }} rounded-2xl p-5 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                     <div class="w-14 h-14 {{ $color[0] }} {{ $color[1] }} rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                         <i class="ph {{ $icon }} text-2xl"></i>
                     </div>
@@ -241,10 +241,10 @@
         </div>
 
         <!-- Product Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+        <div class="flex md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 overflow-x-auto snap-inline hide-scrollbar -mx-6 px-6 md:mx-0 md:px-0 pb-4">
             @foreach($recommendedProducts as $product)
             <!-- Product Card -->
-            <a href="{{ route('product.show', $product->slug) }}" class="product-card group bg-white rounded-2xl p-3 border border-gray-100 flex flex-col relative h-full">
+            <a href="{{ route('product.show', $product->slug) }}" class="snap-item w-[160px] flex-shrink-0 md:w-auto product-card group bg-white rounded-2xl p-3 border border-gray-100 flex flex-col relative h-full">
                 @if($product->created_at->diffInDays(now()) < 7)
                 <div class="absolute top-5 left-5 z-10 px-2 py-1 bg-brand-500 text-white text-[10px] font-bold rounded-md uppercase tracking-wider">{{ __('New') }}</div>
                 @endif

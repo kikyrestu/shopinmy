@@ -311,10 +311,21 @@
     <!-- Notification Toast (Livewire) -->
     <div x-data="{ show: false, message: '' }" 
          x-on:notify.window="show = true; message = $event.detail.message; setTimeout(() => { show = false }, 3000)"
-         class="fixed bottom-5 right-5 z-50">
+         class="fixed bottom-24 right-5 z-50">
         <div x-show="show" x-transition.opacity.duration.300ms class="bg-gray-900 text-white px-6 py-3 rounded-xl shadow-xl font-medium flex items-center gap-3">
             <i class="ph-fill ph-check-circle text-emerald-400 text-xl"></i>
             <span x-text="message"></span>
         </div>
+    </div>
+
+    <!-- Sticky Mobile CTA -->
+    <div class="fixed bottom-16 left-0 w-full bg-white border-t border-gray-100 p-3 flex gap-3 z-40 md:hidden shadow-[0_-10px_20px_rgba(0,0,0,0.05)] pb-safe">
+        <button wire:click="toggleWishlist" class="w-12 h-12 rounded-xl flex items-center justify-center border transition-all flex-shrink-0 {{ $isWishlisted ? 'bg-red-50 border-red-200 text-red-500' : 'bg-white border-gray-200 text-gray-400 hover:bg-gray-50' }}">
+            <i class="{{ $isWishlisted ? 'ph-fill' : 'ph' }} ph-heart text-xl"></i>
+        </button>
+        <button wire:click="addToCart" class="flex-1 bg-brand-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform" {{ $qty < 1 ? 'disabled' : '' }}>
+            <i class="ph ph-shopping-cart-simple text-lg"></i>
+            {{ __('Add to Cart') }} &bull; RM {{ number_format($currentPrice, 2) }}
+        </button>
     </div>
 </div>
