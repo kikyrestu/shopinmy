@@ -48,6 +48,7 @@ class BannerForm
                             ->icon('heroicon-o-photo')
                             ->schema([
                                 FileUpload::make('image')
+                                    ->label('Desktop Image')
                                     ->image()
                                     ->disk('public')
                                     ->directory('banners')
@@ -55,8 +56,16 @@ class BannerForm
                                     ->imageEditor()
                                     ->imageResizeMode('contain')
                                     ->imageResizeTargetWidth('1920')
-                                    ->imageResizeTargetHeight('1080')
-                                    ->helperText('Panduan Gambar: Ukuran ideal banner adalah 1920x600px atau proporsi 3:1. Format yang disarankan: JPG, PNG, WEBP dengan ukuran maksimal 2MB.'),
+                                    ->imageResizeTargetHeight('600')
+                                    ->helperText('Panduan Gambar: Ukuran ideal banner desktop adalah 1920x600px atau proporsi 3:1. Maksimal 5MB.'),
+                                FileUpload::make('mobile_image')
+                                    ->label('Mobile Image (Opsional)')
+                                    ->image()
+                                    ->disk('public')
+                                    ->directory('banners/mobile')
+                                    ->maxSize(5120)
+                                    ->imageEditor()
+                                    ->helperText('Ukuran ideal untuk HP Android/iOS: 800x800px (Kotak). Jika kosong, akan memakai gambar Desktop.'),
                             ]),
                         \Filament\Schemas\Components\Tabs\Tab::make('YouTube')
                             ->icon('heroicon-o-play-circle')

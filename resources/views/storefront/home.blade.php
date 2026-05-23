@@ -6,7 +6,7 @@
     <!-- HERO BANNER (Modern Gradient & 3D Vibe) -->
     @if(isset($banners) && $banners->count() > 0)
         @php $mainBanner = $banners->first(); @endphp
-        <section class="relative w-full h-[250px] md:h-[350px] lg:h-[400px] rounded-[2rem] overflow-hidden bg-gray-900 group">
+        <section class="relative w-full aspect-square md:aspect-auto md:h-[350px] lg:h-[400px] rounded-[2rem] overflow-hidden bg-gray-900 group">
             <!-- Dynamic Background -->
             <div class="absolute inset-0 {{ $mainBanner->show_text_overlay ? 'bg-gray-900' : '' }} pointer-events-none">
                 @if($mainBanner->youtube_link)
@@ -21,7 +21,8 @@
                                 frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                     @endif
                 @elseif($mainBanner->image)
-                    <img src="{{ Storage::disk('public')->url($mainBanner->image) }}" class="w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
+                    <img src="{{ Storage::disk('public')->url($mainBanner->mobile_image ?? $mainBanner->image) }}" class="block md:hidden w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
+                    <img src="{{ Storage::disk('public')->url($mainBanner->image) }}" class="hidden md:block w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
                 @endif
             </div>
             <!-- Abstract decorative circles -->
