@@ -103,7 +103,7 @@
                         </div>
                     </div>
 
-                    <a href="{{ route('checkout.index') }}" class="w-full py-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-500/30 transform active:scale-95 text-lg">
+                    <a href="{{ route('checkout.index') }}" class="hidden lg:flex w-full py-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-2xl items-center justify-center gap-2 transition-all shadow-lg shadow-brand-500/30 transform active:scale-95 text-lg">
                         {{ __('Proceed to Checkout') }} <i class="ph-bold ph-arrow-right"></i>
                     </a>
 

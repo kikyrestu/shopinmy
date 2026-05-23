@@ -145,7 +145,7 @@
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex-1 flex gap-3">
+                    <div class="hidden md:flex flex-1 gap-3">
                         <button wire:click="addToCart" class="flex-1 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all transform active:scale-95 disabled:opacity-50 disabled:active:scale-100 disabled:cursor-not-allowed {{ $this->maxStock !== null && $this->maxStock <= 0 ? 'bg-gray-400' : 'bg-brand-600 hover:bg-brand-700 shadow-lg shadow-brand-500/30' }}" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
                             @if($this->maxStock !== null && $this->maxStock <= 0)
                                 <i class="ph-fill ph-x-circle text-xl"></i> {{ __('Out of Stock') }}

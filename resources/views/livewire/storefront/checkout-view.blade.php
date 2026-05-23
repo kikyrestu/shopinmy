@@ -294,7 +294,7 @@
                         </div>
                     @enderror
 
-                    <button type="submit" class="w-full py-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-500/30 transform active:scale-95 text-lg" wire:loading.attr="disabled" wire:loading.class="opacity-50 cursor-not-allowed">
+                    <button type="submit" class="hidden lg:flex w-full py-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-2xl items-center justify-center gap-2 transition-all shadow-lg shadow-brand-500/30 transform active:scale-95 text-lg" wire:loading.attr="disabled" wire:loading.class="opacity-50 cursor-not-allowed">
                         <span wire:loading.remove>{{ __('Place Order') }}</span>
                         <span wire:loading><i class="ph-bold ph-spinner animate-spin"></i> {{ __('Processing...') }}</span>
                         <i class="ph-bold ph-arrow-right" wire:loading.remove></i>
