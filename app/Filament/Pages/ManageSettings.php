@@ -12,10 +12,10 @@ use Filament\Forms\Contracts\HasForms;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Schema;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Form;
 use Filament\Support\Icons\Heroicon;
 
 class ManageSettings extends Page implements HasForms
@@ -47,9 +47,9 @@ class ManageSettings extends Page implements HasForms
         $this->form->fill($settings);
     }
 
-    public function form(Schema $schema): Schema
+    public function form(Form $form): Form
     {
-        return $schema
+        return $form
             ->statePath('data')
             ->components([
                 Tabs::make('Settings')->tabs([
