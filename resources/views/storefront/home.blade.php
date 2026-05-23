@@ -8,7 +8,7 @@
         @php $mainBanner = $banners->first(); @endphp
         <section class="relative w-full h-[250px] md:h-[350px] lg:h-[400px] rounded-[2rem] overflow-hidden bg-gray-900 group">
             <!-- Dynamic Background -->
-            <div class="absolute inset-0 bg-gray-900 pointer-events-none">
+            <div class="absolute inset-0 {{ $mainBanner->show_text_overlay ? 'bg-gray-900' : '' }} pointer-events-none">
                 @if($mainBanner->youtube_link)
                     @php
                         // Extract YouTube ID
@@ -17,17 +17,18 @@
                     @endphp
                     @if($youtubeId)
                         <iframe src="https://www.youtube.com/embed/{{ $youtubeId }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ $youtubeId }}&playsinline=1" 
-                                class="w-[100vw] min-w-[177.77vh] h-[56.25vw] min-h-[100vh] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-60 pointer-events-none" 
+                                class="w-[100vw] min-w-[177.77vh] h-[56.25vw] min-h-[100vh] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 {{ $mainBanner->show_text_overlay ? 'opacity-60' : '' }} pointer-events-none" 
                                 frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                     @endif
                 @elseif($mainBanner->image)
-                    <img src="{{ Storage::disk('public')->url($mainBanner->image) }}" class="w-full h-full object-cover opacity-40">
+                    <img src="{{ Storage::disk('public')->url($mainBanner->image) }}" class="w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
                 @endif
             </div>
             <!-- Abstract decorative circles -->
             <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-brand-500/20 blur-[100px]"></div>
             <div class="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-brand-700/20 blur-[100px]"></div>
             
+            @if($mainBanner->show_text_overlay)
             <div class="relative z-10 h-full flex items-center px-8 md:px-16 w-full">
                 @if($mainBanner->html_content)
                     <div class="w-full h-full flex flex-col justify-center">
@@ -61,14 +62,15 @@
                                 <span class="px-2 py-1 bg-accent-500/20 text-accent-300 text-xs font-bold rounded-lg backdrop-blur-sm border border-accent-500/30">{{ __('Voucher') }}</span>
                         </div>
                         <div>
-                            <p class="text-white font-bold text-2xl mb-1">{{ $promoVoucher->code }}</p>
-                            <p class="text-gray-300 text-sm">{{ __('Discount') }} RM {{ number_format($promoVoucher->discount_amount ?? 0, 0) }}</p>
-                            <button class="w-full mt-4 py-2 bg-white/20 hover:bg-white/30 rounded-xl text-white font-semibold transition-colors backdrop-blur-md">{{ __('Use Now') }}</button>
+                                <h3 class="text-2xl font-bold text-white mb-1">{{ $promoVoucher->code }}</h3>
+                                <p class="text-white/80 text-sm mb-4">{{ $promoVoucher->type === 'percentage' ? $promoVoucher->value . '% OFF' : 'RM' . $promoVoucher->value . ' OFF' }}</p>
+                                <button onclick="navigator.clipboard.writeText('{{ $promoVoucher->code }}'); alert('Code copied!')" class="w-full py-2.5 bg-white text-brand-600 font-bold rounded-xl hover:bg-brand-50 transition-colors shadow-md">{{ __('Copy Code') }}</button>
                         </div>
                     </div>
                 </div>
                 @endif
             </div>
+            @endif
         </section>
     @endif
 

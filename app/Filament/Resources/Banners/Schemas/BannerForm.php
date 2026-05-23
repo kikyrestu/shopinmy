@@ -15,9 +15,13 @@ class BannerForm
             ->components([
                 \Filament\Schemas\Components\Section::make('General Information')
                     ->schema([
+                        Toggle::make('show_text_overlay')
+                            ->label('Show Text & Dark Overlay')
+                            ->default(true)
+                            ->helperText('Matikan jika Anda hanya ingin menampilkan gambar banner utuh tanpa teks di atasnya.'),
                         TextInput::make('title')
-                            ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->nullable(),
                         TextInput::make('subtitle')
                             ->maxLength(255)
                             ->helperText('Teks kecil di atas judul utama (Opsional).'),
