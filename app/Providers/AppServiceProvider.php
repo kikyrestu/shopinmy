@@ -25,16 +25,20 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\Order::observe(\App\Observers\OrderObserver::class);
 
         // Inject Google Socialite config from settings
-        $googleClientId = Setting::get('google_client_id');
-        $googleClientSecret = Setting::get('google_client_secret');
-        if ($googleClientId && $googleClientSecret) {
-            config([
-                'services.google' => [
-                    'client_id' => $googleClientId,
-                    'client_secret' => $googleClientSecret,
-                    'redirect' => url('/auth/google/callback'),
-                ],
-            ]);
+        try {
+            $googleClientId = Setting::get('google_client_id');
+            $googleClientSecret = Setting::get('google_client_secret');
+            if ($googleClientId && $googleClientSecret) {
+                config([
+                    'services.google' => [
+                        'client_id' => $googleClientId,
+                        'client_secret' => $googleClientSecret,
+                        'redirect' => url('/auth/google/callback'),
+                    ],
+                ]);
+            }
+        } catch (\Exception $e) {
+            // Abaikan error kalau table belum di-migrate (deploy pertama kali)
         }
 
         \Illuminate\Support\Facades\View::composer('layouts.storefront', function ($view) {
