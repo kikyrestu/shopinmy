@@ -197,7 +197,7 @@
                     </div>
                     
                     <!-- Mobile Menu Toggle -->
-                    <button class="md:hidden p-2 text-gray-600">
+                    <button class="hidden p-2 text-gray-600">
                         <i class="ph ph-list text-2xl"></i>
                     </button>
                 </div>
