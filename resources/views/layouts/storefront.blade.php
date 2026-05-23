@@ -388,12 +388,12 @@
     <!-- ==========================================
          MODERN FOOTER
          ========================================== -->
-    <footer class="bg-white border-t border-gray-100 pt-16 pb-8 mt-12">
+    <footer class="bg-white border-t border-gray-100 pt-12 pb-24 md:pb-8 mt-auto">
         <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
                 
-                <!-- Brand Col -->
-                <div class="lg:col-span-2">
+                <!-- Pilar 1: Brand & Sosial Media -->
+                <div class="col-span-1">
                     <div class="flex items-center gap-2 mb-4">
                         @if(\App\Models\Setting::get('site_logo'))
                             <img src="{{ Storage::url(\App\Models\Setting::get('site_logo')) }}" alt="{{ \App\Models\Setting::get('site_name', 'NexShop') }}" class="h-8 w-auto object-contain">
@@ -402,72 +402,53 @@
                                 <i class="ph-bold ph-shopping-bag"></i>
                             </div>
                         @endif
-                        <span class="text-2xl font-bold tracking-tight text-gray-900">{{ \App\Models\Setting::get('site_name', 'NexShop') }}</span>
+                        <span class="text-xl font-bold tracking-tight text-gray-900">{{ \App\Models\Setting::get('site_name', 'NexShop') }}</span>
                     </div>
-                    <p class="text-gray-500 text-sm leading-relaxed max-w-sm mb-6">
+                    <p class="text-gray-500 text-sm leading-relaxed mb-6">
                         {{ \App\Models\Setting::get('site_description', __('A next-generation e-commerce platform delivering a seamless, secure, and user-centric shopping experience.')) }}
                     </p>
-                    <div class="flex gap-4">
+                    <div class="flex gap-3">
                         <a href="{{ \App\Models\Setting::get('instagram_url', '#') }}" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-brand-50 hover:text-brand-600 transition-colors"><i class="ph-fill ph-instagram-logo text-xl"></i></a>
                         <a href="{{ \App\Models\Setting::get('twitter_url', '#') }}" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-brand-50 hover:text-brand-600 transition-colors"><i class="ph-fill ph-twitter-logo text-xl"></i></a>
                         <a href="{{ \App\Models\Setting::get('facebook_url', '#') }}" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-brand-50 hover:text-brand-600 transition-colors"><i class="ph-fill ph-facebook-logo text-xl"></i></a>
                     </div>
                 </div>
 
-                <!-- Links Col 1 -->
-                <div>
-                    <h4 class="font-bold text-gray-900 mb-4">{{ __('Information') }}</h4>
+                <!-- Pilar 2: Quick Links -->
+                <div class="col-span-1">
+                    <h4 class="font-bold text-gray-900 mb-4">{{ __('Pusat Bantuan') }}</h4>
                     <ul class="space-y-3 text-sm text-gray-500">
                         @if(isset($footerPages) && count($footerPages) > 0)
                             @foreach($footerPages as $page)
                             <li><a href="/pages/{{ $page->slug }}" class="hover:text-brand-600 transition-colors">{{ $page->title }}</a></li>
                             @endforeach
                         @else
-                            <li><a href="#" class="hover:text-brand-600 transition-colors">{{ __('About Us') }}</a></li>
-                            <li><a href="#" class="hover:text-brand-600 transition-colors">{{ __('Careers') }}</a></li>
-                            <li><a href="#" class="hover:text-brand-600 transition-colors">{{ __('Blog & News') }}</a></li>
-                            <li><a href="#" class="hover:text-brand-600 transition-colors">{{ __('Contact Us') }}</a></li>
+                            <li><a href="{{ \App\Models\Setting::get('help_center_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Pusat Bantuan') }}</a></li>
+                            <li><a href="{{ \App\Models\Setting::get('terms_conditions_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Syarat & Ketentuan') }}</a></li>
+                            <li><a href="{{ \App\Models\Setting::get('privacy_policy_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Kebijakan Privasi') }}</a></li>
+                            <li><a href="{{ \App\Models\Setting::get('track_order_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Lacak Pesanan') }}</a></li>
                         @endif
                     </ul>
                 </div>
 
-                <!-- Links Col 2 -->
-                <div>
-                    <h4 class="font-bold text-gray-900 mb-4">{{ __('Help') }}</h4>
-                    <ul class="space-y-3 text-sm text-gray-500 mb-8">
-                        <li><a href="{{ \App\Models\Setting::get('help_center_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Help Center') }}</a></li>
-                        <li><a href="{{ \App\Models\Setting::get('terms_conditions_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Terms & Conditions') }}</a></li>
-                        <li><a href="{{ \App\Models\Setting::get('privacy_policy_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Privacy Policy') }}</a></li>
-                        <li><a href="{{ \App\Models\Setting::get('track_order_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Track Order') }}</a></li>
-                    </ul>
-                </div>
-
-                <!-- Newsletter Col (Spanning 2 columns) -->
-                <div class="lg:col-span-2 bg-gray-50 rounded-3xl p-6 border border-gray-100">
-                    <h4 class="font-bold text-gray-900 mb-2">{{ \App\Models\Setting::get('newsletter_title', __('Subscribe to our Newsletter')) }}</h4>
-                    <p class="text-xs text-gray-500 mb-4">{{ \App\Models\Setting::get('newsletter_description', __('Get the latest updates on new products and upcoming sales.')) }}</p>
-                    @livewire('storefront.newsletter-form')
-                </div>
-
-                <!-- Payments Col -->
-                <div>
-                    <h4 class="font-bold text-gray-900 mb-4">{{ __('Secure Payment') }}</h4>
-                    <div class="grid grid-cols-3 gap-2">
+                <!-- Pilar 3: Pembayaran -->
+                <div class="col-span-1">
+                    <h4 class="font-bold text-gray-900 mb-4">{{ __('Pembayaran Aman') }}</h4>
+                    <div class="flex flex-wrap gap-2">
                         @php
                             $paymentIcons = \App\Models\Setting::get('payment_icons');
                             $iconsArray = is_string($paymentIcons) ? json_decode($paymentIcons, true) : $paymentIcons;
                             if (empty($iconsArray)) $iconsArray = ['VISA', 'MC', 'FPX', 'TnG', 'Boost'];
                         @endphp
                         @foreach($iconsArray as $icon)
-                            <div class="h-10 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center text-xs font-bold text-gray-400">{{ $icon }}</div>
+                            <div class="h-10 px-4 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center text-xs font-bold text-gray-400">{{ $icon }}</div>
                         @endforeach
                     </div>
                 </div>
-
             </div>
             
-            <div class="pt-8 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400 font-medium">
-                <p>&copy; {{ date('Y') }} {{ \App\Models\Setting::get('site_name', 'NexShop') }}. {{ __('All rights reserved.') }}</p>
+            <div class="pt-6 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400 font-medium">
+                <p>&copy; {{ date('Y') }} {{ \App\Models\Setting::get('site_name', 'NexShop') }}. {{ __('Semua hak cipta dilindungi.') }}</p>
                 <div class="flex items-center gap-1">
                     {!! \App\Models\Setting::get('footer_tagline', __('Made with <i class="ph-fill ph-heart text-red-500 mx-1"></i> in Malaysia')) !!}
                 </div>
