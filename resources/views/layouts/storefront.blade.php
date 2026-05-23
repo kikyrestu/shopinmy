@@ -416,26 +416,26 @@
 
                 <!-- Pilar 2: Quick Links -->
                 <div class="col-span-1">
-                    <h4 class="font-bold text-gray-900 mb-4">{{ __('Pusat Bantuan') }}</h4>
+                    <h4 class="font-bold text-gray-900 mb-4">{{ __('Help Center') }}</h4>
                     <ul class="space-y-3 text-sm text-gray-500">
                         @if(isset($footerPages) && count($footerPages) > 0)
                             @foreach($footerPages as $page)
                             <li><a href="/pages/{{ $page->slug }}" class="hover:text-brand-600 transition-colors">{{ $page->title }}</a></li>
                             @endforeach
                         @else
-                            <li><a href="{{ \App\Models\Setting::get('help_center_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Pusat Bantuan') }}</a></li>
-                            <li><a href="{{ \App\Models\Setting::get('terms_conditions_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Syarat & Ketentuan') }}</a></li>
-                            <li><a href="{{ \App\Models\Setting::get('privacy_policy_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Kebijakan Privasi') }}</a></li>
-                            <li><a href="{{ \App\Models\Setting::get('track_order_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Lacak Pesanan') }}</a></li>
+                            <li><a href="{{ \App\Models\Setting::get('help_center_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Help Center') }}</a></li>
+                            <li><a href="{{ \App\Models\Setting::get('terms_conditions_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Terms & Conditions') }}</a></li>
+                            <li><a href="{{ \App\Models\Setting::get('privacy_policy_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Privacy Policy') }}</a></li>
+                            <li><a href="{{ \App\Models\Setting::get('track_order_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Track Order') }}</a></li>
                         @endif
                     </ul>
                 </div>
 
                 <!-- Pilar 3: Keamanan -->
                 <div class="col-span-1">
-                    <h4 class="font-bold text-gray-900 mb-4">{{ __('Keamanan & Pembayaran') }}</h4>
+                    <h4 class="font-bold text-gray-900 mb-4">{{ __('Security & Payment') }}</h4>
                     <p class="text-gray-500 text-sm mb-4">
-                        {{ __('Proses pembayaran dijamin 100% aman dengan sistem enkripsi (Secure Checkout).') }}
+                        {{ __('100% secure payment processing with encryption (Secure Checkout).') }}
                     </p>
                     <div class="flex items-center gap-3 text-emerald-600">
                         <i class="ph-fill ph-shield-check text-3xl"></i>
@@ -445,7 +445,7 @@
             </div>
             
             <div class="pt-6 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400 font-medium">
-                <p>&copy; {{ date('Y') }} {{ \App\Models\Setting::get('site_name', 'NexShop') }}. {{ __('Semua hak cipta dilindungi.') }}</p>
+                <p>&copy; {{ date('Y') }} {{ \App\Models\Setting::get('site_name', 'NexShop') }}. {{ __('All rights reserved.') }}</p>
                 <div class="flex items-center gap-1">
                     {!! \App\Models\Setting::get('footer_tagline', __('Made with <i class="ph-fill ph-heart text-red-500 mx-1"></i> in Malaysia')) !!}
                 </div>
@@ -461,22 +461,22 @@
     <div class="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-100 md:hidden flex justify-around items-center px-2 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
         <a href="{{ route('home') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('home') ? 'text-brand-600' : 'text-gray-400 hover:text-brand-500' }} transition">
             <i class="{{ request()->routeIs('home') ? 'ph-fill' : 'ph' }} ph-house text-2xl mb-0.5"></i>
-            <span class="text-[10px] font-semibold">Home</span>
+            <span class="text-[10px] font-semibold">{{ __('Home') }}</span>
         </a>
         <a href="{{ route('products.index') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('products.index') ? 'text-brand-600' : 'text-gray-400 hover:text-brand-500' }} transition">
             <i class="{{ request()->routeIs('products.index') ? 'ph-fill' : 'ph' }} ph-magnifying-glass text-2xl mb-0.5"></i>
-            <span class="text-[10px] font-medium">Search</span>
+            <span class="text-[10px] font-medium">{{ __('Search') }}</span>
         </a>
         <a href="{{ route('cart.index') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('cart.index') ? 'text-brand-600' : 'text-gray-400 hover:text-brand-500' }} transition relative">
             <div class="relative">
                 <i class="{{ request()->routeIs('cart.index') ? 'ph-fill' : 'ph' }} ph-shopping-cart text-2xl mb-0.5"></i>
                 <livewire:storefront.cart-badge :minimal="true" />
             </div>
-            <span class="text-[10px] font-medium">Cart</span>
+            <span class="text-[10px] font-medium">{{ __('Cart') }}</span>
         </a>
         <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('dashboard*') ? 'text-brand-600' : 'text-gray-400 hover:text-brand-500' }} transition">
             <i class="{{ request()->routeIs('dashboard*') ? 'ph-fill' : 'ph' }} ph-user text-2xl mb-0.5"></i>
-            <span class="text-[10px] font-medium">Account</span>
+            <span class="text-[10px] font-medium">{{ __('Account') }}</span>
         </a>
     </div>
 

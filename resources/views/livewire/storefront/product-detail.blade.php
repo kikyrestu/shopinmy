@@ -78,7 +78,7 @@
                     </div>
                     <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
                     <div class="text-gray-600 font-medium">
-                        {{ $product->order_items_sum_qty ?? 0 }} <span class="text-gray-500">{{ __('terjual') }}</span>
+                        {{ $product->order_items_sum_qty ?? 0 }} <span class="text-gray-500">{{ __('sold') }}</span>
                     </div>
                     @php
                         $displayStock = $this->maxStock;
@@ -86,12 +86,12 @@
                     @if($displayStock === null)
                     <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
                     <div class="text-emerald-600 font-bold flex items-center gap-1">
-                        <i class="ph-fill ph-check-circle"></i> {{ __('Stok Tersedia') }}
+                        <i class="ph-fill ph-check-circle"></i> {{ __('Available Stock') }}
                     </div>
                     @elseif($displayStock > 0)
                     <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
                     <div class="text-emerald-600 font-bold flex items-center gap-1">
-                        <i class="ph-fill ph-check-circle"></i> {{ __('Stok Tersedia:') }} {{ $displayStock }}
+                        <i class="ph-fill ph-check-circle"></i> {{ __('Available Stock:') }} {{ $displayStock }}
                     </div>
                     @else
                     <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
@@ -279,7 +279,7 @@
                         <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-400 mx-auto mb-3">
                             <i class="ph-fill ph-lock-key text-xl"></i>
                         </div>
-                        <p class="text-gray-600 font-medium">{{ __('Anda hanya dapat memberikan ulasan setelah membeli produk ini.') }}</p>
+                        <p class="text-gray-600 font-medium">{{ __('You can only provide a review after purchasing this product.') }}</p>
                     </div>
                     @endif
                 @else
