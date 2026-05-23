@@ -1,4 +1,4 @@
-<div>
+<div x-data="{ showMobileFilters: false }">
     <!-- Header -->
     <div class="mb-8 relative">
         <div wire:loading class="absolute right-0 top-0 text-brand-500 flex items-center gap-2 font-medium text-sm">
@@ -19,13 +19,16 @@
     <div class="flex flex-col lg:flex-row gap-8">
         
         <!-- SIDEBAR FILTERS -->
-        <aside class="w-full lg:w-64 flex-shrink-0">
-            <div class="bg-white rounded-2xl border border-gray-100 p-5 sticky top-28 shadow-sm">
+        <aside class="w-full lg:w-64 flex-shrink-0 z-50 lg:z-auto" :class="showMobileFilters ? 'fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-end' : 'hidden lg:block'">
+            <div class="bg-white lg:rounded-2xl lg:border border-gray-100 p-5 lg:sticky top-28 shadow-sm h-full lg:h-auto overflow-y-auto w-4/5 lg:w-full" @click.stop>
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="font-bold text-gray-900 flex items-center gap-2"><i class="ph-bold ph-faders"></i> {{ __('Filter') }}</h2>
-                    @if($search || $category || !empty($brand) || $min_price || $max_price)
-                    <button wire:click="clearFilters" class="text-xs font-semibold text-red-500 hover:text-red-600">{{ __('Clear Filters') }}</button>
-                    @endif
+                    <div class="flex items-center gap-3">
+                        @if($search || $category || !empty($brand) || $min_price || $max_price)
+                        <button wire:click="clearFilters" class="text-xs font-semibold text-red-500 hover:text-red-600">{{ __('Clear Filters') }}</button>
+                        @endif
+                        <button @click="showMobileFilters = false" class="lg:hidden text-gray-400 hover:text-gray-900"><i class="ph-bold ph-x text-lg"></i></button>
+                    </div>
                 </div>
 
                 <div>
@@ -87,8 +90,13 @@
 
             <!-- Toolbar (Sorting) -->
             <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
-                <div class="text-sm text-gray-500 font-medium">
-                    {{ __('Sort By') }}:
+                <div class="w-full sm:w-auto flex items-center justify-between gap-4">
+                    <div class="text-sm text-gray-500 font-medium">
+                        {{ __('Sort By') }}:
+                    </div>
+                    <button @click="showMobileFilters = true" class="lg:hidden px-4 py-2 text-sm font-semibold rounded-full border border-gray-200 text-gray-600 flex items-center gap-2">
+                        <i class="ph-bold ph-faders"></i> {{ __('Filter') }}
+                    </button>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                     @php
@@ -135,7 +143,7 @@
                                 <div class="flex items-center gap-1">
                                     <i class="ph-fill ph-star text-amber-400 text-sm"></i>
                                     <span class="text-gray-700 font-bold">{{ number_format($product->reviews_avg_rating ?? 0, 1) }}</span>
-                                    <span>| {{ $product->order_items_sum_qty ?? 0 }} {{ __('terjual') }}</span>
+                                    <span>| {{ $product->order_items_sum_qty ?? 0 }} {{ __('sold') }}</span>
                                 </div>
                                 <div class="flex items-center gap-1">
                                     <i class="ph ph-map-pin"></i> Malaysia

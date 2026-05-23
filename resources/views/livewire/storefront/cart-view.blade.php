@@ -28,8 +28,8 @@
                                     // Bug-P01: Use effective_price instead of base price to match checkout
                                     $price = $item->effective_price;
                                 @endphp
-                                <li class="py-6 flex flex-col sm:flex-row gap-6 relative">
-                                    <div class="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-gray-50 rounded-2xl overflow-hidden">
+                                <li class="py-6 flex flex-row gap-4 sm:gap-6 relative">
+                                    <div class="w-20 h-20 sm:w-28 sm:h-28 flex-shrink-0 bg-gray-50 rounded-2xl overflow-hidden">
                                         @if($item->product->primaryImage)
                                             <img src="{{ $item->product->first_image_url }}" class="w-full h-full object-cover">
                                         @else

@@ -307,4 +307,17 @@
             </div>
         </form>
     </main>
+
+    <!-- Sticky Mobile CTA for Checkout -->
+    <div class="fixed bottom-16 left-0 w-full bg-white border-t border-gray-100 p-3 flex gap-3 z-40 lg:hidden shadow-[0_-10px_20px_rgba(0,0,0,0.05)] pb-safe">
+        <div class="flex-1 flex flex-col justify-center pl-2">
+            <span class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">{{ __('Total') }}</span>
+            <span class="text-base font-extrabold text-brand-600 leading-none">RM {{ number_format($subtotal + $shippingCost + ((\App\Models\Setting::isEnabled('sst_enabled') ? (float) \App\Models\Setting::get('sst_rate', 0) : 0) * $subtotal / 100) - $discountAmount, 2) }}</span>
+        </div>
+        <button wire:click="placeOrder" class="flex-[1.5] bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform text-sm disabled:opacity-50" wire:loading.attr="disabled">
+            <span wire:loading.remove wire:target="placeOrder">{{ __('Place Order') }}</span>
+            <span wire:loading wire:target="placeOrder"><i class="ph-bold ph-spinner animate-spin"></i></span>
+            <i class="ph-bold ph-arrow-right" wire:loading.remove wire:target="placeOrder"></i>
+        </button>
+    </div>
 </div>
