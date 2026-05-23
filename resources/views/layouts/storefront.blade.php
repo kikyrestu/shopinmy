@@ -117,7 +117,7 @@
     <!-- ==========================================
          GLASSMORPHISM HEADER (WEB3 STYLE)
          ========================================== -->
-    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 shadow-sm">
+    <header id="smart-header" class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 shadow-sm transition-transform duration-300 transform translate-y-0">
         <!-- Top Bar -->
         <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20 gap-4 lg:gap-8">
@@ -135,7 +135,7 @@
                 </a>
 
                 <!-- Command-Palette Style Search -->
-                <div class="flex-1 max-w-3xl relative hidden md:block">
+                <div class="flex-1 max-w-3xl relative block">
                     <form action="/products" method="GET" class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <i class="ph ph-magnifying-glass text-xl text-gray-400 group-focus-within:text-brand-500 transition-colors"></i>
@@ -151,7 +151,9 @@
 
                 <!-- Icons & Auth -->
                 <div class="flex items-center justify-end gap-1 sm:gap-3">
-                    @livewire('storefront.cart-badge')
+                    <div class="hidden md:block">
+                        @livewire('storefront.cart-badge')
+                    </div>
                     <button class="p-2.5 text-gray-500 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-all hidden sm:block relative">
                         <i class="ph ph-heart text-2xl"></i>
                         @auth
@@ -501,5 +503,32 @@
     </div>
 
     @stack('scripts')
+
+    <!-- Smart Header Auto-Hide Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let lastScrollTop = 0;
+            const header = document.getElementById('smart-header');
+            
+            window.addEventListener('scroll', function() {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                // Prevent hiding when at the very top (e.g. mobile bouncing)
+                if (scrollTop <= 50) {
+                    header.style.transform = 'translateY(0)';
+                    return;
+                }
+                
+                if (scrollTop > lastScrollTop) {
+                    // Scroll Down -> Hide
+                    header.style.transform = 'translateY(-100%)';
+                } else {
+                    // Scroll Up -> Show
+                    header.style.transform = 'translateY(0)';
+                }
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            }, { passive: true });
+        });
+    </script>
 </body>
 </html>
