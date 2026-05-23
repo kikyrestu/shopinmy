@@ -19,7 +19,7 @@ class SocialAuthController extends Controller
             abort(404);
         }
 
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')->stateless()->redirect();
     }
 
     /**
@@ -32,7 +32,7 @@ class SocialAuthController extends Controller
         }
 
         try {
-            $googleUser = Socialite::driver('google')->setHttpClient(new \GuzzleHttp\Client(['verify' => false]))->user();
+            $googleUser = Socialite::driver('google')->stateless()->setHttpClient(new \GuzzleHttp\Client(['verify' => false]))->user();
 
             // Find user by google_id or email
             $user = User::where('google_id', $googleUser->id)->first();
