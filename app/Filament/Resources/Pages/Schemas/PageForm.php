@@ -6,7 +6,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Set;
 
 class PageForm
 {

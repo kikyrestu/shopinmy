@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Brands\Schemas;
 
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Str;
 use Filament\Schemas\Schema;
 

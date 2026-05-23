@@ -11,7 +11,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Set;
 
 class BundleForm
 {

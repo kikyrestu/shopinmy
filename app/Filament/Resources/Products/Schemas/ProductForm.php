@@ -11,7 +11,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Str;
 use Filament\Schemas\Schema;
 

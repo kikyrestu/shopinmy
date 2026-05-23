@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Categories\Schemas;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Str;
 use Filament\Schemas\Schema;
 
