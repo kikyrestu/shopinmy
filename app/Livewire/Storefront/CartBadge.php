@@ -8,6 +8,7 @@ use Livewire\Attributes\On;
 class CartBadge extends Component
 {
     public $count = 0;
+    public $minimal = false;
 
     public function mount()
     {

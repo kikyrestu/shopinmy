@@ -486,7 +486,7 @@
         <a href="{{ route('cart.index') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('cart.index') ? 'text-brand-600' : 'text-gray-400 hover:text-brand-500' }} transition relative">
             <div class="relative">
                 <i class="{{ request()->routeIs('cart.index') ? 'ph-fill' : 'ph' }} ph-shopping-cart text-2xl mb-0.5"></i>
-                <livewire:storefront.cart-badge />
+                <livewire:storefront.cart-badge :minimal="true" />
             </div>
             <span class="text-[10px] font-medium">Cart</span>
         </a>
