@@ -81,9 +81,14 @@
                         {{ $product->order_items_sum_qty ?? 0 }} <span class="text-gray-500">{{ __('terjual') }}</span>
                     </div>
                     @php
-                        $displayStock = $product->variants->isNotEmpty() ? $product->variants->sum('stock') : $product->stock;
+                        $displayStock = $this->maxStock;
                     @endphp
-                    @if($displayStock > 0)
+                    @if($displayStock === null)
+                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                    <div class="text-emerald-600 font-bold flex items-center gap-1">
+                        <i class="ph-fill ph-check-circle"></i> {{ __('Stok Tersedia') }}
+                    </div>
+                    @elseif($displayStock > 0)
                     <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
                     <div class="text-emerald-600 font-bold flex items-center gap-1">
                         <i class="ph-fill ph-check-circle"></i> {{ __('Stok Tersedia:') }} {{ $displayStock }}

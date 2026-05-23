@@ -69,7 +69,7 @@ class ProductDetail extends Component
 
     public function getMaxStockProperty()
     {
-        $maxStock = $this->product->stock ?? 99;
+        $maxStock = $this->product->stock;
         
         $selectedVariantModel = $this->getSelectedVariantModel();
         if ($selectedVariantModel && $selectedVariantModel->stock !== null) {
@@ -81,7 +81,7 @@ class ProductDetail extends Component
 
     public function incrementQty()
     {
-        if ($this->qty < $this->maxStock) {
+        if ($this->maxStock === null || $this->qty < $this->maxStock) {
             $this->qty++;
         }
     }
