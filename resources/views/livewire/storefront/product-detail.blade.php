@@ -129,21 +129,24 @@
                 <!-- Add to Cart Area -->
                 <div class="flex flex-col sm:flex-row gap-4 mb-10">
                     <!-- Quantity -->
-                    <div class="flex items-center bg-gray-50 rounded-2xl border border-gray-100 p-1 w-max">
+                    <div class="flex items-center bg-gray-50 rounded-2xl border border-gray-100 p-1 w-max {{ $this->maxStock !== null && $this->maxStock <= 0 ? 'opacity-50 pointer-events-none' : '' }}">
                         <button wire:click="decrementQty" class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-white rounded-xl transition-all disabled:opacity-50" {{ $qty <= 1 ? 'disabled' : '' }}>
                             <i class="ph ph-minus font-bold"></i>
                         </button>
                         <div class="w-12 text-center font-bold text-gray-900">{{ $qty }}</div>
-                        <button wire:click="incrementQty" class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-white rounded-xl transition-all">
+                        <button wire:click="incrementQty" class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-white rounded-xl transition-all disabled:opacity-50" {{ ($this->maxStock !== null && $qty >= $this->maxStock) ? 'disabled' : '' }}>
                             <i class="ph ph-plus font-bold"></i>
                         </button>
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="flex-1 flex gap-3">
-                        <button wire:click="addToCart" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-500/30 transform active:scale-95">
-                            <i class="ph ph-shopping-cart-simple text-xl"></i>
-                            {{ __('Add to Cart') }}
+                        <button wire:click="addToCart" class="flex-1 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all transform active:scale-95 disabled:opacity-50 disabled:active:scale-100 disabled:cursor-not-allowed {{ $this->maxStock !== null && $this->maxStock <= 0 ? 'bg-gray-400' : 'bg-brand-600 hover:bg-brand-700 shadow-lg shadow-brand-500/30' }}" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
+                            @if($this->maxStock !== null && $this->maxStock <= 0)
+                                <i class="ph-fill ph-x-circle text-xl"></i> {{ __('Out of Stock') }}
+                            @else
+                                <i class="ph ph-shopping-cart-simple text-xl"></i> {{ __('Add to Cart') }}
+                            @endif
                         </button>
                         <button wire:click="toggleWishlist" class="w-14 h-14 border rounded-2xl flex items-center justify-center transition-all flex-shrink-0 {{ $isWishlisted ? 'bg-red-50 border-red-200 text-red-500' : 'bg-white border-gray-200 hover:bg-red-50 hover:text-red-500 hover:border-red-200 text-gray-400' }}">
                             <i class="{{ $isWishlisted ? 'ph-fill' : 'ph' }} ph-heart text-2xl"></i>
@@ -323,9 +326,12 @@
         <button wire:click="toggleWishlist" class="w-12 h-12 rounded-xl flex items-center justify-center border transition-all flex-shrink-0 {{ $isWishlisted ? 'bg-red-50 border-red-200 text-red-500' : 'bg-white border-gray-200 text-gray-400 hover:bg-gray-50' }}">
             <i class="{{ $isWishlisted ? 'ph-fill' : 'ph' }} ph-heart text-xl"></i>
         </button>
-        <button wire:click="addToCart" class="flex-1 bg-brand-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform" {{ $qty < 1 ? 'disabled' : '' }}>
-            <i class="ph ph-shopping-cart-simple text-lg"></i>
-            {{ __('Add to Cart') }} &bull; RM {{ number_format($currentPrice, 2) }}
+        <button wire:click="addToCart" class="flex-1 text-white font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform disabled:opacity-50 disabled:active:scale-100 {{ $this->maxStock !== null && $this->maxStock <= 0 ? 'bg-gray-400' : 'bg-brand-600' }}" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
+            @if($this->maxStock !== null && $this->maxStock <= 0)
+                <i class="ph-fill ph-x-circle text-lg"></i> {{ __('Out of Stock') }}
+            @else
+                <i class="ph ph-shopping-cart-simple text-lg"></i> {{ __('Add to Cart') }} &bull; RM {{ number_format($currentPrice, 2) }}
+            @endif
         </button>
     </div>
 </div>

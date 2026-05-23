@@ -67,17 +67,21 @@ class ProductDetail extends Component
         $this->selectedImage = $url;
     }
 
-    public function incrementQty()
+    public function getMaxStockProperty()
     {
         $maxStock = $this->product->stock ?? 99;
         
-        // If variant selected, check variant stock
         $selectedVariantModel = $this->getSelectedVariantModel();
         if ($selectedVariantModel && $selectedVariantModel->stock !== null) {
             $maxStock = $selectedVariantModel->stock;
         }
 
-        if ($this->qty < $maxStock) {
+        return $maxStock;
+    }
+
+    public function incrementQty()
+    {
+        if ($this->qty < $this->maxStock) {
             $this->qty++;
         }
     }
@@ -128,8 +132,14 @@ class ProductDetail extends Component
     {
         $variant = $this->getSelectedVariantModel();
         
+        // Prevent adding to cart if product requires variant but none valid is selected
+        if ($this->product->variants->isNotEmpty() && !$variant) {
+            $this->dispatch('notify', message: __('Please select a valid variant combination.'));
+            return;
+        }
+        
         // Stock Check
-        $maxStock = $variant ? $variant->stock : $this->product->stock;
+        $maxStock = $this->maxStock;
         if ($maxStock !== null && $this->qty > $maxStock) { // Bug-P03: Handle null stock
             $this->dispatch('notify', message: __('Insufficient stock available.'));
             return;

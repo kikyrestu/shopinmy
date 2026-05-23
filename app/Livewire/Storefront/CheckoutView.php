@@ -241,6 +241,11 @@ class CheckoutView extends Component
         }
 
         $this->isCalculatingShipping = false;
+        
+        // Recalculate voucher if one is active, in case shipping cost changed
+        if ($this->voucherId) {
+            $this->applyVoucher();
+        }
     }
 
     public function applyVoucher()
