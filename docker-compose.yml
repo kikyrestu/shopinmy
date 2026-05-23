@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  ecommerce_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shopinmy_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - ecommerce_db
+    networks:
+      - shopinmy_network
+
+  ecommerce_web:
+    image: nginx:alpine
+    container_name: shopinmy_web
+    restart: unless-stopped
+    ports:
+      - "8088:80" # Port unik Host: 8088
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - ecommerce_app
+    networks:
+      - shopinmy_network
+
+  ecommerce_db:
+    image: mysql:8.0
+    container_name: shopinmy_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-shopinmy}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_USER: ${DB_USERNAME:-shopinmy_user}
+    ports:
+      - "33069:3306" # Port unik Host: 33069
+    volumes:
+      - shopinmy_db_data:/var/lib/mysql
+    networks:
+      - shopinmy_network
+
+volumes:
+  shopinmy_db_data:
+
+networks:
+  shopinmy_network:
+    driver: bridge

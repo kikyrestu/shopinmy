@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexShop - Modern E-Commerce</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Phosphor Icons (Sleek, modern iconography) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Google Fonts: Plus Jakarta Sans (Popular in Web3/Fintech) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981', // Web3 Emerald Green
+                            600: '#059669',
+                            900: '#064e3b',
+                        },
+                        accent: {
+                            300: '#fdba74',
+                            500: '#f97316', // Vibrant Orange
+                        }
+                    },
+                    boxShadow: {
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+                        'floating': '0 20px 40px -15px rgba(0,0,0,0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAFAFC;
+        }
+        
+        /* Smooth scrolling for anchor links */
+        html { scroll-behavior: smooth; }
+
+        /* Hide scrollbar for category tabs but keep functionality */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Product Card Hover Effect */
+        .product-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased">
+
+    <!-- ==========================================
+         GLASSMORPHISM HEADER (WEB3 STYLE)
+         ========================================== -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 shadow-sm">
+        <!-- Top Bar -->
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20 gap-4 lg:gap-8">
+                
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-b from-brand-400 to-brand-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
+                        <i class="ph-bold ph-shopping-bag text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold tracking-tight text-gray-900 hidden sm:block">Nex<span class="text-brand-600">Shop</span></span>
+                </div>
+
+                <!-- Command-Palette Style Search -->
+                <div class="flex-1 max-w-3xl relative hidden md:block">
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="ph ph-magnifying-glass text-xl text-gray-400 group-focus-within:text-brand-500 transition-colors"></i>
+                        </div>
+                        <input type="text" class="block w-full pl-12 pr-4 py-3 bg-gray-100/80 border border-transparent rounded-full text-sm placeholder-gray-400 focus:bg-white focus:border-brand-500/30 focus:ring-4 focus:ring-brand-500/10 transition-all outline-none" placeholder="Cari brand, produk, atau toko...">
+                        <div class="absolute inset-y-0 right-0 pr-2 flex items-center">
+                            <button class="p-1.5 bg-brand-500 text-white rounded-full hover:bg-brand-600 transition-colors shadow-sm">
+                                <i class="ph-bold ph-arrow-right text-sm w-5 h-5 flex items-center justify-center"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Icons & Auth -->
+                <div class="flex items-center justify-end gap-1 sm:gap-3">
+                    <button class="p-2.5 text-gray-500 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-all relative">
+                        <i class="ph ph-shopping-cart text-2xl"></i>
+                        <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-accent-500 rounded-full ring-2 ring-white"></span>
+                    </button>
+                    <button class="p-2.5 text-gray-500 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-all hidden sm:block">
+                        <i class="ph ph-heart text-2xl"></i>
+                    </button>
+                    <button class="p-2.5 text-gray-500 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-all hidden lg:block">
+                        <i class="ph ph-bell text-2xl"></i>
+                    </button>
+                    
+                    <div class="h-6 w-px bg-gray-200 mx-1 hidden sm:block"></div>
+                    
+                    <!-- Modern Auth Buttons -->
+                    <div class="hidden md:flex items-center gap-2">
+                        <button class="px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-full transition-colors">Masuk</button>
+                        <button class="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-b from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 rounded-full shadow-lg shadow-brand-500/25 transition-all transform hover:-translate-y-0.5">Daftar</button>
+                    </div>
+                    
+                    <!-- Mobile Menu Toggle -->
+                    <button class="md:hidden p-2 text-gray-600">
+                        <i class="ph ph-list text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secondary Navigation (Categories & Location) -->
+        <div class="border-t border-gray-100/50 bg-white/40">
+            <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between text-sm">
+                
+                <div class="flex items-center gap-4 lg:gap-8 flex-1 min-w-0 overflow-hidden">
+                    <!-- Category Button -->
+                    <button class="flex items-center gap-2 text-gray-700 font-medium hover:text-brand-600 transition-colors whitespace-nowrap">
+                        <i class="ph ph-squares-four text-lg"></i> Kategori
+                    </button>
+                    
+                    <!-- Location Pill -->
+                    <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-gray-100/80 rounded-full text-gray-500 cursor-pointer hover:bg-gray-200 transition-colors whitespace-nowrap">
+                        <i class="ph-fill ph-map-pin text-brand-500"></i>
+                        <span class="truncate max-w-[200px] text-xs font-medium">Kirim ke: Jakarta Pusat...</span>
+                        <i class="ph ph-caret-down text-xs"></i>
+                    </div>
+
+                    <!-- Scrollable Tabs (Web3 Pill Style) -->
+                    <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar flex-1 pl-2">
+                        <a href="#" class="px-4 py-1.5 rounded-full bg-brand-500 hover:bg-brand-600 text-white font-semibold whitespace-nowrap shadow-sm shadow-brand-500/20 transition-colors">Untukmu</a>
+                        <a href="#" class="px-4 py-1.5 rounded-full hover:bg-gray-100 text-gray-600 font-medium transition-colors whitespace-nowrap"><span class="text-accent-500">⚡</span> Flash Sale</a>
+                        <a href="#" class="px-4 py-1.5 rounded-full hover:bg-gray-100 text-gray-600 font-medium transition-colors whitespace-nowrap">Kebutuhan</a>
+                        <a href="#" class="px-4 py-1.5 rounded-full hover:bg-gray-100 text-gray-600 font-medium transition-colors whitespace-nowrap">Tech & Gadget</a>
+                        <a href="#" class="px-4 py-1.5 rounded-full hover:bg-gray-100 text-gray-600 font-medium transition-colors whitespace-nowrap">Fashion</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         MAIN CONTENT
+         ========================================== -->
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+        
+        <!-- HERO BANNER (Modern Gradient & 3D Vibe) -->
+        <section class="relative w-full h-[250px] md:h-[350px] lg:h-[400px] rounded-[2rem] overflow-hidden bg-gray-900 group">
+            <!-- Dynamic Background -->
+            <div class="absolute inset-0 bg-gray-900"></div>
+            <!-- Abstract decorative circles -->
+            <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-brand-500/20 blur-[100px]"></div>
+            <div class="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-brand-700/20 blur-[100px]"></div>
+            
+            <div class="relative z-10 h-full flex items-center px-8 md:px-16">
+                <div class="max-w-2xl text-white space-y-4 md:space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold tracking-wider uppercase">
+                        <span class="w-2 h-2 rounded-full bg-accent-500 animate-pulse"></span>
+                        Ramadan Mega Sale
+                    </div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
+                        Temukan Kebutuhanmu, <br/>
+                        <span class="text-brand-400">Lebih Cepat.</span>
+                    </h1>
+                    <p class="text-gray-300 text-sm md:text-base font-medium max-w-lg">
+                        Diskon eksklusif hingga 80% untuk produk teknologi, gaya hidup, dan kebutuhan harian.
+                    </p>
+                    <button class="mt-4 px-8 py-3.5 bg-white text-gray-900 font-bold rounded-full hover:bg-gray-100 transition-transform transform hover:scale-105 shadow-xl flex items-center gap-2">
+                        Eksplor Sekarang <i class="ph-bold ph-arrow-right text-brand-500"></i>
+                    </button>
+                </div>
+                
+                <!-- Floating Element (Mockup/Illustration placeholder) -->
+                <div class="hidden lg:block absolute right-16 top-1/2 transform -translate-y-1/2">
+                    <div class="w-72 h-80 bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-6 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500 flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                             <div class="w-12 h-12 bg-gradient-to-b from-brand-400 to-brand-500 rounded-2xl flex items-center justify-center shadow-lg"><i class="ph-fill ph-ticket text-white text-2xl"></i></div>
+                             <span class="px-2 py-1 bg-accent-500/20 text-accent-300 text-xs font-bold rounded-lg backdrop-blur-sm border border-accent-500/30">Terbatas</span>
+                        </div>
+                        <div>
+                            <p class="text-white font-bold text-2xl mb-1">Voucher Rp50Rb</p>
+                            <p class="text-gray-300 text-sm">Klaim untuk pengguna baru</p>
+                            <button class="w-full mt-4 py-2 bg-white/20 hover:bg-white/30 rounded-xl text-white font-semibold transition-colors backdrop-blur-md">Klaim Sekarang</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRODUCT SECTION: FOR YOU -->
+        <section class="space-y-6">
+            <!-- Section Header -->
+            <div class="flex items-end justify-between">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">Rekomendasi <span class="text-brand-500">Untukmu</span></h2>
+                    <p class="text-sm text-gray-500 mt-1 font-medium">Berdasarkan aktivitas dan pencarian terakhir Anda.</p>
+                </div>
+                <a href="#" class="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700 transition-colors px-4 py-2 rounded-full hover:bg-brand-50">
+                    Lihat semua <i class="ph-bold ph-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+                
+                <!-- Product Card 1 -->
+                <a href="#" class="product-card group bg-white rounded-2xl p-3 border border-gray-100 flex flex-col relative h-full">
+                    <div class="absolute top-5 left-5 z-10 px-2 py-1 bg-red-500 text-white text-[10px] font-bold rounded-md uppercase tracking-wider">Diskon 20%</div>
+                    <!-- Image Wrapper -->
+                    <div class="relative w-full aspect-square rounded-xl overflow-hidden bg-gray-50 mb-4">
+                        <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&w=400&q=80" alt="Mechanical Keyboard" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <!-- Content -->
+                    <div class="flex flex-col flex-1 justify-between">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-800 line-clamp-2 leading-tight group-hover:text-brand-600 transition-colors">Keychron Q1 Pro Wireless Custom Mechanical Keyboard</h3>
+                            <div class="mt-2.5 flex items-baseline gap-2">
+                                <span class="text-lg font-bold text-gray-900">Rp 2.850.000</span>
+                                <span class="text-xs text-gray-400 line-through">Rp 3.200.000</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                            <div class="flex items-center gap-1">
+                                <i class="ph-fill ph-star text-amber-400 text-sm"></i>
+                                <span class="text-gray-700 font-bold">4.9</span>
+                                <span>| 120 terjual</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <i class="ph ph-map-pin"></i> Jakarta
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Product Card 2 -->
+                <a href="#" class="product-card group bg-white rounded-2xl p-3 border border-gray-100 flex flex-col relative h-full">
+                    <div class="relative w-full aspect-square rounded-xl overflow-hidden bg-gray-50 mb-4">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80" alt="Headphone" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="flex flex-col flex-1 justify-between">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-800 line-clamp-2 leading-tight group-hover:text-brand-600 transition-colors">Sony WH-1000XM5 Wireless Noise Cancelling Headphones</h3>
+                            <div class="mt-2.5">
+                                <span class="text-lg font-bold text-gray-900">Rp 4.999.000</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                            <div class="flex items-center gap-1">
+                                <i class="ph-fill ph-star text-amber-400 text-sm"></i>
+                                <span class="text-gray-700 font-bold">5.0</span>
+                                <span>| 45 terjual</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <i class="ph ph-map-pin"></i> Bandung
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Product Card 3 -->
+                <a href="#" class="product-card group bg-white rounded-2xl p-3 border border-gray-100 flex flex-col relative h-full">
+                    <div class="absolute top-5 left-5 z-10 px-2 py-1 bg-brand-500 text-white text-[10px] font-bold rounded-md uppercase tracking-wider">Official</div>
+                    <div class="relative w-full aspect-square rounded-xl overflow-hidden bg-gray-50 mb-4">
+                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80" alt="Smartwatch" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="flex flex-col flex-1 justify-between">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-800 line-clamp-2 leading-tight group-hover:text-brand-600 transition-colors">Apple Watch Series 9 GPS 45mm Midnight Aluminum Case</h3>
+                            <div class="mt-2.5">
+                                <span class="text-lg font-bold text-gray-900">Rp 7.499.000</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                            <div class="flex items-center gap-1">
+                                <i class="ph-fill ph-star text-amber-400 text-sm"></i>
+                                <span class="text-gray-700 font-bold">4.8</span>
+                                <span>| 89 terjual</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <i class="ph ph-map-pin"></i> Jakarta
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Product Card 4 -->
+                <a href="#" class="product-card group bg-white rounded-2xl p-3 border border-gray-100 flex flex-col relative h-full">
+                    <div class="relative w-full aspect-square rounded-xl overflow-hidden bg-gray-50 mb-4">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=400&q=80" alt="Sneakers" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="flex flex-col flex-1 justify-between">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-800 line-clamp-2 leading-tight group-hover:text-brand-600 transition-colors">Nike Air Force 1 '07 Original - Sepatu Pria Casual</h3>
+                            <div class="mt-2.5 flex items-baseline gap-2">
+                                <span class="text-lg font-bold text-gray-900">Rp 1.549.000</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                            <div class="flex items-center gap-1">
+                                <i class="ph-fill ph-star text-amber-400 text-sm"></i>
+                                <span class="text-gray-700 font-bold">4.9</span>
+                                <span>| 300+ terjual</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <i class="ph ph-map-pin"></i> Tangerang
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Product Card 5 -->
+                <a href="#" class="product-card group bg-white rounded-2xl p-3 border border-gray-100 flex flex-col relative h-full hidden xl:flex">
+                    <div class="relative w-full aspect-square rounded-xl overflow-hidden bg-gray-50 mb-4">
+                        <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=400&q=80" alt="Earbuds" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="flex flex-col flex-1 justify-between">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-800 line-clamp-2 leading-tight group-hover:text-brand-600 transition-colors">Samsung Galaxy Buds2 Pro TWS Earbuds dengan ANC Active Noise Cancelling</h3>
+                            <div class="mt-2.5">
+                                <span class="text-lg font-bold text-gray-900">Rp 2.150.000</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                            <div class="flex items-center gap-1">
+                                <i class="ph-fill ph-star text-amber-400 text-sm"></i>
+                                <span class="text-gray-700 font-bold">4.7</span>
+                                <span>| 210 terjual</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <i class="ph ph-map-pin"></i> Bekasi
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+            
+            <!-- Mobile View All Button -->
+            <button class="w-full sm:hidden py-3 border border-gray-200 rounded-full text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                Lihat semua rekomendasi
+            </button>
+        </section>
+
+        <!-- APP INSTALL PROMO (Modern Glass Card) -->
+        <section class="mt-16 bg-brand-50/50 rounded-[2rem] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between border border-brand-100 shadow-xl shadow-brand-500/5 relative overflow-hidden">
+            <!-- decorative blur -->
+            <div class="absolute right-0 top-0 w-64 h-64 bg-brand-200/40 rounded-full blur-[80px]"></div>
+            
+            <div class="relative z-10 flex items-center gap-6 mb-6 md:mb-0">
+                <div class="w-20 h-20 rounded-2xl bg-white shadow-lg flex items-center justify-center p-4">
+                    <div class="w-full h-full bg-gradient-to-b from-brand-400 to-brand-500 rounded-xl flex items-center justify-center text-white">
+                        <i class="ph-bold ph-shopping-bag text-3xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 tracking-tight">Lebih untung pakai aplikasi</h3>
+                    <p class="text-gray-600 font-medium mt-1">Dapatkan gratis ongkir dan promo eksklusif setiap hari.</p>
+                </div>
+            </div>
+            
+            <div class="relative z-10 flex gap-4 w-full md:w-auto">
+                <button class="flex-1 md:flex-none px-6 py-3 bg-gray-900 text-white rounded-xl font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center gap-2">
+                    <i class="ph-fill ph-apple-logo text-xl"></i> App Store
+                </button>
+                <button class="flex-1 md:flex-none px-6 py-3 bg-white text-gray-900 border border-gray-200 shadow-sm rounded-xl font-semibold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+                    <i class="ph-fill ph-google-play-logo text-brand-500 text-xl"></i> Play Store
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==========================================
+         MODERN FOOTER
+         ========================================== -->
+    <footer class="bg-white border-t border-gray-100 pt-16 pb-8 mt-12">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-12">
+                
+                <!-- Brand Col -->
+                <div class="lg:col-span-2">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white">
+                            <i class="ph-bold ph-shopping-bag"></i>
+                        </div>
+                        <span class="text-2xl font-bold tracking-tight text-gray-900">Nex<span class="text-brand-600">Shop</span></span>
+                    </div>
+                    <p class="text-gray-500 text-sm leading-relaxed max-w-sm mb-6">
+                        Platform e-commerce masa depan yang memberikan pengalaman belanja mulus, aman, dan berpusat pada pengguna.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-brand-50 hover:text-brand-600 transition-colors"><i class="ph-fill ph-instagram-logo text-xl"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-brand-50 hover:text-brand-600 transition-colors"><i class="ph-fill ph-twitter-logo text-xl"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-brand-50 hover:text-brand-600 transition-colors"><i class="ph-fill ph-facebook-logo text-xl"></i></a>
+                    </div>
+                </div>
+
+                <!-- Links Col 1 -->
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-4">Informasi</h4>
+                    <ul class="space-y-3 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Tentang Kami</a></li>
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Karir</a></li>
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Blog & Berita</a></li>
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Hubungi Kami</a></li>
+                    </ul>
+                </div>
+
+                <!-- Links Col 2 -->
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-4">Bantuan</h4>
+                    <ul class="space-y-3 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Pusat Bantuan</a></li>
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Syarat & Ketentuan</a></li>
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Kebijakan Privasi</a></li>
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Lacak Pesanan</a></li>
+                    </ul>
+                </div>
+
+                <!-- Payments Col -->
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-4">Pembayaran Aman</h4>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="h-10 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center text-xs font-bold text-gray-400">VISA</div>
+                        <div class="h-10 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center text-xs font-bold text-gray-400">MC</div>
+                        <div class="h-10 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center text-xs font-bold text-gray-400">QRIS</div>
+                        <div class="h-10 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center text-xs font-bold text-gray-400">GoPay</div>
+                        <div class="h-10 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center text-xs font-bold text-gray-400">OVO</div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="pt-8 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400 font-medium">
+                <p>&copy; 2026 NexShop. Hak cipta dilindungi undang-undang.</p>
+                <div class="flex items-center gap-1">
+                    Dibuat dengan <i class="ph-fill ph-heart text-red-500 mx-1"></i> di Indonesia
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

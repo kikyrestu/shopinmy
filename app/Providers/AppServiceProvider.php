@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Providers;
+
+use App\Models\Setting;
+use App\Observers\SettingObserver;
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        //
+    }
+
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        Setting::observe(SettingObserver::class);
+        \App\Models\Order::observe(\App\Observers\OrderObserver::class);
+
+        // Inject Google Socialite config from settings
+        $googleClientId = Setting::get('google_client_id');
+        $googleClientSecret = Setting::get('google_client_secret');
+        if ($googleClientId && $googleClientSecret) {
+            config([
+                'services.google' => [
+                    'client_id' => $googleClientId,
+                    'client_secret' => $googleClientSecret,
+                    'redirect' => url('/auth/google/callback'),
+                ],
+            ]);
+        }
+
+        \Illuminate\Support\Facades\View::composer('layouts.storefront', function ($view) {
+            $view->with('categories', \App\Models\Category::with('children')->whereNull('parent_id')->get());
+            $view->with('footerPages', \App\Models\Page::select('title', 'slug')->get());
+        });
+    }
+}

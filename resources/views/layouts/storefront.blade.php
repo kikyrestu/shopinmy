@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SEO Meta Tags -->
+    @php
+        $defaultTitle = \App\Models\Setting::get('site_name', 'NexShop');
+        $defaultDesc = \App\Models\Setting::get('site_description', __('A next-generation e-commerce platform delivering a seamless, secure, and user-centric shopping experience.'));
+        $defaultLogo = \App\Models\Setting::get('site_logo') ? Storage::url(\App\Models\Setting::get('site_logo')) : asset('logo.png');
+    @endphp
+    
+    <title>@yield('title', $defaultTitle . ' - Modern E-Commerce')</title>
+    <meta name="description" content="@yield('meta_description', $defaultDesc)">
+    
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request()->url() }}">
+    <meta property="og:title" content="@yield('meta_title', $defaultTitle)">
+    <meta property="og:description" content="@yield('meta_description', $defaultDesc)">
+    <meta property="og:image" content="@yield('meta_image', $defaultLogo)">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('meta_title', $defaultTitle)">
+    <meta name="twitter:description" content="@yield('meta_description', $defaultDesc)">
+    <meta name="twitter:image" content="@yield('meta_image', $defaultLogo)">
+    
+    <!-- Dynamic Favicon -->
+    @if(\App\Models\Setting::get('site_favicon'))
+        <link rel="icon" type="image/x-icon" href="{{ Storage::url(\App\Models\Setting::get('site_favicon')) }}">
+    @else
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    @endif
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Phosphor Icons (Sleek, modern iconography) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Alpine.js is bundled with Livewire 3, so we don't load it manually -->
+    <!-- Google Fonts: Plus Jakarta Sans (Popular in Web3/Fintech) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981', // Web3 Emerald Green
+                            600: '#059669',
+                            900: '#064e3b',
+                        },
+                        accent: {
+                            300: '#fdba74',
+                            500: '#f97316', // Vibrant Orange
+                        }
+                    },
+                    boxShadow: {
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+                        'floating': '0 20px 40px -15px rgba(0,0,0,0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAFAFC;
+        }
+        
+        /* Smooth scrolling for anchor links */
+        html { scroll-behavior: smooth; }
+
+        /* Hide scrollbar for category tabs but keep functionality */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Product Card Hover Effect */
+        .product-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1);
+        }
+    </style>
+    @stack('styles')
+</head>
+<body class="text-gray-800 antialiased">
+
+    <!-- ==========================================
+         GLASSMORPHISM HEADER (WEB3 STYLE)
+         ========================================== -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 shadow-sm">
+        <!-- Top Bar -->
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20 gap-4 lg:gap-8">
+                
+                <!-- Logo -->
+                <a href="{{ route('home') }}" class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+                    @if(\App\Models\Setting::get('site_logo'))
+                        <img src="{{ Storage::url(\App\Models\Setting::get('site_logo')) }}" alt="{{ \App\Models\Setting::get('site_name', 'NexShop') }}" class="h-10 w-auto object-contain">
+                    @else
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-b from-brand-400 to-brand-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
+                            <i class="ph-bold ph-shopping-bag text-xl"></i>
+                        </div>
+                    @endif
+                    <span class="text-2xl font-bold tracking-tight text-gray-900 hidden sm:block">{{ \App\Models\Setting::get('site_name', 'NexShop') }}</span>
+                </a>
+
+                <!-- Command-Palette Style Search -->
+                <div class="flex-1 max-w-3xl relative hidden md:block">
+                    <form action="/products" method="GET" class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="ph ph-magnifying-glass text-xl text-gray-400 group-focus-within:text-brand-500 transition-colors"></i>
+                        </div>
+                        <input type="text" name="search" class="block w-full pl-12 pr-4 py-3 bg-gray-100/80 border border-transparent rounded-full text-sm placeholder-gray-400 focus:bg-white focus:border-brand-500/30 focus:ring-4 focus:ring-brand-500/10 transition-all outline-none" placeholder="{{ __('Search brands, products, or stores...') }}">
+                        <div class="absolute inset-y-0 right-0 pr-2 flex items-center">
+                            <button type="submit" class="p-1.5 bg-brand-500 text-white rounded-full hover:bg-brand-600 transition-colors shadow-sm">
+                                <i class="ph-bold ph-arrow-right text-sm w-5 h-5 flex items-center justify-center"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Icons & Auth -->
+                <div class="flex items-center justify-end gap-1 sm:gap-3">
+                    @livewire('storefront.cart-badge')
+                    <button class="p-2.5 text-gray-500 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-all hidden sm:block relative">
+                        <i class="ph ph-heart text-2xl"></i>
+                        @auth
+                            @php $wishlistCount = auth()->user()->wishlists()->count(); @endphp
+                            @if($wishlistCount > 0)
+                                <span class="absolute top-1 right-1 w-4 h-4 bg-accent-500 rounded-full ring-2 ring-white text-[10px] text-white font-bold flex items-center justify-center">{{ $wishlistCount }}</span>
+                            @endif
+                        @endauth
+                    </button>
+                    @auth
+                        <livewire:storefront.header-notifications />
+                    @else
+                        <button class="p-2.5 text-gray-500 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-all hidden lg:block" onclick="window.location.href='{{ route('login') }}'">
+                            <i class="ph ph-bell text-2xl"></i>
+                        </button>
+                    @endauth
+
+                    <!-- Language Switcher -->
+                    <div class="hidden sm:flex items-center bg-gray-100 rounded-full p-0.5">
+                        <a href="{{ route('locale.switch', 'ms') }}" class="px-3 py-1 text-xs font-semibold rounded-full transition-all {{ app()->getLocale() === 'ms' ? 'bg-white text-brand-600 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">MS</a>
+                        <a href="{{ route('locale.switch', 'en') }}" class="px-3 py-1 text-xs font-semibold rounded-full transition-all {{ app()->getLocale() === 'en' ? 'bg-white text-brand-600 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">EN</a>
+                    </div>
+                    
+                    <div class="h-6 w-px bg-gray-200 mx-1 hidden sm:block"></div>
+                    
+                    <!-- Modern Auth Buttons -->
+                    <div class="hidden md:flex items-center gap-2">
+                        @auth
+                            <a href="{{ route('dashboard') }}" class="flex items-center gap-2 pl-1.5 pr-4 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-full transition-colors border border-transparent hover:border-gray-200">
+                                <img src="{{ auth()->user()->avatar_url }}" alt="Avatar" class="w-7 h-7 rounded-full object-cover">
+                                {{ __('My Profile') }}
+                            </a>
+                            <form method="POST" action="{{ route('logout') }}" class="inline">
+                                @csrf
+                                <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-b from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-full shadow-lg shadow-red-500/25 transition-all transform hover:-translate-y-0.5 inline-block">{{ __('Logout') }}</button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}" class="px-5 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-full transition-colors">{{ __('Login') }}</a>
+                            <a href="{{ route('register') }}" class="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-b from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 rounded-full shadow-lg shadow-brand-500/25 transition-all transform hover:-translate-y-0.5 inline-block">{{ __('Register') }}</a>
+                        @endauth
+                    </div>
+                    
+                    <!-- Mobile Menu Toggle -->
+                    <button class="md:hidden p-2 text-gray-600">
+                        <i class="ph ph-list text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secondary Navigation (Categories & Location) -->
+        <div class="border-t border-gray-100/50 bg-white/40">
+            <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between text-sm">
+                
+                <div class="flex items-center gap-4 lg:gap-8 flex-1 min-w-0">
+                    <!-- Category Dropdown (Mega Menu) -->
+                    <div x-data="{ open: false, activeCategory: {{ $categories->first()?->id ?? 'null' }} }" class="relative">
+                        <button @click="open = !open" class="flex items-center gap-2 px-3 py-1.5 bg-gray-100/80 rounded-lg text-gray-700 font-bold hover:bg-gray-200 transition-colors whitespace-nowrap">
+                            <i class="ph ph-squares-four text-lg"></i> {{ __('Kategori') }}
+                        </button>
+                        
+                        <!-- Mega Menu Container -->
+                        <div x-show="open" @click.away="open = false" 
+                             x-transition:enter="transition ease-out duration-200" 
+                             x-transition:enter-start="opacity-0 -translate-y-2" 
+                             x-transition:enter-end="opacity-100 translate-y-0" 
+                             x-transition:leave="transition ease-in duration-150" 
+                             x-transition:leave-start="opacity-100 translate-y-0" 
+                             x-transition:leave-end="opacity-0 -translate-y-2" 
+                             class="absolute left-0 top-full mt-3 w-[800px] bg-white rounded-xl shadow-xl border border-gray-100 flex z-50 overflow-hidden" style="display: none; min-height: 350px;">
+                            
+                            <!-- Sidebar Kiri -->
+                            <div class="w-1/3 bg-gray-50/50 border-r border-gray-100 py-3 flex flex-col">
+                                @foreach($categories as $cat)
+                                @php
+                                    // Custom icons based on category slug if available, fallback to default
+                                    $icon = match($cat->slug) {
+                                        'promo' => 'ph-megaphone',
+                                        'kebutuhan' => 'ph-shopping-basket',
+                                        'aksesoris' => 'ph-armchair',
+                                        'sport' => 'ph-sneaker',
+                                        'untukmu' => 'ph-star',
+                                        default => 'ph-tag'
+                                    };
+                                    $color = match($cat->slug) {
+                                        'promo' => 'text-red-500',
+                                        'kebutuhan' => 'text-blue-500',
+                                        'aksesoris' => 'text-amber-500',
+                                        'sport' => 'text-emerald-500',
+                                        'untukmu' => 'text-gray-700',
+                                        default => 'text-gray-500'
+                                    };
+                                @endphp
+                                <button @mouseenter="activeCategory = {{ $cat->id }}" 
+                                        :class="activeCategory === {{ $cat->id }} ? 'bg-white shadow-sm font-bold text-brand-600' : 'text-gray-600 hover:bg-gray-100 font-medium'" 
+                                        class="flex items-center gap-3 px-5 py-3 text-sm transition-all text-left w-full relative">
+                                    <i class="ph-fill {{ $icon }} {{ $color }} text-xl"></i>
+                                    {{ $cat->name }}
+                                </button>
+                                @endforeach
+                            </div>
+
+                            <!-- Area Kanan -->
+                            <div class="w-2/3 p-6 flex flex-col justify-between">
+                                <div class="flex-1">
+                                    @foreach($categories as $cat)
+                                    <div x-show="activeCategory === {{ $cat->id }}" class="h-full flex flex-col">
+                                        <!-- Header Kategori -->
+                                        <div class="flex justify-between items-center mb-2 pb-3 border-b border-gray-100">
+                                            <div>
+                                                <h3 class="text-2xl font-extrabold text-gray-900 tracking-tight">{{ $cat->name }}</h3>
+                                                <p class="text-xs text-gray-400 mt-1">{{ __('Choose a category to explore products faster.') }}</p>
+                                            </div>
+                                            <a href="{{ route('products.index', ['category' => $cat->slug]) }}" class="text-brand-600 hover:text-brand-700 text-sm font-bold flex items-center gap-1 transition-colors">
+                                                {{ __('View all') }} <i class="ph-bold ph-arrow-right"></i>
+                                            </a>
+                                        </div>
+
+                                        <!-- Konten Subkategori atau Info -->
+                                        <div class="flex-1 mt-4">
+                                            <div class="flex gap-6 h-full">
+                                                <div class="flex-1">
+                                                    @if($cat->children->count() > 0)
+                                                        <div class="grid grid-cols-2 gap-x-4 gap-y-3">
+                                                            @foreach($cat->children as $child)
+                                                                <a href="{{ route('products.index', ['category' => $child->slug]) }}" class="text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors flex items-center gap-2">
+                                                                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                                                                    {{ $child->name }}
+                                                                </a>
+                                                            @endforeach
+                                                        </div>
+                                                    @else
+                                                        <div class="bg-gray-50/80 border border-gray-200 border-dashed rounded-xl p-4 flex items-center gap-3 text-gray-500 text-sm mt-2">
+                                                            <i class="ph ph-info text-xl text-gray-400"></i>
+                                                            {{ __('No subcategories available for this category.') }}
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                
+                                                <!-- Featured Image -->
+                                                @if($cat->image)
+                                                <div class="w-40 flex-shrink-0">
+                                                    <div class="w-full aspect-square rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 shadow-sm p-2 flex items-center justify-center">
+                                                        <img src="{{ Storage::url($cat->image) }}" class="w-full h-full object-contain" alt="{{ $cat->name }}">
+                                                    </div>
+                                                </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Location Dropdown -->
+                    <div x-data="{ open: false }" class="relative hidden sm:block">
+                        <button @click="open = !open" class="flex items-center gap-2 px-3 py-1.5 bg-gray-100/80 rounded-full text-gray-500 cursor-pointer hover:bg-gray-200 transition-colors whitespace-nowrap">
+                            <i class="ph-fill ph-map-pin text-brand-500"></i>
+                            <span class="truncate max-w-[200px] text-xs font-medium">
+                                @auth
+                                    @php
+                                        $defaultAddress = auth()->user()->addresses()->where('is_default', true)->first() ?? auth()->user()->addresses()->first();
+                                    @endphp
+                                    {{ __('Ship to') }}: {{ $defaultAddress ? $defaultAddress->city . ', ' . $defaultAddress->state : __('Select Location') }}
+                                @else
+                                    {{ __('Ship to') }}: {{ __('Malaysia') }}
+                                @endauth
+                            </span>
+                            <i class="ph ph-caret-down text-xs transition-transform" :class="open ? 'rotate-180' : ''"></i>
+                        </button>
+                        <div x-show="open" @click.away="open = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" class="absolute left-0 top-full mt-3 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50" style="display: none;">
+                            <div class="px-4 py-2 border-b border-gray-100 mb-1">
+                                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">{{ __('Shipping Address') }}</p>
+                            </div>
+                            @auth
+                                @php $userAddresses = auth()->user()->addresses()->take(3)->get(); @endphp
+                                @forelse($userAddresses as $addr)
+                                    <div class="flex items-start gap-3 px-4 py-3 hover:bg-brand-50 transition-colors cursor-pointer group">
+                                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 {{ $addr->is_default ? 'bg-brand-100 text-brand-600' : 'bg-gray-100 text-gray-400' }}">
+                                            <i class="ph-fill {{ strtolower($addr->label ?? '') == 'office' ? 'ph-buildings' : 'ph-house' }} text-sm"></i>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                                                {{ $addr->label ?? __('Address') }}
+                                                @if($addr->is_default)
+                                                    <span class="text-[10px] bg-brand-500 text-white px-1.5 py-0.5 rounded-md font-bold">{{ __('Default') }}</span>
+                                                @endif
+                                            </p>
+                                            <p class="text-xs text-gray-500 truncate mt-0.5">{{ $addr->address }}, {{ $addr->city }}</p>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="px-4 py-4 text-center">
+                                        <p class="text-sm text-gray-500">{{ __('No saved addresses.') }}</p>
+                                    </div>
+                                @endforelse
+                                <div class="border-t border-gray-100 mt-1 pt-1">
+                                    <a href="{{ route('dashboard.addresses') }}" class="flex items-center gap-2 px-4 py-2.5 hover:bg-brand-50 transition-colors text-brand-600 font-semibold text-sm">
+                                        <i class="ph-bold ph-plus"></i> {{ __('Manage Addresses') }}
+                                    </a>
+                                </div>
+                            @else
+                                <div class="px-4 py-4 text-center">
+                                    <p class="text-sm text-gray-500 mb-3">{{ __('Login to manage your shipping addresses.') }}</p>
+                                    <a href="{{ route('login') }}" class="inline-block px-5 py-2 bg-brand-600 text-white text-sm font-bold rounded-full hover:bg-brand-700 transition-colors">{{ __('Login') }}</a>
+                                </div>
+                            @endauth
+                        </div>
+                    </div>
+
+                    <!-- Scrollable Tabs (Web3 Pill Style) -->
+                    <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar flex-1 pl-2 pb-1">
+                        <a href="{{ route('home') }}" class="px-4 py-1.5 rounded-full bg-brand-500 hover:bg-brand-600 text-white font-semibold whitespace-nowrap shadow-sm shadow-brand-500/20 transition-colors">{{ __('For You') }}</a>
+                        <a href="{{ route('flash-sale.index') }}" class="px-4 py-1.5 rounded-full hover:bg-gray-100 text-gray-600 font-medium transition-colors whitespace-nowrap"><span class="text-accent-500">⚡</span> {{ __('Flash Sale') }}</a>
+                        @foreach($categories as $category)
+                            <a href="{{ route('products.index', ['category' => $category->slug]) }}" class="px-4 py-1.5 rounded-full hover:bg-gray-100 text-gray-600 font-medium transition-colors whitespace-nowrap">{{ $category->name }}</a>
+                        @endforeach
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         MAIN CONTENT
+         ========================================== -->
+    @yield('content')
+
+    <!-- ==========================================
+         MODERN FOOTER
+         ========================================== -->
+    <footer class="bg-white border-t border-gray-100 pt-16 pb-8 mt-12">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-12">
+                
+                <!-- Brand Col -->
+                <div class="lg:col-span-2">
+                    <div class="flex items-center gap-2 mb-4">
+                        @if(\App\Models\Setting::get('site_logo'))
+                            <img src="{{ Storage::url(\App\Models\Setting::get('site_logo')) }}" alt="{{ \App\Models\Setting::get('site_name', 'NexShop') }}" class="h-8 w-auto object-contain">
+                        @else
+                            <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white">
+                                <i class="ph-bold ph-shopping-bag"></i>
+                            </div>
+                        @endif
+                        <span class="text-2xl font-bold tracking-tight text-gray-900">{{ \App\Models\Setting::get('site_name', 'NexShop') }}</span>
+                    </div>
+                    <p class="text-gray-500 text-sm leading-relaxed max-w-sm mb-6">
+                        {{ \App\Models\Setting::get('site_description', __('A next-generation e-commerce platform delivering a seamless, secure, and user-centric shopping experience.')) }}
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="{{ \App\Models\Setting::get('instagram_url', '#') }}" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-brand-50 hover:text-brand-600 transition-colors"><i class="ph-fill ph-instagram-logo text-xl"></i></a>
+                        <a href="{{ \App\Models\Setting::get('twitter_url', '#') }}" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-brand-50 hover:text-brand-600 transition-colors"><i class="ph-fill ph-twitter-logo text-xl"></i></a>
+                        <a href="{{ \App\Models\Setting::get('facebook_url', '#') }}" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-brand-50 hover:text-brand-600 transition-colors"><i class="ph-fill ph-facebook-logo text-xl"></i></a>
+                    </div>
+                </div>
+
+                <!-- Links Col 1 -->
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-4">{{ __('Information') }}</h4>
+                    <ul class="space-y-3 text-sm text-gray-500">
+                        @if(isset($footerPages) && count($footerPages) > 0)
+                            @foreach($footerPages as $page)
+                            <li><a href="/pages/{{ $page->slug }}" class="hover:text-brand-600 transition-colors">{{ $page->title }}</a></li>
+                            @endforeach
+                        @else
+                            <li><a href="#" class="hover:text-brand-600 transition-colors">{{ __('About Us') }}</a></li>
+                            <li><a href="#" class="hover:text-brand-600 transition-colors">{{ __('Careers') }}</a></li>
+                            <li><a href="#" class="hover:text-brand-600 transition-colors">{{ __('Blog & News') }}</a></li>
+                            <li><a href="#" class="hover:text-brand-600 transition-colors">{{ __('Contact Us') }}</a></li>
+                        @endif
+                    </ul>
+                </div>
+
+                <!-- Links Col 2 -->
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-4">{{ __('Help') }}</h4>
+                    <ul class="space-y-3 text-sm text-gray-500 mb-8">
+                        <li><a href="{{ \App\Models\Setting::get('help_center_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Help Center') }}</a></li>
+                        <li><a href="{{ \App\Models\Setting::get('terms_conditions_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Terms & Conditions') }}</a></li>
+                        <li><a href="{{ \App\Models\Setting::get('privacy_policy_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Privacy Policy') }}</a></li>
+                        <li><a href="{{ \App\Models\Setting::get('track_order_url', '#') }}" class="hover:text-brand-600 transition-colors">{{ __('Track Order') }}</a></li>
+                    </ul>
+                </div>
+
+                <!-- Newsletter Col (Spanning 2 columns) -->
+                <div class="lg:col-span-2 bg-gray-50 rounded-3xl p-6 border border-gray-100">
+                    <h4 class="font-bold text-gray-900 mb-2">{{ \App\Models\Setting::get('newsletter_title', __('Subscribe to our Newsletter')) }}</h4>
+                    <p class="text-xs text-gray-500 mb-4">{{ \App\Models\Setting::get('newsletter_description', __('Get the latest updates on new products and upcoming sales.')) }}</p>
+                    @livewire('storefront.newsletter-form')
+                </div>
+
+                <!-- Payments Col -->
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-4">{{ __('Secure Payment') }}</h4>
+                    <div class="grid grid-cols-3 gap-2">
+                        @php
+                            $paymentIcons = \App\Models\Setting::get('payment_icons');
+                            $iconsArray = is_string($paymentIcons) ? json_decode($paymentIcons, true) : $paymentIcons;
+                            if (empty($iconsArray)) $iconsArray = ['VISA', 'MC', 'FPX', 'TnG', 'Boost'];
+                        @endphp
+                        @foreach($iconsArray as $icon)
+                            <div class="h-10 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center text-xs font-bold text-gray-400">{{ $icon }}</div>
+                        @endforeach
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="pt-8 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400 font-medium">
+                <p>&copy; {{ date('Y') }} {{ \App\Models\Setting::get('site_name', 'NexShop') }}. {{ __('All rights reserved.') }}</p>
+                <div class="flex items-center gap-1">
+                    {!! \App\Models\Setting::get('footer_tagline', __('Made with <i class="ph-fill ph-heart text-red-500 mx-1"></i> in Malaysia')) !!}
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    @include('storefront.whatsapp-button')
+    @stack('scripts')
+</body>
+</html>

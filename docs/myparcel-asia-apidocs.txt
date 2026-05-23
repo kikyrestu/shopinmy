@@ -1,0 +1,1424 @@
+API Documentation
+Version 2.1
+
+This is documentation for public API to MyParcel Asia. This API enable your system to be able to use MyParcel Asia engine to generate consignment note.
+
+General Guidelines
+ONLY POST request required. Other method is not available
+api_key parameter need to always be sent in POST parameter for verification
+Base url for PRODUCTION endpoint is https://app.myparcelasia.com/apiv2/{endpoint}
+Base url for DEVELOPMENT endpoint is https://demo.myparcelasia.com/apiv2/{endpoint}
+POST HTTP Query
+All api call can only be accessed via any HTTP software such as cURL and plain AJAX as POST operation. No other verb is in service.
+
+All parameter sent should be a standard POST parameter. No other input (get, body) is available.
+
+All parameter should follow the required format and validation requirement to ensure success in operation. Helpful error message will accompany all error in validation and processing the required action.
+
+Testing / Demo Keys
+For development and testing purpose, please register demo account at https://demo.myparcelasia.com/ and generate key like above guidance.
+
+You also need to use https://demo.myparcelasia.com/ as endpoint.
+
+All demo credit topup request will be auto approved and all shipment will have not-working fake tracking number. Other than that, everything will be the same.
+
+Authentication
+Each API call need api_key to sent in POST Parameter as means of authentication. Your api keys is as shown below:
+
+#	Label	API Key	API Secret	Status	Is Log	Action
+1	shopinmy
+other	
+k71631880e35209f422a6550b43fe2141
+sda6fb3c4aab02d33ae26500f6716bb8c
+
+ON
+
+NO
+Verification
+Verification done via api_key match between sent api_key and api_key in our backend. Mismatch api_key will return error and endpoint will not be processed.
+
+Please take note that api_key value need to be sent as POST Parameter along with other parameters. NOT in HTTP Authentication parameter.
+
+Response Object
+All endpoint call will return specific response object pattern in JSON format. Below are an example:
+
+{
+  "status":true,
+  "message":"Order has been processed. Some shipment may not gone through. Please check returned shipment for successfully processed shipments only.",
+  "data":{
+    "order":{
+      "id":"4118",
+      "customer_name":"Izwan Wahab",
+      "total_amount":"6.00",
+      "currency_label":"RM",
+      "currency_code":"MYR",
+      "created_at":"2018-07-30 14:27:14"
+    },
+    "shipments":[
+      {
+        "id":"1008607",
+        "shipment_id":"1008607",
+        "api_key":"k71631880e35209f422a6550b43fe2141",
+        "scope":"international",
+        .
+        .
+        .
+        "tracking_no":"30344963515",
+        "consignment_note":"https://app.myparcelasia.com/dload/label/TVRBd09EWXdOdz09",
+        "label_url":"https://app.myparcelasia.com/dload/label/TVRBd09EWXdOdz09",
+        "shipment_created":"true"
+      }
+    ]
+  },
+  "meta":{
+    "vendor":"https://app.myparcelasia.com/",
+    "endpoint":"/apiv2/checkout",
+    "api_key":"k71631880e35209f422a6550b43fe2141",
+    "currency_label":"RM",
+    "currency_code":"MYR",
+    "topup_balance":"3493.62"
+  },
+  "hash":"ecaf53684a2ff7ca9cc1b412fd47fb82"
+}
+
+Response object has 5 separate section. Explanation as below:
+
+Parameter	Explanation
+status	will only return TRUE or FALSE to indicate the status of call.
+message	will contain verbose response accompanying the status.
+data	will contain specific object that is a result of endpoint processing. It may differ from one endpoint to another.
+hash	contain a hash key of all the returned parameter exluding hash itself and meta. Optional for you to check the validity of the return object. Hash calculation will be presented below.
+meta	is miscelanious data that can help in developing the integration and can also be helpful in debugging integration errors.
+Hash Calculation
+Hash was generate by simple formula: an array with parameter for status, message and data IN THAT ORDER which then encoded as JSON string and concatenate with api_secret accompanying the api_key in usage. The string then get hash with md5 function to return a 32 character length hash result.
+
+<?php
+  $ret['status'] = $status;
+  $ret['message'] = $msg;
+  $ret['data'] = $data;
+  $ret['meta'] = $meta;
+  $hash = md5(json_encode($ret).$api_secret);
+
+?>
+General Flow (Cart Flow)
+As customer facing API, this integration was meant to be used in system that manage purchased item as fulfillment. In general, your system should have a listing or orders that need to be processed.
+
+From there, your user can select items/orders that they like to generate consignment note and proceed with MyParcel Asia API.
+
+User select items to be processed by MyParcel Asia
+User key in postcode from & to and get list of quotes
+User select quotes they aggree with
+System verify that user has enough balance, if not, user has the option to topup their account balance
+If enough balance, user will need to fill in receiver details
+Done all details, user checkout to confirm balance reduction and get connotes to be downloaded
+End
+Bulk Operation (Bulk Flow)
+Some of you might better use a bulk flow to create shipment, as it is more simpler to create a working consignment note label.
+
+This Bulk Flow can create multiple shipments and check it out automatically which directly return a label url.
+
+Check multiple shipment price.
+Create consignment note label for multiple shipment
+Get multiple shipment details.
+Endpoints
+/user
+ENDPOINT: https://app.myparcelasia.com/apiv2/user
+
+USAGE: To get user details which belong to the api_key. Also used to test or debug the connection to the api.
+
+PARAMETERS:
+
+Name	Type	Rules	Remarks
+api_key	string	Required	
+
+POST Parameter Example
+{
+  "api_key":"k71631880e35209f422a6550b43fe2141"
+}
+
+RESPONSE Example
+{
+  "status":true,
+  "message":"success",
+  "data":{
+    "id": "125685",
+    "ref_code": "amb125685",
+    "ref_by": null,
+    "key": "062312902ae75a3f2c09dbeb1e418dfb",
+    "flag": null,
+    "username": null,
+    "fullname": "AHMAD KHAIRUL OSMAN BIN MOHD HASSAN",
+    "email": "amboburhan6@gmail.com",
+    "email_verify_key": null,
+    "email_is_verified": "no",
+    "phone": "601167734214",
+    "phone_verify_code": "554038",
+    "phone_is_verified": "yes",
+    "phone_verified_at": null,
+    "ic": null,
+    "is_business": "no",
+    "company_name": null,
+    "company_no": null,
+    "company_certificate": null,
+    "sender_name": "Abd Halim Bin Osman",
+    "sender_email": "amboburhan6@gmail.com",
+    "sender_phone": "011677734214",
+    "sender_address_line_1": "196-1 Blok 4 Perumahan Awam Seri Labuan Bandar Tuan Razak Cheras",
+    "sender_address_line_2": null,
+    "sender_address_line_3": null,
+    "sender_address_line_4": null,
+    "sender_postcode": "58100",
+    "sender_city": "Kuala Lumpur",
+    "sender_state_code": "KUL",
+    "sender_state": "WP Kuala Lumpur",
+    "sender_country_code": "MY",
+    "sender_country": "WP Kuala Lumpur",
+    "default_content_type": null,
+    "default_content_description": null,
+    "default_content_value": null,
+    "default_parcel_weight": null,
+    "default_parcel_size": null,
+    "default_parcel_width": null,
+    "default_parcel_height": null,
+    "default_parcel_length": null,
+    "default_send_sms": "no",
+    "enable_custom_brand": "no",
+    "custom_brand_type": null,
+    "custom_brand_img": null,
+    "custom_brand_company": null,
+    "custom_brand_text": null,
+    "connote_type": "normal",
+    "quick_topup_package": null,
+    "preferred_claimed_flyers_size": null,
+    "status": "incomplete",
+    "group": "user",
+    "lead_status": null,
+    "login_try_count": null,
+    "login_last_try_at": null,
+    "login_try_again_at": null,
+    "login_try_ip": "172.71.152.78",
+    "last_accessed_at": "2026-05-19 10:18:01",
+    "last_checkout_at": null,
+    "registered_at": null,
+    "created_at": "2026-05-19 10:04:06",
+    "created_by": null,
+    "sales_user_id": null,
+    "modified_at": "2026-05-19 02:04:06",
+    "remember_token": null,
+    "type": "0",
+    "roles": null,
+    "flex_admin_id": null,
+    "contract_acc_markup": "0.50",
+    "terms_check": null,
+    "campaign_id": null,
+    "source": null,
+    "ref_url": null,
+    "side_note": null,
+    "profile_picture": null,
+    "form_9": null,
+    "ic_front": null,
+    "ic_back": null
+},
+  "meta": ...,
+  "hash": ...
+}
+/get_postcode_details
+ENDPOINT: https://app.myparcelasia.com/apiv2/get_postcode_details
+
+USAGE: To verify postcode. If false then the postcode is invalid. Also used to auto populate city and state details for the postcode
+
+PARAMETERS:
+Name	Type	Rules	Remarks
+api_key	string	Required	
+postcode	string	Required	
+POST Parameter Example
+{
+  "api_key":"k71631880e35209f422a6550b43fe2141",
+  "postcode":"68000"
+}
+RESPONSE Example
+{
+  "status":true,
+  "message":"success",
+  "data":{
+        "city": "Ampang",
+        "state_code": "SGR",
+        "poslaju_can_pickup": "yes",
+        "state": "Selangor",
+        "country_code": "MY",
+        "country": "Malaysia"
+    },
+  "meta": ...,
+  "hash": ...
+}
+/check_price
+ENDPOINT: https://app.myparcelasia.com/apiv2/check_price
+
+USAGE: To get list of prices available for the respective shipment intent. Use to show price and shipment options to the user before proceed to complete the shipment details.
+
+PARAMETERS:
+Name	Type	Rules	Remarks
+api_key	string	Required	
+sender_postcode	string	Required	
+receiver_postcode	string	Required	Optional for International
+receiver_country_code	string	Optional	ISO code for receiver country i.e. MY, ID, SG. Default is MY
+declared_weight	string	Required	in KG
+POST Parameter Example
+{
+  "api_key":"k71631880e35209f422a6550b43fe2141",
+  "sender_postcode":"68000",
+  "receiver_postcode":"08000",
+  "declared_weight":2
+}
+
+for international:
+
+{
+  "api_key":"k71631880e35209f422a6550b43fe2141",
+  "sender_postcode":"68000",
+  "receiver_country_code":"SG",
+  "declared_weight":2
+}
+RESPONSE Example
+{
+    "status": true,
+    "message": "success",
+    "data": {
+        "prices": [
+            {
+                "provider_code": "citylink",
+                "normal_price": "8.20",
+                "exclusive_price": "5.00",
+                "effective_price": "5.00",
+                "provider_label": "Citylink Express",
+                "provider_logo": "http://localhost:15000/assets/img/citylink.png",
+                "transit_time": "1-5 days",
+                "cod_transaction": false,
+                "send_methods": [
+                    "pickup",
+                    "dropoff"
+                ],
+                "send_dates": [
+                    "2022-10-27",
+                    "2022-10-28",
+                    "2022-10-31",
+                    "2022-11-01",
+                    "2022-11-02",
+                    "2022-11-03",
+                    "2022-11-04"
+                ]
+            },
+            {
+              ...
+            },
+            {
+                "provider_code": "ninjavan",
+                "normal_price": "15.60",
+                "exclusive_price": "12.80",
+                "effective_price": "12.80",
+                "provider_label": "Ninjavan",
+                "provider_logo": "http://localhost:15000/assets/img/ninjavan.png",
+                "transit_time": "1-5 days",
+                "cod_transaction": true,
+                "send_methods": [
+                    "pickup",
+                    "dropoff"
+                ],
+                "send_dates": [
+                    "2022-10-27",
+                    "2022-10-28",
+                    "2022-10-29",
+                    "2022-10-30",
+                    "2022-10-31",
+                    "2022-11-01",
+                    "2022-11-02"
+                ]
+            },
+            {
+              ...
+            }
+        ]
+    },
+    "meta": ...,
+    "hash": ...
+}
+}
+/sdd_price
+ENDPOINT: https://app.myparcelasia.com/apiv2/sdd_price
+
+USAGE: To get list of prices for Same Day Delivery couriers such as Grab Express, Lalamove etc. Use to show price and shipment options to the user before proceed to complete the shipment details.
+
+PARAMETERS:
+Name	Type	Rules	Remarks
+api_key	string	Required	
+pickup_address	string	Required	Single line (no break) full address of the location to pickup the parcel
+pickup_postcode	string	Required	
+pickup_lat	string	Required	Latitude coordinate of the pickup location i.e. 2.887305
+pickup_lng	string	Required	Latitude coordinate of the pickup location i.e. 101.780217
+receiver_address	string	Required	Single line (no break) full address of the receiver of the parcel
+receiver_postcode	string	Required	
+receiver_lat	string	Required	Latitude coordinate of the receiver location i.e. 2.887305
+receiver_lng	string	Required	Latitude coordinate of the receiver location i.e. 101.780217
+declared_weight	string	Required	in KG
+POST Parameter Example
+{
+  "api_key":"k71631880e35209f422a6550b43fe2141",
+  "pickup_address":"SA20, Lor Pandan Pertama 3, Pandan Utama, 68000 Ampang, Selangor, Malaysia",
+  "pickup_postcode":"68000",
+  "pickup_lat":"3.142675558910796",
+  "pickup_lng":"101.74786236970816",
+  "receiver_address":"Jalan Mewah Utara, Taman Pandan Mewah, 68000 Ampang, Selangor, Malaysia",
+  "receiver_postcode":"68000",
+  "receiver_lat":"3.1302506150687734",
+  "receiver_lng":"101.76279945549199",
+  "declared_weight":2
+}
+RESPONSE Example
+{
+    "status": true,
+    "message": "success",
+    "data": {
+        "prices": [
+            {
+                "provider_code": "grabx",
+                "price_id": "api|2022-09-21 11:15:03",
+                "tag": 10,
+                "type": "parcel",
+                "handling_charges_percent": 0,
+                "fuel_surcharge_percent": 0,
+                "pos_coverage_price": 0,
+                "oda_price": 0,
+                "sst_percent": 0,
+                "normal_ori": "13.00",
+                "normal_base": "13.00",
+                "normal": "13.00",
+                "exclusive_ori": "11.50",
+                "exclusive_base": "11.50",
+                "exclusive": "11.50",
+                "effective_rate": "exclusive",
+                "effective_base": "11.50",
+                "effective": "11.50",
+                "sst_price": 0.65
+            },
+            {
+                "provider_code": "bungkusit",
+                "price_id": "api|2022-09-21 11:15:03",
+                "tag": 9.39,
+                "type": "parcel",
+                "handling_charges_percent": 0,
+                "fuel_surcharge_percent": 0,
+                "pos_coverage_price": 0,
+                "oda_price": 0,
+                "sst_percent": 6,
+                "normal_ori": 9.39,
+                "normal_base": 9.39,
+                "normal": "12.21",
+                "exclusive_ori": 9.39,
+                "exclusive_base": 9.39,
+                "exclusive": "10.80",
+                "effective_rate": "exclusive",
+                "effective_base": 9.39,
+                "effective": "10.80",
+                "sst_price": 0.61
+            },
+            {
+                "provider_code": "lalamove",
+                "price_id": "api|2022-09-21 11:15:04",
+                "tag": "5.30",
+                "type": "parcel",
+                "handling_charges_percent": 0,
+                "fuel_surcharge_percent": 0,
+                "pos_coverage_price": 0,
+                "oda_price": 0,
+                "sst_percent": 6,
+                "normal_ori": "5.30",
+                "normal_base": "5.30",
+                "normal": "6.89",
+                "exclusive_ori": "5.30",
+                "exclusive_base": "5.30",
+                "exclusive": "6.10",
+                "effective_rate": "exclusive",
+                "effective_base": "5.30",
+                "effective": "6.10",
+                "sst_price": 0.35
+            }
+        ]
+    },
+    "meta": ...,
+    "hash": ...
+}
+/get_parcel_sizes
+ENDPOINT: https://app.myparcelasia.com/apiv2/get_parcel_sizes
+
+USAGE: To get all parcel sizes available to be chosen by user in creating a shipment.
+
+PARAMETERS:
+Name	Type	Rules	Remarks
+api_key	string	Required	
+POST Parameter Example
+{
+  "api_key":"k71631880e35209f422a6550b43fe2141"
+}
+RESPONSE Example
+{
+  "status": true,
+  "message": "success",
+  "data": {
+    "": "-",
+    "flyers_s": "Flyers S",
+    "flyers_m": "Flyers M",
+    "flyers_l": "Flyers L",
+    "flyers_xl": "Flyers XL",
+    "envelope_third": "Envelope 1\/3 A4",
+    "envelope_a4": "Envelope A4",
+    "envelope_a5": "Envelope A5",
+    "box": "Box \/ Self Wrapped"
+  },
+  "meta": ...,
+  "hash": ...
+}
+/get_content_types
+ENDPOINT: https://app.myparcelasia.com/apiv2/get_content_types
+
+USAGE: To get all product type id available to be used in /create_shipment parameters.
+
+PARAMETERS:
+Name	Type	Rules	Remarks
+api_key	string	Required	
+POST Parameter Example
+{
+  "api_key":"k71631880e35209f422a6550b43fe2141"
+}
+RESPONSE Example
+{
+  "status": true,
+  "message": "success",
+  "data": {
+    "outdoors": "Lifestyle & Home - Outdoors",
+    "general": "Fashion & Apparel - General",
+    "sports": "Fashion & Apparel - Sports",
+    "accessories": "Fashion & Apparel - Accessories",
+    "muslimah": "Fashion & Apparel- Muslimah",
+    "health": "Health & Beauty",
+    "babies": "Babies & Toys",
+    "gadget_general": "Electronic & Gadgets - General",
+    "music": "Electronic & Gadgets - Music",
+    "furniture": "Lifestyle & Home - Furniture",
+    "fitness": "Lifestyle & Home - Health and Fitness",
+    "papers": "Letters & Papers",
+    "others": "Others"
+  },
+  "meta": ...,
+  "hash": ...
+}
+/create_shipment
+ENDPOINT: https://app.myparcelasia.com/apiv2/create_shipment
+
+USAGE: To get all product type id available to be used in /create_shipment parameters.
+
+PARAMETERS:
+Name	Type	Rules	Remarks
+api_key	string	Required	
+integration_order_id	string		your reference id for the shipment in your system. Optional for now but will be required in future api version
+integration_order_data	string	object	
+connote_show_invoice (yes/no) = show invoice in AWB
+
+total_weight (kg) = weight of all item combined
+
+send_method	string	Required, value either [pickup] or [walkin] only	
+send_date	string	Required	
+type	string	Required, value either [parcel] or [document] only	
+declared_weight	string	Required, between 0.001 to 30, 3 decimal point	
+provider_code	string	Required, valid value are "poslaju", "ems" or "airparcel" only	Available courier: "poslaju", "aramex", "redly", "jnt", "dhle", "ems", "ninjavan", "janio", "airparcel", "flash", "citylink", "fmx", "bestexpress", "kexexpress", and "fedex"
+size	string	Required, only accept values from /get_parcel_sizes response	
+length	string	Required for size [box]	Numeric value
+width	string	Required for size [box]	Numeric value
+height	string	Required for size [box]	Numeric value
+content_type	string	Required, only accept values from /get_content_types endpoint	
+content_description	string	Required	
+content_value	string	Required, number only without currency code, ie 200 for RM 200.00	refer as cod amount if has_cod=yes
+has_cod	string	Optional, value [yes] or [no].	
+has_sms	string	Optional, value [yes] or [no].	
+sender_name	string	Required	
+sender_phone	string	Required	Minimum 10 digit or maximum 12 digit, ie 01xxxxxxxx OR 01xxxxxxxxx OR 601xxxxxxxx OR 601xxxxxxxxx'
+sender_email	string		
+sender_company_name	string		
+sender_address_line_1	string	Required	
+sender_address_line_2	string		
+sender_address_line_3	string		
+sender_address_line_4	string		
+sender_postcode	string	Required	
+sender_city	string		
+sender_state	string		
+sender_country_code	string		
+receiver_name	string	Required	
+receiver_phone	string	Required	For domestic delivery, minimum 10 digit or maximum 11 digit, ie 01XXXXXXXX or 01XXXXXXXXX
+receiver_email	string	Required	
+receiver_company_name	string		
+receiver_address_line_1	string	Required	
+receiver_address_line_2	string		
+receiver_address_line_3	string		
+receiver_address_line_4	string		
+receiver_postcode	string	Required for domestic	
+receiver_city	string		
+receiver_state	string		
+receiver_country_code	string	Required for international	ISO format i.e. MY, SG, ID. Default to MY
+POST Parameter Example
+
+{
+    "api_key":"k71631880e35209f422a6550b43fe2141",
+    "integration_order_id":"129223",
+    "integration_order_data":{
+        "connote_show_invoice": "yes",
+        "total_weight": 0.1,
+        "line_item": [
+            {
+                "product_id": 14,
+                "name": "Tumblr Hijau",
+                "sku": "TMBG34",
+                "hscode": "334221",
+                "duty_percent": 10,
+                "duty_currency": "MYR",
+                "duty_amount": 4,
+                "weight": "0.1",
+                "sub_weight": 0.1,
+                "currency": "MYR",
+                "quantity": 1,
+                "price": "40",
+                "tax": "2.4",
+                "sub_total": "40"
+            },
+            {
+                "product_id": 14,
+                "name": "Tumblr Biru",
+                "sku": "TMBB12",
+                "hscode": "334221",
+                "duty_percent": 10,
+                "duty_currency": "MYR",
+                "duty_amount": 4,
+                "weight": "0.1",
+                "sub_weight": 0.1,
+                "currency": "MYR",
+                "quantity": 1,
+                "price": "40",
+                "tax": "2.4",
+                "sub_total": "40"
+            }
+        ]
+    },
+    "send_method":"pickup",
+    "send_date":"2025-07-29",
+    "type":"parcel",
+    "declared_weight":1,
+    "size":"box",
+    "width":20,
+    "length":100,
+    "height":10,
+    "provider_code":"poslaju",
+    "content_type":"general",
+    "content_description":"DIY item",
+    "content_value":15.00,
+    "has_cod":"yes",
+    "has_sms":"yes",
+    "sender_name":"Izwan Wahabi",
+    "sender_phone":"60166611428",
+    "sender_email":"robotys@gmail.com",
+    "sender_company_name":"MYPARCEL ASIA SDN. BHD.",
+    "sender_address_line_1":"Level 11, Menara KEN TTDI",
+    "sender_address_line_2":"No 37, Jalan Burhanuddin Helmi,",
+    "sender_address_line_3":"",
+    "sender_address_line_4":"",
+    "sender_postcode":"60000",
+    "receiver_name":"Tun Mahathir",
+    "receiver_phone":"0199999999",
+    "receiver_email":"tun@mahathir.com",
+    "receiver_address_line_1":"Jabatan Perdana Menteri",
+    "receiver_address_line_2":"Bulatan Utama Putrajaya",
+    "receiver_address_line_3":"",
+    "receiver_address_line_4":"",
+    "receiver_postcode":"62000"
+}
+        
+RESPONSE Example
+{
+    "status": true,
+    "message": "success",
+    "data": {
+        "sender_postcode": "60000",
+        "receiver_postcode": "68000",
+        "declared_weight": "1",
+        "send_method": "dropoff",
+        "type": "parcel",
+        "size": "flyers_xl",
+        "provider_code": "poslaju",
+        "content_type": "general",
+        "content_description": "Mr DIY",
+        "content_value": "15.00",
+        "sender_name": "Sender Name",
+        "sender_phone": "0188888888",
+        "sender_email": "sender@email.com",
+        "sender_address_line_1": "Menara KEN",
+        "sender_address_line_2": "Taman Tun Dr Ismail",
+        "sender_address_line_3": "",
+        "sender_address_line_4": "",
+        "receiver_name": "Tun Mahathir",
+        "receiver_phone": "0199999999",
+        "receiver_email": "tun@mahathir.com",
+        "receiver_address_line_1": "Jabatan Perdana Menteri",
+        "receiver_address_line_2": "Bulatan Utama Putrajaya",
+        "receiver_address_line_3": "",
+        "receiver_address_line_4": "",
+        "receiver_country_code": "MY",
+        "effective_weight": "1",
+        "origin_channel": "api",
+        "declared_send_at": "2020-05-07",
+        "sender_company": "Big Company Somewhere",
+        "sender_city": "Kuala Lumpur",
+        "sender_state": "WP Kuala Lumpur",
+        "sender_state_code": "KUL",
+        "sender_country_code": "MY",
+        "receiver_city": "Ampang",
+        "receiver_state": "Selangor",
+        "receiver_state_code": "SGR",
+        "topup_package_code": "normal",
+        "package_expire_at": "2021-05-06",
+        "normal_price": 8,
+        "exclusive_rate_card": "",
+        "exclusive_price": 6.5,
+        "effective_rate": "normal",
+        "effective_price": 8,
+        "oda_price": 0,
+        "pos_coverage_price": 0.1,
+        "total_price": 8,
+        "created_at": "2020-05-06 14:17:31",
+        "shipment_status": "complete",
+        "user_id": "1048",
+        "integration_vendor": "apiv2",
+        "shipment_key": "403cf1d341a89cd7b002cbef1c337c85"
+    },
+    "meta": ...
+    "hash": ...
+}
+/get_cart_items
+ENDPOINT: https://app.myparcelasia.com/apiv2/get_cart_items
+
+USAGE: To get all shipment that is ready to checkout.
+
+PARAMETERS:
+Name	Type	Rules	Remarks
+api_key	string	Required	
+POST Parameter Example
+{
+  "api_key":"k71631880e35209f422a6550b43fe2141"
+}
+RESPONSE Example
+{
+  "status": true,
+  "message": "success",
+  "data": [
+      {
+          "id": "27870",
+          "key": "8cff59a37c6c11f96106d055e0638cb8",
+          "origin_channel": "api:k063ab451b2ce0836955353ffe5dea837",
+          "tracking_no": null,
+          "provider_code": "poslaju",
+          .
+          .
+          .
+          "user_id": "1",
+          "created_at": "2019-09-30 10:49:49",
+          "canceled_by": null,
+          "canceled_at": null,
+          "canceled_remarks": null,
+          "modified_at": "2019-09-30 10:49:49"
+      },
+      .
+      .
+      .
+      {
+          "id": "17793",
+          "key": "a25786029a8751cf964f86917f0be559",
+          "origin_channel": null,
+          "tracking_no": null,
+          "provider_code": "poslaju",
+          .
+          .
+          .
+          "user_id": "1",
+          "created_at": "2019-09-13 11:20:05",
+          "canceled_by": null,
+          "canceled_at": null,
+          "canceled_remarks": null,
+          "modified_at": "2019-09-13 11:20:05"
+      }
+  ],
+  "meta": ...,
+  "hash": ...
+}
+/checkout
+ENDPOINT: https://app.myparcelasia.com/apiv2/checkout
+
+USAGE: Checkout shipments to get download connote links.
+
+PARAMETERS:
+Name	Type	Rules	Remarks
+api_key	string	Required	
+shipment_keys	array	Required	Containing shipment keys as returned by /get_cart_items
+POST Parameter Example
+{
+  "api_key":"k71631880e35209f422a6550b43fe2141",
+  "shipment_keys":["8cff59a37c6c11f96106d055e0638cb8","a25786029a8751cf964f86917f0be559"]
+}
+RESPONSE Example
+{
+    "status": true,
+    "message": "success",
+    "data": {
+        "id": "11088",
+        "key": "5f97b6f23dc1c595cd8fd73c34bd9b0f",
+        "type": "credit",
+        "total_cons": 2,
+        "total_weight": 5.333,
+        "total_price": 21.16,
+        "shipment_ids": "[\"17793\",\"27870\"]",
+        "status": "paid",
+        "remarks": null,
+        "paid_at": "2019-09-30 12:24:41",
+        "transaction_id": 11841,
+        "payment_gateway": null,
+        "payment_id": null,
+        "payment_request_data": null,
+        "payment_return_data": null,
+        "created_at": "2019-09-30 12:24:38",
+        "created_by": "1",
+        "modified_at": "2019-09-30 12:24:38",
+        "shipments": [
+            {
+                "id": "27870",
+                "key": "8cff59a37c6c11f96106d055e0638cb8",
+                "origin_channel": "api:k063ab451b2ce0836955353ffe5dea837",
+                "tracking_no": "ERA311010687MY",
+                .
+                .
+                .
+                "user_id": "1",
+                "created_at": "2019-09-30 10:49:49",
+                "canceled_by": null,
+                "canceled_at": null,
+                "canceled_remarks": null,
+                "modified_at": "2019-09-30 10:49:49"
+            },
+            .
+            .
+            .
+            {
+                "id": "17793",
+                "key": "a25786029a8751cf964f86917f0be559",
+                "origin_channel": null,
+                "tracking_no": "ERA311010656MY",
+                .
+                .
+                .
+                "user_id": "1",
+                "created_at": "2019-09-13 11:20:05",
+                "canceled_by": null,
+                "canceled_at": null,
+                "canceled_remarks": null,
+                "modified_at": "2019-09-13 11:20:05"
+            }
+        ]
+    },
+  "meta": ...,
+  "hash": ...
+}
+/get_shipment_statuses
+ENDPOINT: https://app.myparcelasia.com/apiv2/get_shipment_statuses
+
+USAGE: Shipment status value and label to be shown to user
+
+PARAMETERS:
+Name	Type	Rules	Remarks
+api_key	string	Required	
+POST Parameter Example
+{
+  "api_key":"k71631880e35209f422a6550b43fe2141"
+}
+RESPONSE Example
+{
+    "status": true,
+    "message": "success",
+    "data": {
+        "incomplete": "Incomplete",
+        "complete": "Complete",
+        "pending_pickup": "Pending Pickup",
+        "pending_dropoff": "Pending Drop Off",
+        "in_transit": "In Transit",
+        "delivered": "Delivered",
+        "failed": "Fail Delivery",
+        "received": "Received",
+        "refund_requested": "Cancel n Refund Requested",
+        "refund_denied": "Cancel n Refund Request Denied",
+        "cancelled_refunded": "Refunded",
+        "cancelled": "Cancelled"
+    },
+  "meta": ...,
+  "hash": ...
+}
+/get_shipments
+ENDPOINT: https://app.myparcelasia.com/apiv2/get_shipments
+
+USAGE: Get shipment by array of shipments keys. It will return an array [data] with [shipment_key] as its key so it will be easy to use.
+
+PARAMETERS:
+Name	Type	Rules	Remarks
+api_key	string	Required	
+shipment_keys	array	Required	
+POST Parameter Example
+{
+  "api_key":"k71631880e35209f422a6550b43fe2141",
+  "shipment_keys":["403cf1d341a89cd7b002cbef1c337c85"]
+}
+RESPONSE Example
+{
+    "status": true,
+    "message": "success",
+    "data": {
+        "403cf1d341a89cd7b002cbef1c337c85": {
+            "shipment_key": "403cf1d341a89cd7b002cbef1c337c85",
+            "integration_order_id": null,
+            "provider_code": "poslajud",
+            "tracking_no": "ERB750426807MY",
+            "declared_weight": "1.000",
+            "normal_price": "8.00",
+            "exclusive_price": "6.50",
+            "effective_price": "8.00",
+            "type": "parcel",
+            "send_method": "dropoff",
+            "shipment_status": "pending_dropoff",
+            "checkout_status": "paid",
+            "sender_name": "Sender Name",
+            "sender_company_name": "Big Company Somewhere",
+            "sender_address_line_1": "Menara KEN",
+            "sender_address_line_2": "Taman Tun Dr Ismail",
+            "sender_address_line_3": "",
+            "sender_address_line_4": "",
+            "sender_city": "Kuala Lumpur",
+            "sender_state": "WP Kuala Lumpur",
+            "sender_country": "Malaysia",
+            "sender_email": "sender@email.com",
+            "receiver_phone": "0199999999",
+            "receiver_name": "Tun Mahathir",
+            "receiver_company_name": null,
+            "receiver_address_line_1": "Jabatan Perdana Menteri",
+            "receiver_address_line_2": "Bulatan Utama Putrajaya",
+            "receiver_address_line_3": "",
+            "receiver_address_line_4": "",
+            "receiver_city": "Ampang",
+            "receiver_state": "Selangor",
+            "receiver_country": null,
+            "receiver_email": "tun@mahathir.com",
+            "provider_label": "POSLaju",
+            "provider_logo": "http:\/\/app.stratos.local\/assets\/img\/poslaju.png"
+        }
+    },
+    "meta": ...,
+    "hash": ...
+}
+/get_shipment_history
+ENDPOINT: https://app.myparcelasia.com/apiv2/get_shipment_history
+
+USAGE: Get all shipment that has been paid.
+
+PARAMETERS:
+Name	Type	Rules	Remarks
+api_key	string	Required	
+page	integer		will assume page 1 if not given. Retrieve next/prev/current pagination details in response data
+POST Parameter Example
+{
+  "api_key":"k71631880e35209f422a6550b43fe2141"
+}
+RESPONSE Example
+{
+  "status": true,
+  "message": "success",
+  "data": {
+      "shipments": [
+          {
+              "id": "17793",
+              "key": "a25786029a8751cf964f86917f0be559",
+              "origin_channel": null,
+              "tracking_no": "ERA311010700MY",
+              .
+              .
+              .
+              "user_id": "1",
+              "created_at": "2019-09-13 11:20:05",
+              "canceled_by": null,
+              "canceled_at": null,
+              "canceled_remarks": null,
+              "modified_at": "2019-09-13 11:20:05"
+          },
+          .
+          .
+          .
+          {
+              "id": "27870",
+              "key": "8cff59a37c6c11f96106d055e0638cb8",
+              "origin_channel": "api:k063ab451b2ce0836955353ffe5dea837",
+              "tracking_no": "ERA311010695MY",
+              .
+              .
+              .
+              "user_id": "1",
+              "created_at": "2019-09-30 10:49:49",
+              "canceled_by": null,
+              "canceled_at": null,
+              "canceled_remarks": null,
+              "modified_at": "2019-09-30 10:49:49"
+          }
+      ],
+      "pagination": {
+          "current_page": 1,
+          "total_item": "5",
+          "item_per_page": 100,
+          "total_page": 1,
+          "next_page": null,
+          "prev_page": null
+      }
+  },
+  "meta": ...,
+  "hash": ...
+}
+/get_consignment_note
+ENDPOINT: https://app.myparcelasia.com/apiv2/get_consignment_note
+
+USAGE: Standard AJAX call will download pdf formatted consignment note. Please send post call as normal form to view the generated pdf.
+
+PARAMETERS:
+Name	Type	Rules	Remarks
+api_key	string	Required	
+shipment_keys	array	Required if tracking_no was not sent	Preferred method. Array of shipment_keys for all the shipments that needed to be printed in one single downloadable pdf.
+tracking_no	array	Required if shipment_keys was not sent	Array of tracking numbers for all the shipments that needed to be printed in one single downloadable pdf.
+If using both [shipment_keys] and [tracking_no] at the same time, only [tracking_no] will be accepted.
+POST Parameter Example
+{
+  "api_key":"k71631880e35209f422a6550b43fe2141",
+  "tracking_no":["ERA311010700MY","ERA311010695MY"]
+}
+RESPONSE Example
+/check_price_bulk
+ENDPOINT: https://app.myparcelasia.com/apiv2/check_price_bulk
+
+USAGE: To get prices for multiple shipment at once.
+
+PARAMETERS:
+Name	Type	Rules	Remarks
+api_key	string	Required	
+shipments	array	Required	
+sender_postcode	string	Required	in array for each shipment
+receiver_postcode	string	Required for domestic	in array for each shipment
+receiver_country_code	string	Required for international	in array for each shipment
+declared_weight	string	Required, between 0.001 to 30, 3 decimal point	in array for each shipment
+provider_code	string	Optional, valid value are "poslaju", "ems" or "airparcel" only	
+type	string	Optional, value either [parcel] or [document] only	in array for each shipment
+POST Parameter Example
+{
+    "api_key": "k71631880e35209f422a6550b43fe2141",
+    "shipments": [
+        {
+            "sender_postcode": "53000",
+            "receiver_postcode": "57000",
+            "receiver_country_code": "MY",
+            "declared_weight": "0.35"
+        },
+        {
+            "sender_postcode": "53000",
+            "receiver_postcode": "68000",
+            "receiver_country_code": "MY",
+            "declared_weight": "1",
+            "type": "parcel",
+            "provider_code": "poslaju"
+        },
+        {
+            "sender_postcode": "53000",
+            "receiver_postcode": "68000",
+            "receiver_country_code": "SG",
+            "declared_weight": "1"
+        }
+    ]
+}
+RESPONSE Example
+{
+    "status": true,
+    "message": "success",
+    "data": [
+        {
+            "item_id": 0,
+            "status": false,
+            "message": "Invalid check price parameter and values",
+            "errors": [
+                "Missing [sender_postcode] parameter\/value",
+                "Missing [receiver_postcode] parameter\/value",
+                "Missing [declared_weight] parameter\/value"
+            ],
+            "prices": null
+        },
+        {
+            "item_id": 1,
+            "status": true,
+            "message": "success",
+            "errors": null,
+            "prices": [
+                {
+                    "provider_code": "poslaju",
+                    "normal_base": 5.4,
+                    "normal": 7.55,
+                    "type": "parcel",
+                    "transit_time": "1-3 days",
+                    "zone": 1,
+                    "handling_charges_percent": 15,
+                    "fuel_surcharge_percent": 15,
+                    "pos_coverage_price": 0.1,
+                    "oda_price": 0,
+                    "sst_percent": 6,
+                    "exclusive_base": 4.71,
+                    "exclusive": 6.6,
+                    "effective_rate": "exclusive",
+                    "effective_base": 4.71,
+                    "effective": 6.6,
+                    "sst_price": 0.37
+                }
+            ]
+        },
+        {
+            "item_id": 2,
+            "status": true,
+            "message": "success",
+            "errors": null,
+            "prices": [
+                {
+                    "provider_code": "poslaju",
+                    "normal_base": 5.8,
+                    "normal": 8.1,
+                    "type": "parcel",
+                    "transit_time": "1-3 days",
+                    "zone": 1,
+                    "handling_charges_percent": 15,
+                    "fuel_surcharge_percent": 15,
+                    "pos_coverage_price": 0.1,
+                    "oda_price": 0,
+                    "sst_percent": 6,
+                    "exclusive_base": 4.71,
+                    "exclusive": 6.6,
+                    "effective_rate": "exclusive",
+                    "effective_base": 4.71,
+                    "effective": 6.6,
+                    "sst_price": 0.37
+                }
+            ]
+        },
+        {
+            "item_id": 3,
+            "status": true,
+            "message": "success",
+            "errors": null,
+            "prices": [
+                {
+                    "provider_code": "ems",
+                    "normal_base": 30.11,
+                    "normal": 41.6,
+                    "type": "document",
+                    "zone": "1",
+                    "transit_time": "2-3 days",
+                    "handling_charges_percent": 15,
+                    "fuel_surcharge_percent": 15,
+                    "pos_coverage_price": 0.1,
+                    "sst_percent": 6,
+                    "exclusive_base": 24.07,
+                    "exclusive": 33.28,
+                    "exclusive_rate_card": "p1k",
+                    "effective_rate": "exclusive",
+                    "effective_base": 24.07,
+                    "effective": 33.28,
+                    "sst_price": 1.88
+                },
+                {
+                    "provider_code": "ems",
+                    "normal_base": 40.49,
+                    "normal": 55.9,
+                    "type": "parcel",
+                    "zone": "1",
+                    "transit_time": "2-3 days",
+                    "handling_charges_percent": 15,
+                    "fuel_surcharge_percent": 15,
+                    "pos_coverage_price": 0.1,
+                    "sst_percent": 6,
+                    "exclusive_base": 34.4,
+                    "exclusive": 47.52,
+                    "exclusive_rate_card": "p1k",
+                    "effective_rate": "exclusive",
+                    "effective_base": 34.4,
+                    "effective": 47.52,
+                    "sst_price": 2.69
+                },
+                {
+                    "provider_code": "airparcel",
+                    "normal_base": 25.32,
+                    "normal": 35,
+                    "type": "parcel",
+                    "zone": "1",
+                    "transit_time": "5-8 days",
+                    "handling_charges_percent": 15,
+                    "fuel_surcharge_percent": 15,
+                    "pos_coverage_price": 0.1,
+                    "sst_percent": 6,
+                    "exclusive_base": 23.29,
+                    "exclusive": 32.2,
+                    "effective_rate": "exclusive",
+                    "effective_base": 23.29,
+                    "effective": 32.2,
+                    "sst_price": 1.82
+                }
+            ]
+        }
+    ],
+  "meta": ...,
+  "hash": ...
+}
+/create_bulk_awb
+ENDPOINT: https://app.myparcelasia.com/apiv2/create_bulk_awb
+
+USAGE: To create downloadable (pdf) awb straight from multiple shipment data array.
+
+PARAMETERS:
+Name	Type	Rules	Remarks
+api_key	string	Required	
+integration_order_id	string	Required, your reference id for the shipment in your system.	
+integration_order_data	string	object	
+connote_show_invoice (yes/no) = show invoice in AWB
+
+total_weight (kg) = weight of all item combined
+
+send_method	string	Required, value either [pickup] or [dropoff] only	
+send_date	string	Required	For Same Day Delivery (GrabX, Lalamove, etc), the value should be the same day of the shipment creation. Future date are not allowed.
+type	string	Required, value either [parcel] or [document] only	
+declared_weight	string	Required, between 0.001 to 30, 3 decimal point	
+provider_code	string	Required	
+size	string	Required, only accept values from /get_parcel_sizes response	
+length	string	Required for size [box]	Numeric value
+width	string	Required for size [box]	Numeric value
+height	string	Required for size [box]	Numeric value
+content_type	string	Required, only accept values from /get_content_types endpoint	
+content_description	string	Required	
+content_value	string	Required, number only without currency code, ie 200 for RM 200.00	
+sender_name	string	Required	
+sender_phone	string	Required	
+sender_email	string		
+sender_company_name	string		
+sender_address_line_1	string	Required	* Not required for Same Day Delivery
+sender_address_line_2	string		
+sender_address_line_3	string		
+sender_address_line_4	string		
+sender_postcode	string	Required	* Not required for Same Day Delivery
+sender_city	string		
+sender_state	string		
+sender_country_code	string		
+pickup_address	string	Required	Only for Same Day Delivery
+pickup_postcode	string	Required	Only for Same Day Delivery
+pickup_lat	string	Required	Only for Same Day Delivery. Latitude coordinates for the pickup location. Can consult Google Map API for the value.
+pickup_lng	string	Required	Only for Same Day Delivery. Longitude coordinates for the pickup location. Can consult Google Map API for the value.
+receiver_name	string	Required	
+receiver_phone	string	Required	
+receiver_email	string	Required	
+receiver_company_name	string		
+receiver_address_line_1	string	Required	* Not required for Same Day Delivery
+receiver_address_line_2	string		
+receiver_address_line_3	string		
+receiver_address_line_4	string		
+receiver_postcode	string	Required	Not required for International shipment
+receiver_address	string	Required	Only for Same Day Delivery
+receiver_postcode	string	Required	Only for Same Day Delivery
+receiver_lat	string	Required	Only for Same Day Delivery. Latitude coordinates for the receiver location. Can consult Google Map API for the value.
+receiver_lng	string	Required	Only for Same Day Delivery. Longitude coordinates for the receiver location. Can consult Google Map API for the value.
+receiver_city	string		
+receiver_state	string		
+receiver_country_code	string	Required	
+POST Parameter Example
+{
+    "api_key": "k71631880e35209f422a6550b43fe2141",
+    "shipments": [
+        {
+            "integration_order_id": "MYID291822",
+            "receiver_postcode": "47301",
+            "receiver_country_code": "MY",
+            "declared_weight": 0.5,
+            "type": "parcel",
+            "provider_code": "grabx",
+            "size": "flyers_m",
+            "send_method": "pickup",
+            "send_date": "2026-05-20",
+            "content_type": "outdoors",
+            "content_description": "Hiking boots",
+            "content_value": 200,
+            "sender_name": "Abd Halim Bin Osman",
+            "sender_phone": "011677734214",
+            "sender_email": "amboburhan6@gmail.com",
+            "sender_company_name": null,
+            "pickup_address": "3349, jalan palimbayan indah 3, sungai penchala,60000 kuala lumpur",
+            "pickup_postcode": "60000",
+            "pickup_lat": "3.1687034",
+            "pickup_lng": "101.6274215",
+            "receiver_name": "Penerima Cubaan",
+            "receiver_phone": "0192837463",
+            "receiver_email": "penerima@cubaan.com",
+            "receiver_company": null,
+            "receiver_address": "Paradigm mall Petaling jaya 1, Jalan SS 7\/26a, Ss 7, 47301 Petaling Jaya, Selangor, Malaysia",
+            "receiver_lat": "3.1051171",
+            "receiver_lng": "101.5959701"
+        },
+        {
+            "integration_order_id": "REFID29382",
+            "integration_order_data": {
+                "connote_show_invoice": "yes",
+                "total_weight": 0.1,
+                "line_item": [
+                    {
+                        "product_id": 14,
+                        "name": "Tumblr Hijau",
+                        "sku": "TMBG34",
+                        "hscode": "334221",
+                        "duty_percent": 10,
+                        "duty_currency": "MYR",
+                        "duty_amount": 4,
+                        "weight": "0.1",
+                        "sub_weight": 0.1,
+                        "currency": "MYR",
+                        "quantity": 1,
+                        "price": "40",
+                        "tax": "2.4",
+                        "sub_total": "40"
+                    },
+                    {
+                        "product_id": 14,
+                        "name": "Tumblr Biru",
+                        "sku": "TMBB12",
+                        "hscode": "334221",
+                        "duty_percent": 10,
+                        "duty_currency": "MYR",
+                        "duty_amount": 4,
+                        "weight": "0.1",
+                        "sub_weight": 0.1,
+                        "currency": "MYR",
+                        "quantity": 1,
+                        "price": "40",
+                        "tax": "2.4",
+                        "sub_total": "40"
+                    }
+                ]
+            },
+            "receiver_postcode": "05150",
+            "receiver_country_code": "SG",
+            "declared_weight": 0.5,
+            "type": "document",
+            "provider_code": "aramex",
+            "size": "flyers_s",
+            "send_method": "pickup",
+            "send_date": "2022-06-16",
+            "content_type": "papers",
+            "content_description": "Agreement Document",
+            "content_value": 10,
+            "sender_name": "Izwan Wahab",
+            "sender_phone": "60182798114",
+            "sender_email": "robotys@gmail.com",
+            "sender_company_name": "MYPARCEL ASIA SDN. BHD.",
+            "sender_address_line_1": "No 28 Lorong Dagang 9",
+            "sender_address_line_2": "Taman Dagang Jaya",
+            "sender_address_line_3": "",
+            "sender_address_line_4": "",
+            "sender_postcode": "68000",
+            "sender_city": null,
+            "sender_state": null,
+            "sender_country": "Malaysia",
+            "receiver_name": "Mr Tester Xavier",
+            "receiver_phone": "650129382",
+            "receiver_email": "xavier@tester.com",
+            "receiver_company": null,
+            "receiver_address_line_1": "Unit 123-A Block B",
+            "receiver_address_line_2": "Orchard Road Square",
+            "receiver_address_line_3": null,
+            "receiver_address_line_4": null,
+            "receiver_city": "Singapore",
+            "receiver_state": "Singapore",
+            "receiver_country": "Singapore"
+        }
+    ]
+}
+FAILED RESPONSE Example
+{
+  "status": false,
+  "message": [
+    {
+      "integration_order_id": null,
+      "message": "Insufficient balance (total: RM 33.64, credit balance: RM 22.50)"
+    }
+  ],
+  "data": [],
+  "meta": ...,
+  "hash": ...
+}
+SUCCESS RESPONSE Example
+{
+    "status": true,
+    "message": "success",
+    "data": {
+        "tracking_no": [
+            {
+                "integration_order_id": "MYID291822",
+                "tracking_no": "ERBxxxxxxxxxMY",
+                "total_price": 6.50
+            },
+            {
+                "integration_order_id": "REFID29382",
+                "tracking_no": "EE7xxxxxxxxxMY",
+                "total_price": 6.50
+            }
+        ],
+        "awb_url": "http:\/\/MyParcel Asia.local\/secure\/print\/ERBxxxxxxxxxMY-EE7xxxxxxxxxMY"
+    },
+  "meta": ...,
+  "hash": ...
+}
+/trace
+ENDPOINT: https://app.myparcelasia.com/apiv2/trace
+
+USAGE: To get latest status on particular shipment.
+
+PARAMETERS:
+Name	Type	Rules	Remarks
+api_key	string	Required	
+tracking_no	string	Required	
+POST Parameter Example
+{
+    "api_key": "k71631880e35209f422a6550b43fe2141",
+    "tracking_no": "ERA2918222323MY"
+}
+FAILED RESPONSE Example
+{
+  "status": false,
+  "message": "Forbidden access. Please lookup shipments that belong to you only.",
+  "data": [],
+  "meta": ...,
+  "hash": ...
+}
+SUCCESS RESPONSE Example
+{
+    "status": true,
+    "message": "success",
+    "data": { 
+      "tracking_no": "ERA2918222323MY", 
+      "status": "delivered", 
+      "updated_at": "2021-04-27 09:19:28" 
+    },
+  "meta": ...,
+  "hash": ...
+}
