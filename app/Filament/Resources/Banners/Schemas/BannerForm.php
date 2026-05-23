@@ -47,6 +47,8 @@ class BannerForm
                                     ->image()
                                     ->disk('public')
                                     ->directory('banners')
+                                    ->maxSize(5120)
+                                    ->optimize('webp')
                                     ->imageEditor()
                                     ->imageResizeMode('contain')
                                     ->imageResizeTargetWidth('1920')
