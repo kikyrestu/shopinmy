@@ -1,7 +1,7 @@
 <div>
     @section('title', $product->name)
 
-    <div class="bg-gray-50 py-6 border-b border-gray-100">
+    <div class="hidden md:block bg-gray-50 py-6 border-b border-gray-100">
         <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
             <nav class="flex text-sm text-gray-500 font-medium">
                 <ol class="flex items-center space-x-2">
@@ -15,13 +15,13 @@
         </div>
     </div>
 
-    <main class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <main class="max-w-[1440px] mx-auto px-0 md:px-4 sm:px-6 lg:px-8 py-0 md:py-10">
         <!-- Main Product Section -->
         <div class="flex flex-col lg:flex-row gap-12 lg:gap-16">
             
             <!-- Left: Image Gallery -->
             <div class="w-full lg:w-1/2 flex flex-col gap-4">
-                <div class="w-full aspect-square bg-gray-50 rounded-3xl overflow-hidden border border-gray-100 relative group">
+                <div class="w-full aspect-square bg-gray-50 md:rounded-3xl overflow-hidden md:border border-b border-gray-100 relative group">
                     @if($selectedImage)
                         <img src="{{ $selectedImage }}" alt="{{ $product->name }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                     @else
@@ -32,7 +32,7 @@
                 </div>
 
                 <!-- Thumbnails -->
-                <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+                <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2 px-4 md:px-0">
                     @if($product->primaryImage)
                     @php $primaryUrl = \Illuminate\Support\Facades\Storage::url($product->primaryImage->path); @endphp
                     <button wire:click="changeImage('{{ $primaryUrl }}')" class="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all {{ $selectedImage == $primaryUrl ? 'border-brand-500 shadow-md' : 'border-transparent hover:border-gray-200 opacity-70 hover:opacity-100' }}">
@@ -59,7 +59,7 @@
             </div>
 
             <!-- Right: Product Info -->
-            <div class="w-full lg:w-1/2 flex flex-col">
+            <div class="w-full lg:w-1/2 flex flex-col px-4 md:px-0">
                 <div class="mb-2">
                     @if($product->brand)
                     <a href="{{ route('products.index', ['brand[]' => $product->brand_id]) }}" class="text-sm font-bold text-brand-600 hover:text-brand-700 uppercase tracking-wider">{{ $product->brand->name }}</a>
@@ -327,16 +327,17 @@
     </div>
 
     <!-- Sticky Mobile CTA -->
-    <div class="fixed bottom-16 left-0 w-full bg-white border-t border-gray-100 p-3 flex gap-3 z-40 md:hidden shadow-[0_-10px_20px_rgba(0,0,0,0.05)] pb-safe">
-        <button wire:click="toggleWishlist" class="w-12 h-12 rounded-xl flex items-center justify-center border transition-all flex-shrink-0 {{ $isWishlisted ? 'bg-red-50 border-red-200 text-red-500' : 'bg-white border-gray-200 text-gray-400 hover:bg-gray-50' }}">
-            <i class="{{ $isWishlisted ? 'ph-fill' : 'ph' }} ph-heart text-xl"></i>
+    <div class="fixed bottom-14 left-0 w-full bg-white border-t border-gray-100 p-2 flex gap-2 z-40 md:hidden shadow-[0_-10px_20px_rgba(0,0,0,0.05)] pb-safe">
+        <button wire:click="toggleWishlist" class="w-1/4 rounded-xl flex flex-col items-center justify-center transition-all flex-shrink-0 {{ $isWishlisted ? 'text-red-500' : 'text-gray-500 hover:text-gray-900' }}">
+            <i class="{{ $isWishlisted ? 'ph-fill' : 'ph' }} ph-heart text-[22px] mb-0.5"></i>
+            <span class="text-[9px]">{{ __('Wishlist') }}</span>
         </button>
-        <button wire:click="addToCart" class="flex-1 text-white font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform disabled:opacity-50 disabled:active:scale-100 {{ $this->maxStock !== null && $this->maxStock <= 0 ? 'bg-gray-400' : 'bg-brand-600' }}" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
-            @if($this->maxStock !== null && $this->maxStock <= 0)
-                <i class="ph-fill ph-x-circle text-lg"></i> {{ __('Out of Stock') }}
-            @else
-                <i class="ph ph-shopping-cart-simple text-lg"></i> {{ __('Add to Cart') }} &bull; RM {{ number_format($currentPrice, 2) }}
-            @endif
+        <div class="w-px h-8 bg-gray-200 self-center mx-1"></div>
+        <button wire:click="addToCart" class="flex-1 border border-brand-600 text-brand-600 font-bold rounded-lg flex flex-col items-center justify-center transition-transform disabled:opacity-50" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
+            <span class="text-sm">+ {{ __('Cart') }}</span>
+        </button>
+        <button wire:click="addToCart" class="flex-1 bg-gradient-to-r from-brand-500 to-brand-600 text-white font-bold rounded-lg flex flex-col items-center justify-center transition-transform disabled:opacity-50" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
+            <span class="text-sm">{{ __('Buy Now') }}</span>
         </button>
     </div>
 </div>

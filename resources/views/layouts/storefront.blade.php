@@ -123,7 +123,7 @@
             <div class="flex items-center justify-between h-20 gap-4 lg:gap-8">
                 
                 <!-- Logo -->
-                <a href="{{ route('home') }}" class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+                <a href="{{ route('home') }}" class="hidden md:flex flex-shrink-0 items-center gap-2 cursor-pointer">
                     @if(\App\Models\Setting::get('site_logo'))
                         <img src="{{ Storage::url(\App\Models\Setting::get('site_logo')) }}" alt="{{ \App\Models\Setting::get('site_name', 'NexShop') }}" class="h-10 w-auto object-contain">
                     @else
@@ -135,15 +135,15 @@
                 </a>
 
                 <!-- Command-Palette Style Search -->
-                <div class="flex-1 max-w-3xl relative block">
+                <div class="flex-1 w-full max-w-3xl relative block">
                     <form action="/products" method="GET" class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <i class="ph ph-magnifying-glass text-xl text-gray-400 group-focus-within:text-brand-500 transition-colors"></i>
+                        <div class="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none">
+                            <i class="ph ph-magnifying-glass text-lg md:text-xl text-gray-400 group-focus-within:text-brand-500 transition-colors"></i>
                         </div>
-                        <input type="text" name="search" class="block w-full pl-12 pr-4 py-3 bg-gray-100/80 border border-transparent rounded-full text-sm placeholder-gray-400 focus:bg-white focus:border-brand-500/30 focus:ring-4 focus:ring-brand-500/10 transition-all outline-none" placeholder="{{ __('Search brands, products, or stores...') }}">
-                        <div class="absolute inset-y-0 right-0 pr-2 flex items-center">
+                        <input type="text" name="search" class="block w-full pl-10 md:pl-12 pr-4 py-2.5 md:py-3 bg-gray-100/80 border border-transparent rounded-full text-sm placeholder-gray-400 focus:bg-white focus:border-brand-500/30 focus:ring-4 focus:ring-brand-500/10 transition-all outline-none" placeholder="{{ __('Search brands, products, or stores...') }}">
+                        <div class="absolute inset-y-0 right-0 pr-1 md:pr-2 flex items-center">
                             <button type="submit" class="p-1.5 bg-brand-500 text-white rounded-full hover:bg-brand-600 transition-colors shadow-sm">
-                                <i class="ph-bold ph-arrow-right text-sm w-5 h-5 flex items-center justify-center"></i>
+                                <i class="ph-bold ph-arrow-right text-xs md:text-sm w-4 h-4 md:w-5 md:h-5 flex items-center justify-center"></i>
                             </button>
                         </div>
                     </form>
@@ -388,7 +388,7 @@
     <!-- ==========================================
          MODERN FOOTER
          ========================================== -->
-    <footer class="bg-white border-t border-gray-100 pt-12 pb-24 md:pb-8 mt-auto">
+    <footer class="hidden md:block bg-white border-t border-gray-100 pt-12 pb-24 md:pb-8 mt-auto">
         <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
                 
@@ -458,25 +458,25 @@
     <!-- ==========================================
          MOBILE BOTTOM NAVIGATION (APP-LIKE UX)
          ========================================== -->
-    <div class="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-100 md:hidden flex justify-around items-center px-2 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+    <div class="fixed bottom-0 left-0 z-50 w-full h-14 bg-white border-t border-gray-100 md:hidden flex justify-around items-center px-1 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
         <a href="{{ route('home') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('home') ? 'text-brand-600' : 'text-gray-400 hover:text-brand-500' }} transition">
-            <i class="{{ request()->routeIs('home') ? 'ph-fill' : 'ph' }} ph-house text-2xl mb-0.5"></i>
-            <span class="text-[10px] font-semibold">{{ __('Home') }}</span>
+            <i class="{{ request()->routeIs('home') ? 'ph-fill' : 'ph' }} ph-house text-[22px] mb-0.5"></i>
+            <span class="text-[9px] font-semibold">{{ __('Home') }}</span>
         </a>
         <a href="{{ route('products.index') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('products.index') ? 'text-brand-600' : 'text-gray-400 hover:text-brand-500' }} transition">
-            <i class="{{ request()->routeIs('products.index') ? 'ph-fill' : 'ph' }} ph-magnifying-glass text-2xl mb-0.5"></i>
-            <span class="text-[10px] font-medium">{{ __('Search') }}</span>
+            <i class="{{ request()->routeIs('products.index') ? 'ph-fill' : 'ph' }} ph-magnifying-glass text-[22px] mb-0.5"></i>
+            <span class="text-[9px] font-medium">{{ __('Search') }}</span>
         </a>
         <a href="{{ route('cart.index') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('cart.index') ? 'text-brand-600' : 'text-gray-400 hover:text-brand-500' }} transition relative">
             <div class="relative">
-                <i class="{{ request()->routeIs('cart.index') ? 'ph-fill' : 'ph' }} ph-shopping-cart text-2xl mb-0.5"></i>
+                <i class="{{ request()->routeIs('cart.index') ? 'ph-fill' : 'ph' }} ph-shopping-cart text-[22px] mb-0.5"></i>
                 <livewire:storefront.cart-badge :minimal="true" />
             </div>
-            <span class="text-[10px] font-medium">{{ __('Cart') }}</span>
+            <span class="text-[9px] font-medium">{{ __('Cart') }}</span>
         </a>
         <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('dashboard*') ? 'text-brand-600' : 'text-gray-400 hover:text-brand-500' }} transition">
-            <i class="{{ request()->routeIs('dashboard*') ? 'ph-fill' : 'ph' }} ph-user text-2xl mb-0.5"></i>
-            <span class="text-[10px] font-medium">{{ __('Account') }}</span>
+            <i class="{{ request()->routeIs('dashboard*') ? 'ph-fill' : 'ph' }} ph-user text-[22px] mb-0.5"></i>
+            <span class="text-[9px] font-medium">{{ __('Account') }}</span>
         </a>
     </div>
 

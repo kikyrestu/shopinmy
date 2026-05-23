@@ -120,10 +120,10 @@
 
             <!-- Products -->
             @if($products->count() > 0)
-                <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-6">
                     @foreach($products as $product)
                     <!-- Product Card -->
-                    <a href="{{ route('product.show', $product->slug) }}" class="product-card group bg-white rounded-2xl p-3 border border-gray-100 flex flex-col relative h-full">
+                    <a href="{{ route('product.show', $product->slug) }}" class="product-card group bg-white rounded-lg md:rounded-2xl p-3 border border-gray-100 flex flex-col relative h-full">
                         @if($product->created_at->diffInDays(now()) < 7)
                         <div class="absolute top-5 left-5 z-10 px-2 py-1 bg-brand-500 text-white text-[10px] font-bold rounded-md uppercase tracking-wider">{{ __('New') }}</div>
                         @endif
