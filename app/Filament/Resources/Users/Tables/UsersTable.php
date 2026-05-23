@@ -37,10 +37,10 @@ class UsersTable
             ->recordActions([
                 EditAction::make(),
             ])
-            ->bulkActions([
-                \Filament\Tables\Actions\BulkActionGroup::make([
-                    \Filament\Tables\Actions\DeleteBulkAction::make(),
-                    \Filament\Tables\Actions\BulkAction::make('send_wa_blast')
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    \Filament\Actions\BulkAction::make('send_wa_blast')
                         ->label('Kirim WA Blast')
                         ->icon('heroicon-o-chat-bubble-left-ellipsis')
                         ->color('success')
