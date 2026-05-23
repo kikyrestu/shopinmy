@@ -79,6 +79,21 @@ class ManageSettings extends Page implements HasForms
                         TextInput::make('site_address')->label('Alamat Toko'),
                     ]),
 
+                    Tab::make('Banner Carousel')->icon('heroicon-o-photo')->schema([
+                        Toggle::make('banner_carousel_enabled')->label('Aktifkan Carousel (Slider)')->default(true),
+                        Select::make('banner_carousel_animation')
+                            ->label('Efek Animasi')
+                            ->options([
+                                'slide' => 'Slide (Geser Biasa)',
+                                'fade' => 'Fade (Memudar)',
+                                'flip' => 'Flip (Membalik)',
+                                'cube' => 'Cube (Kubus 3D)',
+                                'coverflow' => 'Coverflow (Efek Apple)',
+                            ])->default('slide'),
+                        Toggle::make('banner_carousel_autoplay')->label('Autoplay (Geser Otomatis)')->default(true),
+                        Toggle::make('banner_carousel_arrows')->label('Tampilkan Tombol Panah (Arrows)')->default(true),
+                    ]),
+
                     Tab::make('SST')->schema([
                         Toggle::make('sst_enabled')->label('Aktifkan SST'),
                         TextInput::make('sst_rate')->label('Rate SST (%)')->numeric()->default(8),

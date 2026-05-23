@@ -39,6 +39,10 @@
     <!-- Phosphor Icons (Sleek, modern iconography) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
+    <!-- Swiper.js for Carousels -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
     <!-- Alpine.js is bundled with Livewire 3, so we don't load it manually -->
     <!-- Google Fonts: Plus Jakarta Sans (Popular in Web3/Fintech) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -5,74 +5,199 @@
         
     <!-- HERO BANNER (Modern Gradient & 3D Vibe) -->
     @if(isset($banners) && $banners->count() > 0)
-        @php $mainBanner = $banners->first(); @endphp
-        <section class="relative w-full aspect-square md:aspect-auto md:h-[350px] lg:h-[400px] rounded-[2rem] overflow-hidden bg-gray-900 group">
-            <!-- Dynamic Background -->
-            <div class="absolute inset-0 {{ $mainBanner->show_text_overlay ? 'bg-gray-900' : '' }} pointer-events-none">
-                @if($mainBanner->youtube_link)
-                    @php
-                        // Extract YouTube ID
-                        preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $mainBanner->youtube_link, $match);
-                        $youtubeId = $match[1] ?? null;
-                    @endphp
-                    @if($youtubeId)
-                        <iframe src="https://www.youtube.com/embed/{{ $youtubeId }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ $youtubeId }}&playsinline=1" 
-                                class="w-[100vw] min-w-[177.77vh] h-[56.25vw] min-h-[100vh] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 {{ $mainBanner->show_text_overlay ? 'opacity-60' : '' }} pointer-events-none" 
-                                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                    @endif
-                @elseif($mainBanner->image)
-                    <img src="{{ Storage::disk('public')->url($mainBanner->mobile_image ?? $mainBanner->image) }}" class="block md:hidden w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
-                    <img src="{{ Storage::disk('public')->url($mainBanner->image) }}" class="hidden md:block w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
-                @endif
-            </div>
-            <!-- Abstract decorative circles -->
-            <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-brand-500/20 blur-[100px]"></div>
-            <div class="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-brand-700/20 blur-[100px]"></div>
-            
-            @if($mainBanner->show_text_overlay)
-            <div class="relative z-10 h-full flex items-center px-8 md:px-16 w-full">
-                @if($mainBanner->html_content)
-                    <div class="w-full h-full flex flex-col justify-center">
-                        {!! $mainBanner->html_content !!}
-                    </div>
-                @else
-                    <div class="max-w-2xl text-white space-y-4 md:space-y-6">
-                        @if($mainBanner->subtitle)
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold tracking-wider uppercase">
-                            <span class="w-2 h-2 rounded-full bg-accent-500 animate-pulse"></span>
-                            {{ $mainBanner->subtitle }}
+        @php 
+            $useCarousel = \App\Models\Setting::isEnabled('banner_carousel_enabled') && $banners->count() > 1; 
+        @endphp
+
+        @if($useCarousel)
+            <div class="swiper banner-swiper relative w-full rounded-[2rem] overflow-hidden group">
+                <div class="swiper-wrapper">
+                    @foreach($banners as $mainBanner)
+                        <div class="swiper-slide">
+                            <section class="relative w-full aspect-square md:aspect-auto md:h-[350px] lg:h-[400px] bg-gray-900">
+                                <!-- Dynamic Background -->
+                                <div class="absolute inset-0 {{ $mainBanner->show_text_overlay ? 'bg-gray-900' : '' }} pointer-events-none">
+                                    @if($mainBanner->youtube_link)
+                                        @php
+                                            preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $mainBanner->youtube_link, $match);
+                                            $youtubeId = $match[1] ?? null;
+                                        @endphp
+                                        @if($youtubeId)
+                                            <iframe src="https://www.youtube.com/embed/{{ $youtubeId }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ $youtubeId }}&playsinline=1" 
+                                                    class="w-[100vw] min-w-[177.77vh] h-[56.25vw] min-h-[100vh] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 {{ $mainBanner->show_text_overlay ? 'opacity-60' : '' }} pointer-events-none" 
+                                                    frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                        @endif
+                                    @elseif($mainBanner->image)
+                                        <img src="{{ Storage::disk('public')->url($mainBanner->mobile_image ?? $mainBanner->image) }}" class="block md:hidden w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
+                                        <img src="{{ Storage::disk('public')->url($mainBanner->image) }}" class="hidden md:block w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
+                                    @endif
+                                </div>
+                                <!-- Abstract decorative circles -->
+                                <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-brand-500/20 blur-[100px] pointer-events-none"></div>
+                                <div class="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-brand-700/20 blur-[100px] pointer-events-none"></div>
+                                
+                                @if($mainBanner->show_text_overlay)
+                                <div class="relative z-10 h-full flex items-center px-8 md:px-16 w-full">
+                                    @if($mainBanner->html_content)
+                                        <div class="w-full h-full flex flex-col justify-center">
+                                            {!! $mainBanner->html_content !!}
+                                        </div>
+                                    @else
+                                        <div class="max-w-2xl text-white space-y-4 md:space-y-6">
+                                            @if($mainBanner->subtitle)
+                                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold tracking-wider uppercase">
+                                                <span class="w-2 h-2 rounded-full bg-accent-500 animate-pulse"></span>
+                                                {{ $mainBanner->subtitle }}
+                                            </div>
+                                            @endif
+                                            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
+                                                {{ $mainBanner->title ?? __('Find What You Need, Faster.') }}
+                                            </h1>
+                                            @if($mainBanner->link && $mainBanner->button_text)
+                                            <a href="{{ $mainBanner->link }}" class="mt-4 px-8 py-3.5 bg-white text-gray-900 font-bold rounded-full hover:bg-gray-100 transition-transform transform hover:scale-105 shadow-xl inline-flex items-center gap-2 w-max">
+                                                {{ $mainBanner->button_text }} <i class="ph-bold ph-arrow-right text-brand-500"></i>
+                                            </a>
+                                            @endif
+                                        </div>
+                                    @endif
+                                    
+                                    @if(isset($promoVoucher) && $mainBanner->show_voucher)
+                                    <div class="hidden lg:block absolute right-16 top-1/2 transform -translate-y-1/2">
+                                        <div class="w-72 h-80 bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-6 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500 flex flex-col justify-between">
+                                            <div class="flex justify-between items-start">
+                                                    <div class="w-12 h-12 bg-gradient-to-b from-brand-400 to-brand-500 rounded-2xl flex items-center justify-center shadow-lg"><i class="ph-fill ph-ticket text-white text-2xl"></i></div>
+                                                    <span class="px-2 py-1 bg-accent-500/20 text-accent-300 text-xs font-bold rounded-lg backdrop-blur-sm border border-accent-500/30">{{ __('Voucher') }}</span>
+                                            </div>
+                                            <div>
+                                                    <h3 class="text-2xl font-bold text-white mb-1">{{ $promoVoucher->code }}</h3>
+                                                    <p class="text-white/80 text-sm mb-4">{{ $promoVoucher->type === 'percentage' ? $promoVoucher->value . '% OFF' : 'RM' . $promoVoucher->value . ' OFF' }}</p>
+                                                    <button onclick="navigator.clipboard.writeText('{{ $promoVoucher->code }}'); alert('Code copied!')" class="w-full py-2.5 bg-white text-brand-600 font-bold rounded-xl hover:bg-brand-50 transition-colors shadow-md">{{ __('Copy Code') }}</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+                                </div>
+                                @endif
+                            </section>
                         </div>
-                        @endif
-                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
-                            {{ $mainBanner->title ?? __('Find What You Need, Faster.') }}
-                        </h1>
-                        @if($mainBanner->link && $mainBanner->button_text)
-                        <a href="{{ $mainBanner->link }}" class="mt-4 px-8 py-3.5 bg-white text-gray-900 font-bold rounded-full hover:bg-gray-100 transition-transform transform hover:scale-105 shadow-xl inline-flex items-center gap-2 w-max">
-                            {{ $mainBanner->button_text }} <i class="ph-bold ph-arrow-right text-brand-500"></i>
-                        </a>
-                        @endif
-                    </div>
-                @endif
+                    @endforeach
+                </div>
                 
-                <!-- Floating Element (Mockup/Illustration placeholder) -->
-                @if(isset($promoVoucher) && $mainBanner->show_voucher)
-                <div class="hidden lg:block absolute right-16 top-1/2 transform -translate-y-1/2">
-                    <div class="w-72 h-80 bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-6 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500 flex flex-col justify-between">
-                        <div class="flex justify-between items-start">
-                                <div class="w-12 h-12 bg-gradient-to-b from-brand-400 to-brand-500 rounded-2xl flex items-center justify-center shadow-lg"><i class="ph-fill ph-ticket text-white text-2xl"></i></div>
-                                <span class="px-2 py-1 bg-accent-500/20 text-accent-300 text-xs font-bold rounded-lg backdrop-blur-sm border border-accent-500/30">{{ __('Voucher') }}</span>
+                @if(\App\Models\Setting::isEnabled('banner_carousel_arrows'))
+                    <div class="swiper-button-next !text-white !opacity-30 hover:!opacity-100 transition-opacity"></div>
+                    <div class="swiper-button-prev !text-white !opacity-30 hover:!opacity-100 transition-opacity"></div>
+                @endif
+                <div class="swiper-pagination !bottom-4"></div>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const effectType = '{{ \App\Models\Setting::get("banner_carousel_animation", "slide") }}';
+                    const swiperParams = {
+                        effect: effectType,
+                        loop: true,
+                        @if(\App\Models\Setting::isEnabled('banner_carousel_autoplay'))
+                        autoplay: {
+                            delay: 5000,
+                            disableOnInteraction: false,
+                        },
+                        @endif
+                        @if(\App\Models\Setting::isEnabled('banner_carousel_arrows'))
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev',
+                        },
+                        @endif
+                        pagination: {
+                            el: '.swiper-pagination',
+                            clickable: true,
+                        },
+                    };
+
+                    if (effectType === 'coverflow') {
+                        swiperParams.coverflowEffect = {
+                            rotate: 50, stretch: 0, depth: 100, modifier: 1, slideShadows: true,
+                        };
+                    } else if (effectType === 'cube') {
+                        swiperParams.cubeEffect = {
+                            shadow: true, slideShadows: true, shadowOffset: 20, shadowScale: 0.94,
+                        };
+                    }
+
+                    new Swiper('.banner-swiper', swiperParams);
+                });
+            </script>
+        @else
+            <!-- Static Single Banner -->
+            @php $mainBanner = $banners->first(); @endphp
+            <section class="relative w-full aspect-square md:aspect-auto md:h-[350px] lg:h-[400px] rounded-[2rem] overflow-hidden bg-gray-900 group">
+                <!-- Dynamic Background -->
+                <div class="absolute inset-0 {{ $mainBanner->show_text_overlay ? 'bg-gray-900' : '' }} pointer-events-none">
+                    @if($mainBanner->youtube_link)
+                        @php
+                            // Extract YouTube ID
+                            preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $mainBanner->youtube_link, $match);
+                            $youtubeId = $match[1] ?? null;
+                        @endphp
+                        @if($youtubeId)
+                            <iframe src="https://www.youtube.com/embed/{{ $youtubeId }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ $youtubeId }}&playsinline=1" 
+                                    class="w-[100vw] min-w-[177.77vh] h-[56.25vw] min-h-[100vh] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 {{ $mainBanner->show_text_overlay ? 'opacity-60' : '' }} pointer-events-none" 
+                                    frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        @endif
+                    @elseif($mainBanner->image)
+                        <img src="{{ Storage::disk('public')->url($mainBanner->mobile_image ?? $mainBanner->image) }}" class="block md:hidden w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
+                        <img src="{{ Storage::disk('public')->url($mainBanner->image) }}" class="hidden md:block w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
+                    @endif
+                </div>
+                <!-- Abstract decorative circles -->
+                <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-brand-500/20 blur-[100px] pointer-events-none"></div>
+                <div class="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-brand-700/20 blur-[100px] pointer-events-none"></div>
+                
+                @if($mainBanner->show_text_overlay)
+                <div class="relative z-10 h-full flex items-center px-8 md:px-16 w-full">
+                    @if($mainBanner->html_content)
+                        <div class="w-full h-full flex flex-col justify-center">
+                            {!! $mainBanner->html_content !!}
                         </div>
-                        <div>
-                                <h3 class="text-2xl font-bold text-white mb-1">{{ $promoVoucher->code }}</h3>
-                                <p class="text-white/80 text-sm mb-4">{{ $promoVoucher->type === 'percentage' ? $promoVoucher->value . '% OFF' : 'RM' . $promoVoucher->value . ' OFF' }}</p>
-                                <button onclick="navigator.clipboard.writeText('{{ $promoVoucher->code }}'); alert('Code copied!')" class="w-full py-2.5 bg-white text-brand-600 font-bold rounded-xl hover:bg-brand-50 transition-colors shadow-md">{{ __('Copy Code') }}</button>
+                    @else
+                        <div class="max-w-2xl text-white space-y-4 md:space-y-6">
+                            @if($mainBanner->subtitle)
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold tracking-wider uppercase">
+                                <span class="w-2 h-2 rounded-full bg-accent-500 animate-pulse"></span>
+                                {{ $mainBanner->subtitle }}
+                            </div>
+                            @endif
+                            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
+                                {{ $mainBanner->title ?? __('Find What You Need, Faster.') }}
+                            </h1>
+                            @if($mainBanner->link && $mainBanner->button_text)
+                            <a href="{{ $mainBanner->link }}" class="mt-4 px-8 py-3.5 bg-white text-gray-900 font-bold rounded-full hover:bg-gray-100 transition-transform transform hover:scale-105 shadow-xl inline-flex items-center gap-2 w-max">
+                                {{ $mainBanner->button_text }} <i class="ph-bold ph-arrow-right text-brand-500"></i>
+                            </a>
+                            @endif
+                        </div>
+                    @endif
+                    
+                    <!-- Floating Element (Mockup/Illustration placeholder) -->
+                    @if(isset($promoVoucher) && $mainBanner->show_voucher)
+                    <div class="hidden lg:block absolute right-16 top-1/2 transform -translate-y-1/2">
+                        <div class="w-72 h-80 bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-6 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500 flex flex-col justify-between">
+                            <div class="flex justify-between items-start">
+                                    <div class="w-12 h-12 bg-gradient-to-b from-brand-400 to-brand-500 rounded-2xl flex items-center justify-center shadow-lg"><i class="ph-fill ph-ticket text-white text-2xl"></i></div>
+                                    <span class="px-2 py-1 bg-accent-500/20 text-accent-300 text-xs font-bold rounded-lg backdrop-blur-sm border border-accent-500/30">{{ __('Voucher') }}</span>
+                            </div>
+                            <div>
+                                    <h3 class="text-2xl font-bold text-white mb-1">{{ $promoVoucher->code }}</h3>
+                                    <p class="text-white/80 text-sm mb-4">{{ $promoVoucher->type === 'percentage' ? $promoVoucher->value . '% OFF' : 'RM' . $promoVoucher->value . ' OFF' }}</p>
+                                    <button onclick="navigator.clipboard.writeText('{{ $promoVoucher->code }}'); alert('Code copied!')" class="w-full py-2.5 bg-white text-brand-600 font-bold rounded-xl hover:bg-brand-50 transition-colors shadow-md">{{ __('Copy Code') }}</button>
+                            </div>
                         </div>
                     </div>
+                    @endif
                 </div>
                 @endif
-            </div>
-            @endif
-        </section>
+            </section>
+        @endif
     @endif
 
     <!-- FLASH SALE SECTION -->
