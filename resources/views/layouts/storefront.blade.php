@@ -204,7 +204,7 @@
                 
                 <div class="flex items-center gap-4 lg:gap-8 flex-1 min-w-0">
                     <!-- Category Dropdown (Mega Menu) -->
-                    <div x-data="{ open: false, activeCategory: {{ $categories->first()?->id ?? 'null' }} }" class="relative">
+                    <div x-data="{ open: false, activeCategory: {{ $categories->first()?->id ?? 'null' }} }" class="relative hidden md:block">
                         <button @click="open = !open" class="flex items-center gap-2 px-3 py-1.5 bg-gray-100/80 rounded-lg text-gray-700 font-bold hover:bg-gray-200 transition-colors whitespace-nowrap">
                             <i class="ph ph-squares-four text-lg"></i> {{ __('Kategori') }}
                         </button>
