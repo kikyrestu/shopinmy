@@ -431,18 +431,15 @@
                     </ul>
                 </div>
 
-                <!-- Pilar 3: Pembayaran -->
+                <!-- Pilar 3: Keamanan -->
                 <div class="col-span-1">
-                    <h4 class="font-bold text-gray-900 mb-4">{{ __('Pembayaran Aman') }}</h4>
-                    <div class="flex flex-wrap gap-2">
-                        @php
-                            $paymentIcons = \App\Models\Setting::get('payment_icons');
-                            $iconsArray = is_string($paymentIcons) ? json_decode($paymentIcons, true) : $paymentIcons;
-                            if (empty($iconsArray)) $iconsArray = ['VISA', 'MC', 'FPX', 'TnG', 'Boost'];
-                        @endphp
-                        @foreach($iconsArray as $icon)
-                            <div class="h-10 px-4 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center text-xs font-bold text-gray-400">{{ $icon }}</div>
-                        @endforeach
+                    <h4 class="font-bold text-gray-900 mb-4">{{ __('Keamanan & Pembayaran') }}</h4>
+                    <p class="text-gray-500 text-sm mb-4">
+                        {{ __('Proses pembayaran dijamin 100% aman dengan sistem enkripsi (Secure Checkout).') }}
+                    </p>
+                    <div class="flex items-center gap-3 text-emerald-600">
+                        <i class="ph-fill ph-shield-check text-3xl"></i>
+                        <span class="text-sm font-bold">{{ __('Safe & Secure Payments') }}</span>
                     </div>
                 </div>
             </div>
