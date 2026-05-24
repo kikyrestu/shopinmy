@@ -103,10 +103,11 @@
                                     <i class="ph-bold ph-upload-simple text-xl"></i>
                                 </div>
                                 <span class="font-bold text-gray-700 dark:text-gray-300 text-sm">{{ __('Pilih gambar atau foto') }}</span>
-                                <span class="text-gray-400 dark:text-gray-600 text-xs mt-1">{{ __('PNG, JPG, max 2MB') }}</span>
+                                <span class="text-gray-400 dark:text-gray-600 text-xs mt-1">{{ __('PNG, JPG, max 5MB') }}</span>
                             @endif
                             
-                            <input type="file" id="receipt-upload" wire:model="receiptImage" class="hidden" accept="image/*">
+                            <input type="file" id="receipt-upload" wire:model="receiptImage" class="hidden" accept="image/*"
+                                x-on:livewire-upload-error="$dispatch('notify', { message: 'Ukuran foto terlalu besar atau koneksi terputus!', type: 'error' })">
                         </div>
                         
                         @error('receiptImage') 

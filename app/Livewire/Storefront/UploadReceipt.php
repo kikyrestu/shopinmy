@@ -25,9 +25,20 @@ class UploadReceipt extends Component
 
     public function upload()
     {
-        $this->validate([
-            'receiptImage' => ['required', 'image', 'max:2048'], // 2MB Max
-        ]);
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            ['receiptImage' => $this->receiptImage],
+            ['receiptImage' => ['required', 'image', 'max:5120']], // 5MB Max
+            [
+                'receiptImage.required' => 'Pilih foto bukti transfer terlebih dahulu.',
+                'receiptImage.image' => 'File harus berupa gambar (JPG/PNG/dll).',
+                'receiptImage.max' => 'Ukuran foto terlalu besar (Maksimal 5MB).',
+            ]
+        );
+
+        if ($validator->fails()) {
+            $this->dispatch('notify', message: $validator->errors()->first('receiptImage'), type: 'error');
+            return;
+        }
 
         $this->isProcessing = true;
 
