@@ -311,44 +311,31 @@
     </script>
     @endif
 
-    <!-- CATEGORY HIGHLIGHTS -->
+    <!-- CATEGORY HIGHLIGHTS (Tokopedia Style) -->
     @if(isset($featuredCategories) && $featuredCategories->count() > 0)
-    <section class="space-y-6 ">
+    <section class="space-y-4">
         <div class="flex items-end justify-between">
             <div>
-                <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">{{ __('Shop by') }} <span class="text-brand-500">{{ __('Category') }}</span></h2>
-                <p class="text-sm text-gray-500 dark:text-gray-500 mt-1 font-medium">{{ __('Explore our curated categories.') }}</p>
+                <h2 class="text-xl md:text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">{{ __('Shop by Category') }}</h2>
             </div>
-            <a href="{{ route('products.index') }}" class="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700 transition-colors px-4 py-2 rounded-full hover:bg-brand-50">
+            <a href="{{ route('products.index') }}" class="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-brand-600 hover:text-brand-700 transition-colors px-3 py-1.5 rounded-full hover:bg-brand-50">
                 {{ __('View all') }} <i class="ph-bold ph-arrow-right"></i>
             </a>
         </div>
 
-        <div class="flex sm:grid sm:grid-cols-3 md:grid-cols-4 gap-4 overflow-x-auto snap-inline hide-scrollbar -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 pb-4">
+        <div class="flex sm:grid sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 overflow-x-auto snap-inline hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 pb-2">
             @php
                 $categoryIcons = ['ph-t-shirt', 'ph-sneaker', 'ph-device-mobile', 'ph-laptop', 'ph-headphones', 'ph-watch', 'ph-handbag', 'ph-cooking-pot'];
-                $categoryColors = [
-                    ['bg-brand-50', 'text-brand-600', 'border-brand-100'],
-                    ['bg-emerald-50', 'text-emerald-600', 'border-emerald-100'],
-                    ['bg-violet-50', 'text-violet-600', 'border-violet-100'],
-                    ['bg-amber-50', 'text-amber-600', 'border-amber-100'],
-                    ['bg-rose-50', 'text-rose-600', 'border-rose-100'],
-                    ['bg-cyan-50', 'text-cyan-600', 'border-cyan-100'],
-                    ['bg-indigo-50', 'text-indigo-600', 'border-indigo-100'],
-                    ['bg-orange-50', 'text-orange-600', 'border-orange-100'],
-                ];
             @endphp
             @foreach($featuredCategories as $index => $cat)
                 @php
-                    $color = $categoryColors[$index % count($categoryColors)];
-                    $icon = $categoryIcons[$index % count($categoryIcons)];
+                    $icon = $cat->icon ?? $categoryIcons[$index % count($categoryIcons)];
                 @endphp
-                <a href="{{ route('products.index', ['category' => $cat->slug]) }}" class="snap-item w-[140px] flex-shrink-0 sm:w-auto group {{ $color[0] }} border {{ $color[2] }} rounded-2xl p-5 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-                    <div class="w-14 h-14 {{ $color[0] }} {{ $color[1] }} rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                        <i class="ph {{ $icon }} text-2xl"></i>
+                <a href="{{ route('products.index', ['category' => $cat->slug]) }}" class="snap-item w-[72px] sm:w-full flex-shrink-0 flex flex-col items-center text-center gap-2 group">
+                    <div class="w-12 h-12 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl shadow-sm flex items-center justify-center group-hover:border-brand-500 group-hover:shadow-md transition-all">
+                        <i class="ph-fill {{ $icon }} text-[28px] text-brand-500 group-hover:scale-110 transition-transform"></i>
                     </div>
-                    <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100 line-clamp-1">{{ $cat->name }}</h3>
-                    <p class="text-xs text-gray-500 dark:text-gray-500 font-medium mt-1">{{ $cat->products_count }} {{ __('Products') }}</p>
+                    <span class="text-[10px] font-medium leading-tight line-clamp-2 text-gray-700 dark:text-gray-300">{{ $cat->name }}</span>
                 </a>
             @endforeach
         </div>
