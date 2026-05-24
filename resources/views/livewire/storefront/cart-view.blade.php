@@ -59,7 +59,10 @@
                         <div class="flex items-center gap-3">
                             <!-- Green Checkbox -->
                             <input type="checkbox" wire:model.live="selectAll" class="w-5 h-5 rounded text-brand-500 focus:ring-brand-500 border-gray-300 dark:border-gray-600 dark:bg-gray-800 cursor-pointer flex-shrink-0">
-                            <span class="font-bold text-gray-900 dark:text-gray-100">{{ \App\Models\Setting::get('site_name', 'Toko Utama') }}</span>
+                            <a href="{{ route('home') }}" class="font-bold text-gray-900 dark:text-gray-100 hover:text-brand-600 transition-colors flex items-center gap-1">
+                                {{ \App\Models\Setting::get('site_name', 'Toko Utama') }}
+                                <i class="ph-bold ph-caret-right text-xs text-gray-400"></i>
+                            </a>
                         </div>
                         @if(\App\Models\Setting::isEnabled('free_shipping_enabled', true))
                         <span class="text-[10px] font-extrabold text-brand-500 italic tracking-wider">{{ __('GRATIS ONGKIR') }}</span>
@@ -232,8 +235,11 @@
                             <span>| {{ $product->order_items_sum_qty ?? 0 }} terjual</span>
                         </div>
                         
-                        <div class="mt-2 md:hidden">
-                            <div class="w-full py-1.5 border border-brand-500 text-brand-500 font-bold text-center text-xs rounded-lg">+ Keranjang</div>
+                        <div class="mt-2 md:hidden z-10 relative">
+                            <button wire:click.prevent="addToCart({{ $product->id }})" class="w-full py-1.5 border border-brand-500 text-brand-500 hover:bg-brand-50 dark:hover:bg-brand-900/20 font-bold text-center text-xs rounded-lg transition-colors flex justify-center items-center h-8" wire:loading.attr="disabled">
+                                <span wire:loading.remove wire:target="addToCart({{ $product->id }})">+ Keranjang</span>
+                                <span wire:loading wire:target="addToCart({{ $product->id }})"><i class="ph-bold ph-spinner animate-spin"></i></span>
+                            </button>
                         </div>
                     </div>
                 </a>
@@ -261,7 +267,7 @@
     <!-- Sticky Mobile CTA for Cart (Tokopedia Style) -->
     <div class="fixed bottom-14 left-0 w-full bg-white dark:bg-[#1A1A1A] md:hidden z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.1)] pb-safe">
         <!-- Promo Bar -->
-        <div class="border-t border-b border-gray-100 dark:border-gray-800 px-4 py-2 flex items-center justify-between">
+        <a href="{{ route('checkout.index') }}" class="border-t border-b border-gray-100 dark:border-gray-800 px-4 py-2 flex items-center justify-between active:bg-gray-50 dark:active:bg-gray-800/50 transition-colors block">
             <div class="flex items-center gap-2">
                 @if($activeVoucher)
                 <i class="ph-fill ph-ticket text-brand-500 text-xl"></i>
@@ -275,7 +281,7 @@
                 @endif
             </div>
             <i class="ph-bold ph-caret-right text-gray-400 dark:text-gray-500"></i>
-        </div>
+        </a>
         <!-- Checkout Bar -->
         <div class="px-4 py-2 flex items-center justify-between gap-2">
             <div class="flex items-center gap-2 flex-shrink-0">

@@ -148,6 +148,64 @@ class CartView extends Component
         }
     }
 
+    public function addToCart($productId)
+    {
+        $product = \App\Models\Product::find($productId);
+        if (!$product) return;
+
+        if ($product->stock !== null && $product->stock < 1) {
+            $this->dispatch('notify', message: __('Product is out of stock.'));
+            return;
+        }
+
+        $sessionId = session()->getId();
+        $userId = auth()->id();
+
+        // 1. Get or create Cart
+        $cart = \App\Models\Cart::firstOrCreate(
+            $userId ? ['user_id' => $userId] : ['session_id' => $sessionId]
+        );
+
+        // 2. Check if item exists in cart
+        $cartItem = $cart->items()->where('product_id', $product->id)->whereNull('variant_id')->first();
+
+        if ($cartItem) {
+            // Check stock limit
+            if ($product->stock !== null && ($cartItem->qty + 1) > $product->stock) {
+                $this->dispatch('notify', message: __('Maximum stock reached.'));
+                return;
+            }
+            $cartItem->increment('qty');
+        } else {
+            // Determine price
+            $price = $product->price;
+
+            $cart->items()->create([
+                'product_id' => $product->id,
+                'qty' => 1,
+                'price' => $price,
+            ]);
+        }
+
+        $this->loadCart();
+        // Add newly added product to selected items if it wasn't there
+        if ($cartItem) {
+            $itemIdStr = (string)$cartItem->id;
+            if (!in_array($itemIdStr, $this->selectedItems)) {
+                $this->selectedItems[] = $itemIdStr;
+            }
+        } else {
+            // If it's a new item, we need to load cart again to get the new item ID and select it
+            $newItem = $cart->items()->where('product_id', $product->id)->whereNull('variant_id')->first();
+            if ($newItem) {
+                $this->selectedItems[] = (string)$newItem->id;
+            }
+        }
+        
+        $this->dispatch('cart-updated');
+        $this->dispatch('notify', message: __('Barang berhasil ditambahkan ke keranjang!'));
+    }
+
     public function render()
     {
         $subtotal = 0;
