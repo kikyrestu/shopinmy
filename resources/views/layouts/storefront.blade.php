@@ -472,6 +472,10 @@
             <i class="{{ request()->routeIs('products.index') ? 'ph-fill' : 'ph' }} ph-magnifying-glass text-[22px] mb-0.5"></i>
             <span class="text-[9px] font-medium">{{ __('Search') }}</span>
         </a>
+        <a href="{{ route('dashboard.orders') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('dashboard.orders*') ? 'text-brand-600' : 'text-gray-400 dark:text-gray-600 hover:text-brand-500' }} transition">
+            <i class="{{ request()->routeIs('dashboard.orders*') ? 'ph-fill' : 'ph' }} ph-receipt text-[22px] mb-0.5"></i>
+            <span class="text-[9px] font-medium">{{ __('Transaksi') }}</span>
+        </a>
         <a href="{{ route('cart.index') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('cart.index') ? 'text-brand-600' : 'text-gray-400 dark:text-gray-600 hover:text-brand-500' }} transition relative">
             <div class="relative">
                 <i class="{{ request()->routeIs('cart.index') ? 'ph-fill' : 'ph' }} ph-shopping-cart text-[22px] mb-0.5"></i>
@@ -479,8 +483,11 @@
             </div>
             <span class="text-[9px] font-medium">{{ __('Cart') }}</span>
         </a>
-        <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('dashboard*') ? 'text-brand-600' : 'text-gray-400 dark:text-gray-600 hover:text-brand-500' }} transition">
-            <i class="{{ request()->routeIs('dashboard*') ? 'ph-fill' : 'ph' }} ph-user text-[22px] mb-0.5"></i>
+        @php
+            $isAccountActive = request()->routeIs('dashboard', 'dashboard.profile', 'dashboard.addresses', 'dashboard.wishlist', 'dashboard.loyalty');
+        @endphp
+        <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center w-full h-full {{ $isAccountActive ? 'text-brand-600' : 'text-gray-400 dark:text-gray-600 hover:text-brand-500' }} transition">
+            <i class="{{ $isAccountActive ? 'ph-fill' : 'ph' }} ph-user text-[22px] mb-0.5"></i>
             <span class="text-[9px] font-medium">{{ __('Account') }}</span>
         </a>
     </div>
