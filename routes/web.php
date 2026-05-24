@@ -40,6 +40,15 @@ Route::post('/webhook/billplz', [\App\Http\Controllers\PaymentController::class,
     ->name('webhook.billplz')
     ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 
+// Fallback route to serve payment proofs directly (Bypasses broken symlinks in Docker/VPS)
+Route::get('/storage/payment-proofs/{filename}', function ($filename) {
+    $path = storage_path('app/public/payment-proofs/' . $filename);
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    return response()->file($path);
+})->where('filename', '.*');
+
 Route::middleware(['auth'])->prefix('dashboard')->group(function () {
     Route::get('/', \App\Livewire\Storefront\Dashboard\Overview::class)->name('dashboard');
     Route::get('/orders', \App\Livewire\Storefront\Dashboard\OrderHistory::class)->name('dashboard.orders');
