@@ -25,7 +25,7 @@ class HomeController extends Controller
             $q->where('is_active', true);
         }])
             ->orderByDesc('products_count')
-            ->take(8)
+            ->take(12)
             ->get();
 
         $activeFlashSale = \App\Models\FlashSale::with(['products' => function ($q) {
@@ -41,7 +41,7 @@ class HomeController extends Controller
             ->withAvg('reviews', 'rating')
             ->withSum('orderItems', 'qty')
             ->inRandomOrder()
-            ->take(10)
+            ->take(24)
             ->get();
 
         return view('storefront.home', compact('recommendedProducts', 'banners', 'promoVoucher', 'featuredCategories', 'activeFlashSale'));
