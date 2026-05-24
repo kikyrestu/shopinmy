@@ -1,4 +1,4 @@
-<div>
+<div x-data="{ showPromoModal: false }">
     @section('title', __('Shopping Cart'))
 
     <!-- MOBILE NATIVE HEADER (Tokopedia Style) -->
@@ -265,7 +265,7 @@
 
     @if($cart && $cart->items->count() > 0)
     <!-- Sticky Mobile CTA for Cart (Tokopedia Style) -->
-    <div x-data="{ showPromoModal: false }" class="fixed bottom-14 left-0 w-full bg-white dark:bg-[#1A1A1A] md:hidden z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.1)] pb-safe">
+    <div class="fixed bottom-14 left-0 w-full bg-white dark:bg-[#1A1A1A] md:hidden z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.1)] pb-safe">
         <!-- Promo Bar -->
         <button type="button" @click="showPromoModal = true" class="w-full border-t border-b border-gray-100 dark:border-gray-800 px-4 py-2 flex items-center justify-between active:bg-gray-50 dark:active:bg-gray-800/50 transition-colors">
             <div class="flex items-center gap-2">
@@ -299,10 +299,12 @@
                     {{ __('Beli') }} ({{ count($selectedItems) }})
                 </button>
             </div>
+            </div>
         </div>
+    </div>
 
-        <!-- Voucher Modal (Bottom Sheet) -->
-        <div x-show="showPromoModal" class="fixed inset-0 z-[100] flex items-end justify-center" x-cloak>
+    <!-- Voucher Modal (Bottom Sheet) -->
+    <div x-show="showPromoModal" class="fixed inset-0 z-[100] flex items-end justify-center" x-cloak>
             <!-- Backdrop -->
             <div x-show="showPromoModal" 
                  x-transition:enter="transition-opacity ease-out duration-300" 
@@ -365,6 +367,5 @@
                 </div>
             </div>
         </div>
-    </div>
     @endif
 </div>
