@@ -56,6 +56,14 @@ class ProductForm
                             Toggle::make('is_active')
                                 ->default(true)
                                 ->required(),
+                            Toggle::make('is_free_shipping')
+                                ->label('Penghantaran Percuma / Free Shipping')
+                                ->default(false),
+                            TextInput::make('warranty_period')
+                                ->label('Periode Garansi')
+                                ->placeholder('Contoh: 1 Year / 6 Months')
+                                ->nullable()
+                                ->columnSpanFull(),
                         ])->columns(2),
                     
                     Tabs\Tab::make('Images')

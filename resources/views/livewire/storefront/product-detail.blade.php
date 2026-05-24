@@ -183,6 +183,7 @@
 
                 <!-- Info blocks -->
                 <div class="grid grid-cols-2 gap-4">
+                    @if($product->is_free_shipping)
                     <div class="flex items-center gap-3 p-4 bg-gray-50 dark:bg-[#121212] rounded-2xl">
                         <div class="w-10 h-10 bg-white dark:bg-gray-900 rounded-full flex items-center justify-center text-brand-500 shadow-sm"><i class="ph ph-truck text-xl"></i></div>
                         <div>
@@ -190,13 +191,17 @@
                             <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ __('Free Delivery') }}</div>
                         </div>
                     </div>
+                    @endif
+
+                    @if($product->warranty_period)
                     <div class="flex items-center gap-3 p-4 bg-gray-50 dark:bg-[#121212] rounded-2xl">
                         <div class="w-10 h-10 bg-white dark:bg-gray-900 rounded-full flex items-center justify-center text-brand-500 shadow-sm"><i class="ph ph-shield-check text-xl"></i></div>
                         <div>
                             <div class="text-xs text-gray-500 dark:text-gray-500 font-medium">{{ __('Warranty') }}</div>
-                            <div class="text-sm font-bold text-gray-900 dark:text-gray-100">1 {{ __('Year') }}</div>
+                            <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ $product->warranty_period }}</div>
                         </div>
                     </div>
+                    @endif
                 </div>
 
             </div>

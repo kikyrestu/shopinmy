@@ -11,6 +11,7 @@ class Product extends Model
     protected $casts = [
         'images' => 'array',
         'is_active' => 'boolean',
+        'is_free_shipping' => 'boolean',
         'price' => 'decimal:2',
     ];
 
