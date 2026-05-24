@@ -1,301 +1,231 @@
-<div>
-    <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('dashboard.orders') }}" class="w-10 h-10 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl flex items-center justify-center text-gray-500 dark:text-gray-500 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50 transition-all shadow-sm">
-                <i class="ph-bold ph-arrow-left text-lg"></i>
-            </a>
-            <h1 class="text-2xl font-extrabold text-gray-900 dark:text-gray-100">{{ __('Order Details') }}</h1>
-        </div>
-        
-        @if($order->status === 'pending')
-            <button wire:click="cancelOrder" 
-                    wire:confirm="{{ __('Are you sure you want to cancel this order? This action cannot be undone.') }}"
-                    class="px-5 py-2.5 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white font-bold rounded-xl transition-colors shadow-sm flex items-center gap-2 border border-red-100 hover:border-red-600">
-                <i class="ph-bold ph-x"></i> {{ __('Batalkan Pesanan') }}
-            </button>
-        @endif
-        
-        @if(in_array($order->status, ['shipped', 'delivered']))
-            <button wire:click="completeOrder" 
-                    wire:confirm="{{ __('Apakah Anda yakin barang sudah diterima dengan baik? Transaksi akan diselesaikan.') }}"
-                    class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl transition-colors shadow-sm flex items-center gap-2">
-                <i class="ph-bold ph-check-circle"></i> {{ __('Selesaikan Pesanan') }}
-            </button>
-        @endif
-    </div>
-
-    @if (session()->has('success'))
-        <div class="mb-6 bg-emerald-50 text-emerald-700 p-4 rounded-xl text-sm font-medium border border-emerald-100 flex items-center gap-3">
-            <i class="ph-fill ph-check-circle text-xl"></i>
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if (session()->has('error'))
-        <div class="mb-6 bg-red-50 text-red-700 p-4 rounded-xl text-sm font-medium border border-red-100 flex items-center gap-3">
-            <i class="ph-fill ph-warning-circle text-xl"></i>
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <!-- Tokopedia Style Countdown Timer -->
-    @if($order->status === 'pending')
-    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row justify-between sm:items-center gap-4" 
-         x-data="{
-             endTime: new Date('{{ $order->created_at->addHours(24)->toIso8601String() }}').getTime(),
-             timeLeft: '',
-             init() {
-                 this.updateTimer();
-                 setInterval(() => this.updateTimer(), 1000);
-             },
-             updateTimer() {
-                 let now = new Date().getTime();
-                 let distance = this.endTime - now;
-                 if (distance < 0) {
-                     this.timeLeft = '00:00:00';
-                     return;
-                 }
-                 let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                 let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                 let seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                 this.timeLeft = hours.toString().padStart(2, '0') + ':' + 
-                                 minutes.toString().padStart(2, '0') + ':' + 
-                                 seconds.toString().padStart(2, '0');
-             }
-         }">
-        <div>
-            <p class="text-xs font-bold text-red-700 dark:text-red-400 uppercase tracking-wider mb-1">{{ __('Batas Waktu Pembayaran') }}</p>
-            <div class="text-2xl font-black font-mono tracking-widest text-red-600 dark:text-red-500" x-text="timeLeft"></div>
-        </div>
-        <div>
-            <span class="text-sm text-red-600/80 dark:text-red-400/80 font-medium">{{ __('Segera selesaikan pembayaran Anda sebelum waktu habis.') }}</span>
-        </div>
-    </div>
-    @endif
-
-    <!-- Tokopedia Style Stepper -->
-    @if($order->status !== 'cancelled')
-    <div class="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm p-6 mb-6">
-        <div class="relative max-w-3xl mx-auto mt-2 mb-2">
-            @php
-                $steps = ['pending' => 1, 'processing' => 2, 'shipped' => 3, 'delivered' => 3, 'completed' => 4];
-                $currentStep = $steps[$order->status] ?? 1;
-                $progressWidth = ($currentStep - 1) * 33.33;
-            @endphp
-            
-            <!-- Progress Line Background -->
-            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-100 dark:bg-gray-800 rounded-full"></div>
-            <!-- Progress Line Active -->
-            <div class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-brand-500 rounded-full transition-all duration-1000" style="width: {{ $progressWidth }}%;"></div>
-            
-            <div class="relative z-10 flex justify-between">
-                <!-- Step 1: Belum Bayar -->
-                <div class="flex flex-col items-center">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center transition-colors {{ $currentStep >= 1 ? 'bg-brand-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-400' }}">
-                        <i class="ph-bold ph-wallet text-sm"></i>
-                    </div>
-                    <span class="text-[10px] sm:text-xs font-bold mt-2 {{ $currentStep >= 1 ? 'text-brand-600 dark:text-brand-400' : 'text-gray-400 dark:text-gray-500' }}">{{ __('Belum Bayar') }}</span>
-                </div>
-                
-                <!-- Step 2: Dikemas -->
-                <div class="flex flex-col items-center">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center transition-colors {{ $currentStep >= 2 ? 'bg-brand-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-400' }}">
-                        <i class="ph-bold ph-package text-sm"></i>
-                    </div>
-                    <span class="text-[10px] sm:text-xs font-bold mt-2 {{ $currentStep >= 2 ? 'text-brand-600 dark:text-brand-400' : 'text-gray-400 dark:text-gray-500' }}">{{ __('Dikemas') }}</span>
-                </div>
-                
-                <!-- Step 3: Dikirim -->
-                <div class="flex flex-col items-center">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center transition-colors {{ $currentStep >= 3 ? 'bg-brand-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-400' }}">
-                        <i class="ph-bold ph-truck text-sm"></i>
-                    </div>
-                    <span class="text-[10px] sm:text-xs font-bold mt-2 {{ $currentStep >= 3 ? 'text-brand-600 dark:text-brand-400' : 'text-gray-400 dark:text-gray-500' }}">{{ __('Dikirim') }}</span>
-                </div>
-                
-                <!-- Step 4: Selesai -->
-                <div class="flex flex-col items-center">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center transition-colors {{ $currentStep >= 4 ? 'bg-emerald-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-400' }}">
-                        <i class="ph-bold ph-check text-sm"></i>
-                    </div>
-                    <span class="text-[10px] sm:text-xs font-bold mt-2 {{ $currentStep >= 4 ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500' }}">{{ __('Selesai') }}</span>
-                </div>
+<div class="bg-gray-50 dark:bg-[#121212] min-h-screen pb-24">
+    
+    <!-- Top Header Sticky -->
+    <div class="bg-white dark:bg-gray-900 sticky top-0 z-30 border-b border-gray-100 dark:border-gray-800 shadow-sm">
+        <div class="px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="{{ route('dashboard.orders') }}" class="text-gray-900 dark:text-white">
+                    <i class="ph-bold ph-arrow-left text-xl"></i>
+                </a>
+                <h1 class="text-lg font-bold text-gray-900 dark:text-white">{{ __('Detail Pesanan') }}</h1>
+            </div>
+            <div>
+                <button class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                    <i class="ph-bold ph-question text-xl"></i>
+                </button>
             </div>
         </div>
     </div>
-    @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <!-- Left Column: Items & Summary -->
-        <div class="lg:col-span-2 space-y-6">
-            
-            <!-- Order Items -->
-            <div class="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
-                <div class="p-6 border-b border-gray-50 flex items-center justify-between bg-gray-50 dark:bg-[#121212]/30">
-                    <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                        <i class="ph-fill ph-package text-brand-500"></i> {{ __('Items Ordered') }}
-                    </h2>
-                    <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider
-                        {{ $order->status === 'pending' ? 'bg-amber-100 text-amber-700' : '' }}
-                        {{ $order->status === 'processing' ? 'bg-blue-100 text-blue-700' : '' }}
-                        {{ in_array($order->status, ['completed', 'delivered', 'shipped', 'paid']) ? 'bg-emerald-100 text-emerald-700' : '' }}
-                        {{ $order->status === 'cancelled' ? 'bg-red-100 text-red-700' : '' }}
-                    ">
-                        {{ __($order->status) }}
-                    </span>
-                </div>
-                
-                <div class="divide-y divide-gray-50">
-                    @foreach($order->items as $item)
-                        <div class="p-6 flex flex-col sm:flex-row gap-5 items-start sm:items-center">
-                            <div class="w-20 h-20 bg-gray-50 dark:bg-[#121212] rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden flex-shrink-0">
-                                @if($item->product->primaryImage)
-                                    <img src="{{ $item->product->first_image_url }}" class="w-full h-full object-cover">
-                                @else
-                                    <i class="ph ph-image text-gray-300 w-full h-full flex items-center justify-center text-2xl"></i>
-                                @endif
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="text-base font-bold text-gray-900 dark:text-gray-100 truncate mb-1">{{ $item->product->name }}</h4>
-                                <div class="text-sm text-gray-500 dark:text-gray-500 flex flex-wrap items-center gap-x-4 gap-y-2">
-                                    <span class="flex items-center gap-1"><i class="ph-bold ph-x"></i> {{ $item->qty }}</span>
-                                    @if($item->variant)
-                                        <span class="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded-md text-xs">{{ $item->variant->name }}: {{ $item->variant->value }}</span>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="text-right w-full sm:w-auto mt-2 sm:mt-0">
-                                <div class="text-sm text-gray-500 dark:text-gray-500 mb-0.5">RM {{ number_format($item->price, 2) }} / {{ __('item') }}</div>
-                                <div class="text-lg font-extrabold text-gray-900 dark:text-gray-100">RM {{ number_format($item->price * $item->qty, 2) }}</div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
-            <!-- Pricing Summary -->
-            <div class="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm p-6 sm:p-8">
-                <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
-                    <i class="ph-fill ph-receipt text-brand-500"></i> {{ __('Payment Summary') }}
+    <!-- Status Banner Area -->
+    <div class="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 pt-4 pb-6 px-4 mb-2">
+        <div class="flex justify-between items-start mb-4">
+            <div>
+                <h2 class="text-xl font-extrabold text-gray-900 dark:text-white mb-1">
+                    @if($order->status === 'pending')
+                        Menunggu Pembayaran
+                    @elseif($order->status === 'processing')
+                        Pesanan Diproses
+                    @elseif(in_array($order->status, ['shipped', 'delivered']))
+                        Pesanan Dikirim
+                    @elseif($order->status === 'completed')
+                        Pesanan Selesai
+                    @else
+                        Pesanan Dibatalkan
+                    @endif
                 </h2>
                 
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center text-gray-600 dark:text-gray-400">
-                        <span>{{ __('Subtotal') }}</span>
-                        <span class="font-bold text-gray-900 dark:text-gray-100">RM {{ number_format($order->total - $order->shipping_cost - $order->tax_amount + ($order->voucher_id ? (\App\Models\Voucher::find($order->voucher_id)?->value ?? 0) : 0), 2) }}</span>
-                    </div>
-                    
-                    <div class="flex justify-between items-center text-gray-600 dark:text-gray-400">
-                        <span>{{ __('Shipping Cost') }}</span>
-                        <span class="font-bold text-gray-900 dark:text-gray-100">RM {{ number_format($order->shipping_cost, 2) }}</span>
-                    </div>
-
-                    <div class="flex justify-between items-center text-gray-600 dark:text-gray-400">
-                        <span>{{ __('Tax') }}</span>
-                        <span class="font-bold text-gray-900 dark:text-gray-100">RM {{ number_format($order->tax_amount, 2) }}</span>
-                    </div>
-
-                    @if($order->voucher_id)
-                        <div class="flex justify-between items-center text-emerald-600">
-                            <span>{{ __('Discount (Voucher)') }}</span>
-                            <span class="font-bold">- RM {{ number_format(\App\Models\Voucher::find($order->voucher_id)?->value ?? 0, 2) }}</span>
-                        </div>
-                    @endif
-
-                    <div class="pt-4 border-t border-gray-100 dark:border-gray-800 flex justify-between items-center">
-                        <span class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ __('Grand Total') }}</span>
-                        <span class="text-2xl font-extrabold text-brand-600">RM {{ number_format($order->total, 2) }}</span>
-                    </div>
-                </div>
+                @if($order->status === 'pending')
+                    <p class="text-sm text-gray-500 font-medium">Selesaikan pembayaran agar pesanan diproses.</p>
+                @elseif($order->status === 'completed')
+                    <p class="text-sm text-emerald-600 font-medium">Terima kasih telah berbelanja di toko kami!</p>
+                @else
+                    <p class="text-sm text-gray-500 font-medium">Pesanan kamu sedang dalam proses.</p>
+                @endif
+            </div>
+            
+            <div class="w-12 h-12 flex-shrink-0 bg-brand-50 rounded-full flex items-center justify-center text-brand-500">
+                @if($order->status === 'pending')
+                    <i class="ph-fill ph-wallet text-2xl"></i>
+                @elseif($order->status === 'completed')
+                    <i class="ph-fill ph-check-circle text-2xl text-emerald-500"></i>
+                @elseif($order->status === 'cancelled')
+                    <i class="ph-fill ph-x-circle text-2xl text-red-500"></i>
+                @else
+                    <i class="ph-fill ph-package text-2xl"></i>
+                @endif
             </div>
         </div>
 
-        <!-- Right Column: Shipping & Payment Info -->
-        <div class="space-y-6">
-            
-            <!-- Tracking Info -->
+        @if($order->status === 'pending')
+            <div class="bg-red-50 border border-red-100 rounded-xl p-3 flex justify-between items-center"
+                 x-data="{
+                     endTime: new Date('{{ $order->created_at->addHours(24)->toIso8601String() }}').getTime(),
+                     timeLeft: '',
+                     init() {
+                         this.updateTimer();
+                         setInterval(() => this.updateTimer(), 1000);
+                     },
+                     updateTimer() {
+                         let now = new Date().getTime();
+                         let distance = this.endTime - now;
+                         if (distance < 0) {
+                             this.timeLeft = '00:00:00';
+                             return;
+                         }
+                         let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                         let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                         let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                         this.timeLeft = hours.toString().padStart(2, '0') + ':' + 
+                                         minutes.toString().padStart(2, '0') + ':' + 
+                                         seconds.toString().padStart(2, '0');
+                     }
+                 }">
+                <span class="text-xs font-bold text-red-700 uppercase">Sisa Waktu Bayar</span>
+                <span class="text-sm font-extrabold text-red-700 font-mono" x-text="timeLeft"></span>
+            </div>
+        @endif
+    </div>
+
+    <!-- Info Kurir / Resi -->
+    <div class="bg-white dark:bg-gray-900 border-y border-gray-100 dark:border-gray-800 p-4 mb-2">
+        <div class="flex items-center gap-3 mb-2">
+            <i class="ph-fill ph-truck text-brand-500 text-xl"></i>
+            <h3 class="text-sm font-bold text-gray-900 dark:text-white">Info Pengiriman</h3>
+        </div>
+        <div class="ml-8">
+            <p class="text-sm text-gray-900 dark:text-white font-medium uppercase">{{ $order->courier ?? 'Standard Shipping' }}</p>
             @if($order->tracking_no && !str_starts_with($order->tracking_no, 'ORD-'))
-                <div class="bg-brand-50 border border-brand-200 rounded-3xl p-6 shadow-sm relative overflow-hidden">
-                    <div class="absolute -right-4 -bottom-4 w-24 h-24 text-brand-500/10">
-                        <i class="ph-fill ph-truck text-9xl"></i>
+                <div class="flex items-center justify-between mt-1" x-data="{ copied: false }">
+                    <p class="text-sm text-gray-500 font-mono">{{ $order->tracking_no }}</p>
+                    <button @click="navigator.clipboard.writeText('{{ $order->tracking_no }}'); copied = true; setTimeout(() => copied = false, 2000)" 
+                            class="text-brand-600 text-xs font-bold flex items-center gap-1">
+                        <span x-text="copied ? 'Tersalin' : 'SALIN'"></span>
+                        <i class="ph-bold" :class="copied ? 'ph-check' : 'ph-copy'"></i>
+                    </button>
+                </div>
+            @else
+                <p class="text-sm text-gray-500 mt-1">Resi belum tersedia</p>
+            @endif
+        </div>
+    </div>
+
+    <!-- Detail Produk -->
+    <div class="bg-white dark:bg-gray-900 border-y border-gray-100 dark:border-gray-800 p-4 mb-2">
+        <div class="flex items-center gap-2 mb-4">
+            <i class="ph-fill ph-storefront text-gray-500 text-lg"></i>
+            <h3 class="text-sm font-bold text-gray-900 dark:text-white">Detail Produk</h3>
+        </div>
+
+        <div class="space-y-4">
+            @foreach($order->items as $item)
+                <div class="flex gap-3 items-start">
+                    <!-- Image -->
+                    <div class="w-16 h-16 bg-gray-50 dark:bg-[#121212] rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden flex-shrink-0">
+                        @if($item->product->primaryImage)
+                            <img src="{{ $item->product->first_image_url }}" class="w-full h-full object-cover">
+                        @else
+                            <i class="ph ph-image text-gray-300 w-full h-full flex items-center justify-center text-xl"></i>
+                        @endif
                     </div>
-                    <h2 class="text-sm font-bold text-brand-800 uppercase tracking-wider mb-2 relative z-10">{{ __('Tracking Information') }}</h2>
-                    <div class="font-bold text-gray-900 dark:text-gray-100 text-xl mb-4 relative z-10">{{ $order->tracking_no }}</div>
-                    <a href="{{ route('dashboard.orders.track', $order->id) }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl transition-all shadow-sm relative z-10 text-sm">
-                        <i class="ph-bold ph-map-pin"></i> {{ __('Track Package') }}
-                    </a>
+                    <!-- Info -->
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-sm font-bold text-gray-900 dark:text-white truncate mb-1">{{ $item->product->name }}</h4>
+                        @if($item->variant)
+                            <p class="text-xs text-gray-500 mb-1">{{ $item->variant->name }}: {{ $item->variant->value }}</p>
+                        @endif
+                        <p class="text-xs text-gray-500">{{ $item->qty }} x RM {{ number_format($item->price, 2) }}</p>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pb-4 {{ !$loop->last ? 'border-b border-gray-50 dark:border-gray-800' : '' }}">
+                    <p class="text-sm font-extrabold text-gray-900 dark:text-white mt-1">RM {{ number_format($item->price * $item->qty, 2) }}</p>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+    <!-- Info Pesanan & Pembayaran -->
+    <div class="bg-white dark:bg-gray-900 border-y border-gray-100 dark:border-gray-800 p-4 mb-2">
+        <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-4">Rincian Pembayaran</h3>
+        
+        <div class="space-y-2 text-sm">
+            <div class="flex justify-between text-gray-500">
+                <span>Total Harga ({{ $order->items->sum('qty') }} barang)</span>
+                <span>RM {{ number_format($order->total - $order->shipping_cost - $order->tax_amount + ($order->voucher_id ? (\App\Models\Voucher::find($order->voucher_id)?->value ?? 0) : 0), 2) }}</span>
+            </div>
+            <div class="flex justify-between text-gray-500">
+                <span>Total Ongkos Kirim</span>
+                <span>RM {{ number_format($order->shipping_cost, 2) }}</span>
+            </div>
+            @if($order->tax_amount > 0)
+                <div class="flex justify-between text-gray-500">
+                    <span>Pajak (Tax)</span>
+                    <span>RM {{ number_format($order->tax_amount, 2) }}</span>
                 </div>
             @endif
-
-            <!-- General Info -->
-            <div class="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm p-6">
-                <h2 class="text-sm font-bold text-gray-400 dark:text-gray-600 uppercase tracking-wider mb-4">{{ __('Order Info') }}</h2>
-                <div class="space-y-4">
-                    <div>
-                        <div class="text-xs text-gray-500 dark:text-gray-500 mb-1">{{ __('Order Number') }}</div>
-                        <div class="font-bold text-gray-900 dark:text-gray-100">{{ $order->order_number }}</div>
-                    </div>
-                    <div>
-                        <div class="text-xs text-gray-500 dark:text-gray-500 mb-1">{{ __('Order Date') }}</div>
-                        <div class="font-bold text-gray-900 dark:text-gray-100">{{ $order->created_at->format('d M Y, H:i') }}</div>
-                    </div>
+            @if($order->voucher_id)
+                <div class="flex justify-between text-emerald-600">
+                    <span>Diskon Voucher</span>
+                    <span>- RM {{ number_format(\App\Models\Voucher::find($order->voucher_id)?->value ?? 0, 2) }}</span>
                 </div>
+            @endif
+        </div>
+        
+        <div class="my-4 border-t border-dashed border-gray-200 dark:border-gray-700"></div>
+        
+        <div class="flex justify-between items-center">
+            <span class="text-sm font-bold text-gray-900 dark:text-white">Total Belanja</span>
+            <span class="text-lg font-extrabold text-gray-900 dark:text-white">RM {{ number_format($order->total, 2) }}</span>
+        </div>
+    </div>
+
+    <!-- Invoice Details -->
+    <div class="bg-white dark:bg-gray-900 border-y border-gray-100 dark:border-gray-800 p-4 mb-2" x-data="{ copied: false }">
+        <div class="flex justify-between items-center mb-3">
+            <span class="text-sm text-gray-500">No. Invoice</span>
+            <div class="flex items-center gap-2">
+                <span class="text-sm font-bold text-brand-600">{{ $order->order_number }}</span>
+                <button @click="navigator.clipboard.writeText('{{ $order->order_number }}'); copied = true; setTimeout(() => copied = false, 2000)" class="text-brand-600 hover:text-brand-700">
+                    <i class="ph-bold" :class="copied ? 'ph-check' : 'ph-copy'"></i>
+                </button>
             </div>
-
-            <!-- Shipping Details -->
-            <div class="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm p-6">
-                <h2 class="text-sm font-bold text-gray-400 dark:text-gray-600 uppercase tracking-wider mb-4">{{ __('Shipping Details') }}</h2>
-                
-                <div class="mb-4">
-                    <div class="text-xs text-gray-500 dark:text-gray-500 mb-1">{{ __('Courier') }}</div>
-                    <div class="font-bold text-gray-900 dark:text-gray-100 uppercase">
-                        {{ $order->courier ? strtoupper($order->courier) : __('Standard Shipping') }}
-                    </div>
-                </div>
-
-                <div>
-                    <div class="text-xs text-gray-500 dark:text-gray-500 mb-1">{{ __('Shipping Address') }}</div>
-                    <div class="text-sm text-gray-800 dark:text-gray-200 leading-relaxed font-medium">
-                        {{ $order->guest_name }}<br>
-                        {{ $order->guest_phone }}<br>
-                        {{ $order->guest_address }}<br>
-                        {{ $order->guest_city }}, {{ $order->guest_state }} {{ $order->guest_postcode }}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Payment Details -->
-            <div class="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm p-6">
-                <h2 class="text-sm font-bold text-gray-400 dark:text-gray-600 uppercase tracking-wider mb-4">{{ __('Payment Details') }}</h2>
-                <div class="space-y-4">
-                    <div>
-                        <div class="text-xs text-gray-500 dark:text-gray-500 mb-1">{{ __('Method') }}</div>
-                        <div class="font-bold text-gray-900 dark:text-gray-100 capitalize flex items-center gap-2">
-                            <i class="ph-fill ph-credit-card text-brand-500 text-lg"></i> 
-                            {{ str_replace('_', ' ', $order->payment->method ?? 'N/A') }}
-                        </div>
-                    </div>
-                    <div>
-                        <div class="text-xs text-gray-500 dark:text-gray-500 mb-1">{{ __('Payment Status') }}</div>
-                        <span class="px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider
-                            {{ optional($order->payment)->status === 'pending' ? 'bg-amber-100 text-amber-700' : '' }}
-                            {{ optional($order->payment)->status === 'paid' ? 'bg-emerald-100 text-emerald-700' : '' }}
-                            {{ optional($order->payment)->status === 'failed' || optional($order->payment)->status === 'cancelled' ? 'bg-red-100 text-red-700' : '' }}
-                        ">
-                            {{ __(optional($order->payment)->status ?? 'Unknown') }}
-                        </span>
-                    </div>
-                </div>
-                
-                @if(optional($order->payment)->method === 'manual_transfer' && optional($order->payment)->status === 'pending' && $order->status !== 'cancelled')
-                    <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-                        <a href="{{ route('checkout.success', $order->id) }}" class="block w-full py-2.5 bg-brand-50 text-brand-600 hover:bg-brand-100 font-bold rounded-xl text-center transition-colors text-sm">
-                            {{ __('Upload Bukti Transfer') }}
-                        </a>
-                    </div>
+        </div>
+        <div class="flex justify-between items-center mb-3">
+            <span class="text-sm text-gray-500">Tanggal Pembelian</span>
+            <span class="text-sm text-gray-900 dark:text-white font-medium">{{ $order->created_at->format('d M Y, H:i') }}</span>
+        </div>
+        <div class="flex justify-between items-start">
+            <span class="text-sm text-gray-500">Metode Pembayaran</span>
+            <span class="text-sm text-gray-900 dark:text-white font-medium capitalize text-right">
+                {{ str_replace('_', ' ', $order->payment->method ?? 'N/A') }}
+                @if(optional($order->payment)->status === 'paid')
+                    <span class="block text-xs text-emerald-500 mt-0.5">Lunas</span>
                 @endif
-            </div>
+            </span>
+        </div>
+    </div>
+
+    <!-- Sticky Bottom Navigation Bar (Tokopedia Style) -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-3 px-4 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <div class="max-w-lg mx-auto flex gap-3 items-center">
+            
+            @if($order->status === 'pending' && optional($order->payment)->method === 'manual_transfer')
+                <div class="flex-1">
+                    <p class="text-[10px] text-gray-500 uppercase font-bold">Total Tagihan</p>
+                    <p class="text-sm font-extrabold text-brand-600">RM {{ number_format($order->total, 2) }}</p>
+                </div>
+                <a href="{{ route('checkout.success', $order->id) }}" class="flex-[1.5] py-2.5 bg-brand-500 text-white font-bold rounded-xl text-center text-sm active:scale-95 transition-transform shadow-sm shadow-brand-500/20">
+                    Bayar Sekarang
+                </a>
+            @elseif(in_array($order->status, ['shipped', 'delivered']))
+                <button wire:click="completeOrder" wire:confirm="Yakin pesanan sudah diterima?" class="flex-[1.5] py-2.5 bg-brand-500 text-white font-bold rounded-xl text-center text-sm active:scale-95 transition-transform shadow-sm shadow-brand-500/20">
+                    Selesai & Beri Ulasan
+                </button>
+            @else
+                <button class="flex-1 py-2.5 border border-brand-500 text-brand-600 font-bold rounded-xl text-center text-sm active:scale-95 transition-transform bg-brand-50 dark:bg-transparent">
+                    Beli Lagi
+                </button>
+            @endif
 
         </div>
     </div>

@@ -1,80 +1,114 @@
-<div>
-    <h1 class="text-2xl font-extrabold text-gray-900 dark:text-gray-100 mb-6">{{ __('My Orders') }}</h1>
+<div class="bg-gray-50 dark:bg-[#121212] min-h-screen pb-20">
+    <!-- Header -->
+    <div class="bg-white dark:bg-gray-900 sticky top-0 z-30 border-b border-gray-100 dark:border-gray-800 shadow-sm">
+        <div class="px-4 py-3 flex items-center justify-between">
+            <h1 class="text-xl font-extrabold text-gray-900 dark:text-white">{{ __('Daftar Pesanan') }}</h1>
+            <a href="{{ route('dashboard') }}" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-brand-600">
+                <i class="ph-bold ph-x text-xl"></i>
+            </a>
+        </div>
+        
+        <!-- Sliding Tabs (Pill Style) -->
+        <!-- Future: Implement filtering using Livewire component state -->
+        <div class="px-4 py-3 overflow-x-auto no-scrollbar flex items-center gap-2">
+            <button class="whitespace-nowrap px-4 py-1.5 bg-brand-500 text-white font-bold rounded-full text-sm border border-brand-500 shadow-sm shadow-brand-500/20">Semua</button>
+            <button class="whitespace-nowrap px-4 py-1.5 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 font-bold rounded-full text-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 transition-colors">Berlangsung</button>
+            <button class="whitespace-nowrap px-4 py-1.5 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 font-bold rounded-full text-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 transition-colors">Selesai</button>
+            <button class="whitespace-nowrap px-4 py-1.5 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 font-bold rounded-full text-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 transition-colors">Dibatalkan</button>
+        </div>
+    </div>
 
-    <div class="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+    <div class="max-w-3xl mx-auto px-0 sm:px-4 mt-2 sm:mt-6">
         @if($orders->isEmpty())
-            <div class="p-16 text-center">
+            <div class="p-16 text-center bg-white dark:bg-gray-900 rounded-none sm:rounded-3xl border-y sm:border border-gray-100 dark:border-gray-800">
                 <div class="w-24 h-24 bg-gray-50 dark:bg-[#121212] rounded-full flex items-center justify-center text-gray-300 mx-auto mb-6">
                     <i class="ph ph-package text-5xl"></i>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ __('No orders found') }}</h3>
-                <p class="text-gray-500 dark:text-gray-500 mb-6 max-w-sm mx-auto">{{ __('You have not placed any orders yet. Once you do, you can track their status here.') }}</p>
-                <a href="{{ route('products.index') }}" class="inline-block px-8 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-full transition-all shadow-lg shadow-brand-500/30 transform hover:-translate-y-0.5">{{ __('Start Shopping') }}</a>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ __('Belum ada pesanan') }}</h3>
+                <p class="text-gray-500 dark:text-gray-500 mb-6 max-w-sm mx-auto text-sm">{{ __('Mulai belanja dan nikmati berbagai promo menarik dari kami.') }}</p>
+                <a href="{{ route('products.index') }}" class="inline-block px-8 py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-brand-500/30 text-sm">{{ __('Mulai Belanja') }}</a>
             </div>
         @else
-            <div class="divide-y divide-gray-100 dark:divide-gray-800">
+            <div class="flex flex-col gap-3">
                 @foreach($orders as $order)
-                <div class="p-6 sm:p-8">
-                    <div class="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6 pb-6 border-b border-gray-50">
-                        <div>
-                            <div class="flex items-center gap-3 mb-1">
-                                <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ $order->order_number }}</h3>
-                                <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider
-                                    {{ $order->status === 'pending' ? 'bg-amber-100 text-amber-700' : '' }}
-                                    {{ $order->status === 'processing' ? 'bg-blue-100 text-blue-700' : '' }}
-                                    {{ $order->status === 'completed' || $order->status === 'delivered' ? 'bg-emerald-100 text-emerald-700' : '' }}
-                                    {{ $order->status === 'cancelled' ? 'bg-red-100 text-red-700' : '' }}
-                                ">
-                                    {{ __($order->status) }}
-                                </span>
-                                <a href="{{ route('dashboard.orders.show', $order->id) }}" class="ml-2 px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-xs font-bold uppercase hover:bg-gray-200 transition-colors">
-                                    <i class="ph-bold ph-eye mr-1"></i> Detail
-                                </a>
-                                @if($order->tracking_no && !str_starts_with($order->tracking_no, 'ORD-'))
-                                    <a href="{{ route('dashboard.orders.track', $order->id) }}" class="ml-1 px-3 py-1 bg-brand-50 text-brand-600 rounded-full text-xs font-bold uppercase hover:bg-brand-100 transition-colors">
-                                        <i class="ph-bold ph-map-pin mr-1"></i> Track
-                                    </a>
-                                @endif
-                            </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-500">{{ $order->created_at->format('d M Y, H:i') }} &bull; {{ $order->items->sum('qty') }} {{ __('items') }}</div>
+                <!-- Tokopedia Style Order Card -->
+                <div class="bg-white dark:bg-gray-900 rounded-none sm:rounded-2xl border-y sm:border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+                    
+                    <!-- Card Header -->
+                    <div class="px-4 py-3 flex items-center justify-between border-b border-gray-50 dark:border-gray-800">
+                        <div class="flex items-center gap-2">
+                            <i class="ph-fill ph-storefront text-gray-400 text-lg"></i>
+                            <span class="text-xs font-bold text-gray-900 dark:text-white">Belanja &bull; {{ $order->created_at->format('d M Y') }}</span>
                         </div>
-                        <div class="text-left sm:text-right w-full sm:w-auto">
-                            <div class="text-sm text-gray-500 dark:text-gray-500 mb-1">{{ __('Total Amount') }}</div>
-                            <div class="text-xl font-extrabold text-brand-600">RM {{ number_format($order->total, 2) }}</div>
-                        </div>
+                        <span class="px-2.5 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wide
+                            {{ $order->status === 'pending' ? 'bg-amber-100 text-amber-700' : '' }}
+                            {{ $order->status === 'processing' ? 'bg-blue-100 text-blue-700' : '' }}
+                            {{ in_array($order->status, ['completed', 'delivered', 'shipped', 'paid']) ? 'bg-emerald-100 text-emerald-700' : '' }}
+                            {{ $order->status === 'cancelled' ? 'bg-red-100 text-red-700' : '' }}
+                        ">
+                            {{ __($order->status) }}
+                        </span>
                     </div>
 
-                    <div class="space-y-4">
-                        @foreach($order->items as $item)
-                        <div class="flex gap-4 items-center">
-                            <div class="w-16 h-16 bg-gray-50 dark:bg-[#121212] rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden flex-shrink-0">
-                                @if($item->product->primaryImage)
-                                    <img src="{{ $item->product->first_image_url }}" class="w-full h-full object-cover">
-                                @else
-                                    <i class="ph ph-image text-gray-300 w-full h-full flex items-center justify-center text-xl"></i>
-                                @endif
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="text-sm font-bold text-gray-900 dark:text-gray-100 truncate">{{ $item->product->name }}</h4>
-                                <div class="text-sm text-gray-500 dark:text-gray-500 mt-0.5">
-                                    {{ __('Qty') }}: {{ $item->qty }} 
-                                    @if($item->variant)
-                                        | {{ $item->variant->name }}: {{ $item->variant->value }}
+                    <!-- Card Body -->
+                    <a href="{{ route('dashboard.orders.show', $order->id) }}" class="block px-4 py-3 hover:bg-gray-50 dark:hover:bg-[#121212]/50 transition-colors">
+                        @php $firstItem = $order->items->first(); @endphp
+                        @if($firstItem)
+                            <div class="flex gap-3">
+                                <!-- Product Image -->
+                                <div class="w-16 h-16 bg-gray-50 dark:bg-[#121212] rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden flex-shrink-0">
+                                    @if($firstItem->product->primaryImage)
+                                        <img src="{{ $firstItem->product->first_image_url }}" class="w-full h-full object-cover">
+                                    @else
+                                        <i class="ph ph-image text-gray-300 w-full h-full flex items-center justify-center text-xl"></i>
                                     @endif
                                 </div>
+                                <!-- Product Info -->
+                                <div class="flex-1 min-w-0 flex flex-col justify-center">
+                                    <h4 class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ $firstItem->product->name }}</h4>
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        {{ $firstItem->qty }} barang
+                                        @if($order->items->count() > 1)
+                                            &bull; +{{ $order->items->count() - 1 }} produk lainnya
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
-                            <div class="text-sm font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">
-                                RM {{ number_format($item->price * $item->qty, 2) }}
-                            </div>
+                        @endif
+                    </a>
+
+                    <!-- Card Footer -->
+                    <div class="px-4 py-3 border-t border-gray-50 dark:border-gray-800 flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] text-gray-500 font-medium">{{ __('Total Belanja') }}</p>
+                            <p class="text-sm font-extrabold text-gray-900 dark:text-white">RM {{ number_format($order->total, 2) }}</p>
                         </div>
-                        @endforeach
+                        <div class="flex items-center gap-2">
+                            <!-- Action Buttons Based on Status -->
+                            @if($order->status === 'pending' && optional($order->payment)->method === 'manual_transfer')
+                                <a href="{{ route('checkout.success', $order->id) }}" class="px-4 py-1.5 bg-brand-500 text-white text-xs font-bold rounded-full shadow-sm shadow-brand-500/20 active:scale-95 transition-transform">
+                                    Bayar Sekarang
+                                </a>
+                            @elseif($order->tracking_no && !str_starts_with($order->tracking_no, 'ORD-'))
+                                <a href="{{ route('dashboard.orders.track', $order->id) }}" class="px-4 py-1.5 border border-brand-500 text-brand-600 dark:text-brand-400 bg-brand-50/50 dark:bg-brand-500/10 text-xs font-bold rounded-full active:scale-95 transition-transform">
+                                    Lacak
+                                </a>
+                            @else
+                                <a href="{{ route('dashboard.orders.show', $order->id) }}" class="px-4 py-1.5 bg-brand-500 text-white text-xs font-bold rounded-full shadow-sm shadow-brand-500/20 active:scale-95 transition-transform">
+                                    Beli Lagi
+                                </a>
+                            @endif
+                            <button class="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                                <i class="ph-bold ph-dots-three text-lg"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 @endforeach
             </div>
             
             @if($orders->hasPages())
-            <div class="p-6 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-[#121212]/50">
+            <div class="mt-6 flex justify-center">
                 {{ $orders->links() }}
             </div>
             @endif
