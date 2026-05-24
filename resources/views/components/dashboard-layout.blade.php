@@ -3,15 +3,15 @@
 @section('title', __('User Dashboard'))
 
 @section('content')
-<div class="bg-gray-50 min-h-screen py-10">
-    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+<div class="bg-gray-50 min-h-screen py-0 md:py-10">
+    <div class="max-w-[1440px] mx-auto px-0 md:px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col lg:flex-row gap-8">
             
             <!-- Sidebar -->
             <aside class="w-full lg:w-72 flex-shrink-0 mb-6 lg:mb-0">
-                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden sticky top-28">
+                <div class="bg-white rounded-none md:rounded-3xl border-b md:border border-gray-100 shadow-sm overflow-hidden sticky top-0 md:top-28 z-30">
                     <!-- User Profile Header -->
-                    <div class="p-6 bg-gradient-to-br from-brand-50 to-white border-b border-gray-100 flex items-center gap-4">
+                    <div class="p-4 md:p-6 bg-gradient-to-br from-brand-50 to-white border-b border-gray-100 flex items-center gap-4">
                         <div class="w-14 h-14 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center font-bold text-xl overflow-hidden shadow-inner">
                             <img src="{{ auth()->user()->avatar_url }}" alt="Avatar" class="w-full h-full object-cover">
                         </div>

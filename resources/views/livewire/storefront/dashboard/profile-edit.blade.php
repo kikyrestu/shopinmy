@@ -1,18 +1,18 @@
-<div class="max-w-4xl space-y-8 pb-10">
+<div class="max-w-4xl space-y-4 md:space-y-8 pb-20 md:pb-10">
     <!-- Header -->
-    <div>
+    <div class="px-4 md:px-0">
         <h1 class="text-3xl font-extrabold text-gray-900">{{ __('My Profile') }}</h1>
         <p class="mt-2 text-sm text-gray-500">{{ __('Manage your personal information and security settings.') }}</p>
     </div>
 
     <!-- Personal Information Card -->
-    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="p-6 sm:p-8 border-b border-gray-100 bg-gray-50/50">
+    <div class="bg-white rounded-none md:rounded-3xl border-y md:border border-gray-100 shadow-sm overflow-hidden">
+        <div class="p-4 md:p-6 sm:p-8 border-b border-gray-100 bg-gray-50/50">
             <h2 class="text-xl font-bold text-gray-900">{{ __('Personal Information') }}</h2>
             <p class="mt-1 text-sm text-gray-500">{{ __('Update your photo and personal details here.') }}</p>
         </div>
         
-        <div class="p-6 sm:p-8">
+        <div class="p-4 md:p-6 sm:p-8">
             <!-- Flash Message -->
             @if (session('profile-updated'))
                 <div class="mb-6 bg-emerald-50 text-emerald-700 p-4 rounded-xl text-sm font-medium border border-emerald-100 flex items-center gap-3">
@@ -96,13 +96,13 @@
 
     <!-- Security Information Card (Only for Manual Users) -->
     @if(!$isGoogleUser)
-    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden mt-8">
-        <div class="p-6 sm:p-8 border-b border-gray-100 bg-gray-50/50">
+    <div class="bg-white rounded-none md:rounded-3xl border-y md:border border-gray-100 shadow-sm overflow-hidden mt-4 md:mt-8">
+        <div class="p-4 md:p-6 sm:p-8 border-b border-gray-100 bg-gray-50/50">
             <h2 class="text-xl font-bold text-gray-900">{{ __('Security & Password') }}</h2>
             <p class="mt-1 text-sm text-gray-500">{{ __('Ensure your account is using a long, random password to stay secure.') }}</p>
         </div>
         
-        <div class="p-6 sm:p-8">
+        <div class="p-4 md:p-6 sm:p-8">
             @if (session('password-updated'))
                 <div class="mb-6 bg-emerald-50 text-emerald-700 p-4 rounded-xl text-sm font-medium border border-emerald-100 flex items-center gap-3">
                     <i class="ph-bold ph-shield-check text-lg"></i>

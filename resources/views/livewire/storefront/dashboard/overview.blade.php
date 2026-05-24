@@ -1,7 +1,7 @@
 <div>
-    <h1 class="text-2xl font-extrabold text-gray-900 mb-6">{{ __('Account Overview') }}</h1>
+    <h1 class="text-2xl font-extrabold text-gray-900 mb-6 px-4 md:px-0">{{ __('Account Overview') }}</h1>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 px-4 md:px-0">
         <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
             <div class="flex items-center gap-4 mb-4">
                 <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center">
@@ -42,7 +42,7 @@
         </div>
     </div>
 
-    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-none md:rounded-3xl border-y md:border border-gray-100 shadow-sm overflow-hidden pb-safe">
         <div class="p-6 border-b border-gray-100 flex items-center justify-between">
             <h2 class="text-lg font-bold text-gray-900">{{ __('Recent Orders') }}</h2>
             <a href="{{ route('dashboard.orders') }}" class="text-brand-600 hover:text-brand-700 font-semibold text-sm">{{ __('View All') }}</a>
