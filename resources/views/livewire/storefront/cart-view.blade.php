@@ -299,7 +299,6 @@
                     {{ __('Beli') }} ({{ count($selectedItems) }})
                 </button>
             </div>
-            </div>
         </div>
     </div>
 
