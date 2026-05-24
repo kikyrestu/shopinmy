@@ -14,11 +14,17 @@ class PaymentVerification extends Component
     public function mount()
     {
         // Security check: Only Admins
-        abort_unless(
-            auth()->check() && (auth()->user()->hasRole('super_admin') || auth()->user()->hasRole('admin')),
-            403,
-            'Anda tidak memiliki akses ke halaman ini.'
+        $user = auth()->user();
+        
+        $hasAdminAccess = $user && (
+            $user->hasRole('Super Admin') || 
+            $user->hasRole('super_admin') || 
+            $user->hasRole('Admin') || 
+            $user->hasRole('admin') ||
+            $user->id === 1 // Fallback for root user
         );
+
+        abort_unless($hasAdminAccess, 403, 'Anda tidak memiliki akses ke halaman ini.');
     }
 
     public function approve($paymentId)
