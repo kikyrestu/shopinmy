@@ -73,6 +73,32 @@ class OrderDetail extends Component
         }
     }
 
+    public function completeOrder()
+    {
+        if (!in_array($this->order->status, ['shipped', 'delivered'])) {
+            session()->flash('error', __('Only shipped orders can be completed.'));
+            return;
+        }
+
+        try {
+            DB::transaction(function () {
+                $order = Order::lockForUpdate()->find($this->order->id);
+                
+                if (!in_array($order->status, ['shipped', 'delivered'])) {
+                    throw new \Exception(__('Order status has changed.'));
+                }
+
+                $order->update(['status' => 'completed']);
+            });
+
+            session()->flash('success', __('Pesanan berhasil diselesaikan. Terima kasih telah berbelanja!'));
+            $this->order->refresh();
+
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage());
+        }
+    }
+
     public function render()
     {
         return view('livewire.storefront.dashboard.order-detail')

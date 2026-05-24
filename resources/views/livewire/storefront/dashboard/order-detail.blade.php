@@ -14,6 +14,14 @@
                 <i class="ph-bold ph-x"></i> {{ __('Batalkan Pesanan') }}
             </button>
         @endif
+        
+        @if(in_array($order->status, ['shipped', 'delivered']))
+            <button wire:click="completeOrder" 
+                    wire:confirm="{{ __('Apakah Anda yakin barang sudah diterima dengan baik? Transaksi akan diselesaikan.') }}"
+                    class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl transition-colors shadow-sm flex items-center gap-2">
+                <i class="ph-bold ph-check-circle"></i> {{ __('Selesaikan Pesanan') }}
+            </button>
+        @endif
     </div>
 
     @if (session()->has('success'))
@@ -28,6 +36,93 @@
             <i class="ph-fill ph-warning-circle text-xl"></i>
             {{ session('error') }}
         </div>
+    @endif
+
+    <!-- Tokopedia Style Countdown Timer -->
+    @if($order->status === 'pending')
+    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row justify-between sm:items-center gap-4" 
+         x-data="{
+             endTime: new Date('{{ $order->created_at->addHours(24)->toIso8601String() }}').getTime(),
+             timeLeft: '',
+             init() {
+                 this.updateTimer();
+                 setInterval(() => this.updateTimer(), 1000);
+             },
+             updateTimer() {
+                 let now = new Date().getTime();
+                 let distance = this.endTime - now;
+                 if (distance < 0) {
+                     this.timeLeft = '00:00:00';
+                     return;
+                 }
+                 let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                 let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                 let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                 this.timeLeft = hours.toString().padStart(2, '0') + ':' + 
+                                 minutes.toString().padStart(2, '0') + ':' + 
+                                 seconds.toString().padStart(2, '0');
+             }
+         }">
+        <div>
+            <p class="text-xs font-bold text-red-700 dark:text-red-400 uppercase tracking-wider mb-1">{{ __('Batas Waktu Pembayaran') }}</p>
+            <div class="text-2xl font-black font-mono tracking-widest text-red-600 dark:text-red-500" x-text="timeLeft"></div>
+        </div>
+        <div>
+            <span class="text-sm text-red-600/80 dark:text-red-400/80 font-medium">{{ __('Segera selesaikan pembayaran Anda sebelum waktu habis.') }}</span>
+        </div>
+    </div>
+    @endif
+
+    <!-- Tokopedia Style Stepper -->
+    @if($order->status !== 'cancelled')
+    <div class="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm p-6 mb-6">
+        <div class="relative max-w-3xl mx-auto mt-2 mb-2">
+            @php
+                $steps = ['pending' => 1, 'processing' => 2, 'shipped' => 3, 'delivered' => 3, 'completed' => 4];
+                $currentStep = $steps[$order->status] ?? 1;
+                $progressWidth = ($currentStep - 1) * 33.33;
+            @endphp
+            
+            <!-- Progress Line Background -->
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-100 dark:bg-gray-800 rounded-full"></div>
+            <!-- Progress Line Active -->
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-brand-500 rounded-full transition-all duration-1000" style="width: {{ $progressWidth }}%;"></div>
+            
+            <div class="relative z-10 flex justify-between">
+                <!-- Step 1: Belum Bayar -->
+                <div class="flex flex-col items-center">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center transition-colors {{ $currentStep >= 1 ? 'bg-brand-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-400' }}">
+                        <i class="ph-bold ph-wallet text-sm"></i>
+                    </div>
+                    <span class="text-[10px] sm:text-xs font-bold mt-2 {{ $currentStep >= 1 ? 'text-brand-600 dark:text-brand-400' : 'text-gray-400 dark:text-gray-500' }}">{{ __('Belum Bayar') }}</span>
+                </div>
+                
+                <!-- Step 2: Dikemas -->
+                <div class="flex flex-col items-center">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center transition-colors {{ $currentStep >= 2 ? 'bg-brand-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-400' }}">
+                        <i class="ph-bold ph-package text-sm"></i>
+                    </div>
+                    <span class="text-[10px] sm:text-xs font-bold mt-2 {{ $currentStep >= 2 ? 'text-brand-600 dark:text-brand-400' : 'text-gray-400 dark:text-gray-500' }}">{{ __('Dikemas') }}</span>
+                </div>
+                
+                <!-- Step 3: Dikirim -->
+                <div class="flex flex-col items-center">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center transition-colors {{ $currentStep >= 3 ? 'bg-brand-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-400' }}">
+                        <i class="ph-bold ph-truck text-sm"></i>
+                    </div>
+                    <span class="text-[10px] sm:text-xs font-bold mt-2 {{ $currentStep >= 3 ? 'text-brand-600 dark:text-brand-400' : 'text-gray-400 dark:text-gray-500' }}">{{ __('Dikirim') }}</span>
+                </div>
+                
+                <!-- Step 4: Selesai -->
+                <div class="flex flex-col items-center">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center transition-colors {{ $currentStep >= 4 ? 'bg-emerald-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-400' }}">
+                        <i class="ph-bold ph-check text-sm"></i>
+                    </div>
+                    <span class="text-[10px] sm:text-xs font-bold mt-2 {{ $currentStep >= 4 ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500' }}">{{ __('Selesai') }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
     @endif
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
