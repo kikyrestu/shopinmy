@@ -210,7 +210,7 @@ class ProductDetail extends Component
         if (!auth()->check()) return false;
 
         return \App\Models\Order::where('user_id', auth()->id())
-            ->where('status', 'completed')
+            ->whereIn('status', ['completed', 'delivered'])
             ->whereHas('items', function ($query) {
                 $query->where('product_id', $this->product->id);
             })->exists();
@@ -243,7 +243,7 @@ class ProductDetail extends Component
         }
 
         $completedOrder = \App\Models\Order::where('user_id', auth()->id())
-            ->where('status', 'completed')
+            ->whereIn('status', ['completed', 'delivered'])
             ->whereHas('items', function ($query) {
                 $query->where('product_id', $this->product->id);
             })->latest()->first();
