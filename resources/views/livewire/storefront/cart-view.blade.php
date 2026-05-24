@@ -111,11 +111,11 @@
                                             @if($hasDiscount)
                                                 <span class="bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 text-[9px] px-1 rounded mr-1">Hemat</span>
                                             @endif
-                                            Rp{{ number_format($price, 0, ',', '.') }}
+                                            RM{{ number_format($price, 2) }}
                                         </div>
                                         @if($hasDiscount)
                                         <div class="flex items-center gap-1 mt-0.5">
-                                            <span class="text-[10px] text-gray-400 dark:text-gray-500 line-through">Rp{{ number_format($basePrice, 0, ',', '.') }}</span>
+                                            <span class="text-[10px] text-gray-400 dark:text-gray-500 line-through">RM{{ number_format($basePrice, 2) }}</span>
                                             <span class="text-[10px] text-rose-500 font-bold">{{ $discountPercent }}%</span>
                                         </div>
                                         @endif
@@ -143,7 +143,7 @@
                             @if(\App\Models\Setting::isEnabled('free_shipping_enabled', true))
                             <li class="px-4 py-2 bg-emerald-50/50 dark:bg-emerald-900/10 flex items-center gap-2 border-t border-dashed border-gray-100 dark:border-gray-800">
                                 <i class="ph-fill ph-truck text-emerald-600 text-lg"></i>
-                                <span class="text-[11px] font-medium text-gray-900 dark:text-gray-300">Kamu dapat s.d. <span class="font-bold">Rp{{ number_format(\App\Models\Setting::get('free_shipping_discount_amount', 10000), 0, ',', '.') }}</span> Gratis Ongkir!</span>
+                                <span class="text-[11px] font-medium text-gray-900 dark:text-gray-300">Kamu dapat s.d. <span class="font-bold">RM{{ number_format(\App\Models\Setting::get('free_shipping_discount_amount', 10), 2) }}</span> Gratis Ongkir!</span>
                             </li>
                             @endif
                         @endforeach
@@ -159,7 +159,7 @@
                     <div class="space-y-4 text-sm mb-6">
                         <div class="flex justify-between items-center text-gray-600 dark:text-gray-400 font-medium">
                             <span>{{ __('Subtotal') }}</span>
-                            <span class="text-gray-900 dark:text-gray-100 font-bold">Rp{{ number_format($subtotal, 0, ',', '.') }}</span>
+                            <span class="text-gray-900 dark:text-gray-100 font-bold">RM{{ number_format($subtotal, 2) }}</span>
                         </div>
                         <div class="flex justify-between items-center text-gray-600 dark:text-gray-400 font-medium pb-4 border-b border-gray-100 dark:border-gray-800">
                             <span>{{ __('Shipping') }}</span>
@@ -167,7 +167,7 @@
                         </div>
                         <div class="flex justify-between items-end pt-2">
                             <span class="text-base font-bold text-gray-900 dark:text-gray-100">{{ __('Estimated Total') }}</span>
-                            <span class="text-2xl font-extrabold text-brand-600">Rp{{ number_format($subtotal, 0, ',', '.') }}</span>
+                            <span class="text-2xl font-extrabold text-brand-600">RM{{ number_format($subtotal, 2) }}</span>
                         </div>
                     </div>
 
@@ -217,7 +217,7 @@
                             @endif
                             <h3 class="text-xs font-medium text-gray-800 dark:text-gray-200 line-clamp-2 leading-snug">{{ $product->name }}</h3>
                             <div class="mt-1 font-extrabold text-brand-600 dark:text-rose-500 text-sm">
-                                Rp{{ number_format($product->price, 0, ',', '.') }}
+                                RM{{ number_format($product->price, 2) }}
                             </div>
                         </div>
                         <div class="mt-2 text-[10px] text-gray-500 dark:text-gray-500 flex items-center gap-1">
@@ -278,9 +278,9 @@
             </div>
             <div class="flex items-center gap-3">
                 <div class="text-right">
-                    <div class="text-[15px] font-extrabold text-gray-900 dark:text-gray-100 leading-none">Rp{{ number_format($subtotal, 0, ',', '.') }} <i class="ph-fill ph-ticket text-rose-500 text-[10px]"></i></div>
+                    <div class="text-[15px] font-extrabold text-gray-900 dark:text-gray-100 leading-none">RM{{ number_format($subtotal, 2) }} <i class="ph-fill ph-ticket text-rose-500 text-[10px]"></i></div>
                     <div class="text-[9px] text-gray-500 dark:text-gray-400 flex items-center gap-1 justify-end mt-1">
-                        Total Diskon <span class="text-rose-500 font-bold">Rp{{ number_format($totalDiscount, 0, ',', '.') }}</span> <i class="ph-bold ph-caret-down text-gray-400"></i>
+                        Total Diskon <span class="text-rose-500 font-bold">RM{{ number_format($totalDiscount, 2) }}</span> <i class="ph-bold ph-caret-down text-gray-400"></i>
                     </div>
                 </div>
                 <button wire:click="proceedToCheckout" class="px-5 py-2 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-sm active:scale-95 transition-transform flex-shrink-0">
