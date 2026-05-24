@@ -42,29 +42,57 @@
             <a href="{{ route('dashboard.orders') }}" class="text-xs font-bold text-brand-600">{{ __('Lihat Semua') }}</a>
         </div>
         <div class="grid grid-cols-4 md:grid-cols-5 gap-2">
-            <a href="{{ route('dashboard.orders') }}" class="flex flex-col items-center justify-start gap-2 group text-center">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-gray-50 dark:bg-[#121212] text-gray-600 dark:text-gray-400 rounded-2xl flex items-center justify-center group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors">
-                    <i class="ph ph-wallet text-2xl"></i>
+            <a href="{{ route('dashboard.orders', ['status' => 'pending']) }}" class="flex flex-col items-center justify-start gap-2 group text-center relative">
+                <div class="relative">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-gray-50 dark:bg-[#121212] text-gray-600 dark:text-gray-400 rounded-2xl flex items-center justify-center group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors">
+                        <i class="ph ph-wallet text-2xl"></i>
+                    </div>
+                    @if($pendingCount > 0)
+                        <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white dark:border-gray-900 shadow-sm leading-none">
+                            {{ $pendingCount > 99 ? '99+' : $pendingCount }}
+                        </span>
+                    @endif
                 </div>
                 <span class="text-[10px] md:text-xs font-medium text-gray-600 dark:text-gray-400">{{ __('Belum Bayar') }}</span>
             </a>
-            <a href="{{ route('dashboard.orders') }}" class="flex flex-col items-center justify-start gap-2 group text-center">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-gray-50 dark:bg-[#121212] text-gray-600 dark:text-gray-400 rounded-2xl flex items-center justify-center group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors">
-                    <i class="ph ph-package text-2xl"></i>
+            <a href="{{ route('dashboard.orders', ['status' => 'processing']) }}" class="flex flex-col items-center justify-start gap-2 group text-center relative">
+                <div class="relative">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-gray-50 dark:bg-[#121212] text-gray-600 dark:text-gray-400 rounded-2xl flex items-center justify-center group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors">
+                        <i class="ph ph-package text-2xl"></i>
+                    </div>
+                    @if($processingCount > 0)
+                        <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white dark:border-gray-900 shadow-sm leading-none">
+                            {{ $processingCount > 99 ? '99+' : $processingCount }}
+                        </span>
+                    @endif
                 </div>
                 <span class="text-[10px] md:text-xs font-medium text-gray-600 dark:text-gray-400">{{ __('Diproses') }}</span>
             </a>
-            <a href="{{ route('dashboard.orders') }}" class="flex flex-col items-center justify-start gap-2 group text-center">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-gray-50 dark:bg-[#121212] text-gray-600 dark:text-gray-400 rounded-2xl flex items-center justify-center group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors">
-                    <i class="ph ph-truck text-2xl"></i>
+            <a href="{{ route('dashboard.orders', ['status' => 'shipped']) }}" class="flex flex-col items-center justify-start gap-2 group text-center relative">
+                <div class="relative">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-gray-50 dark:bg-[#121212] text-gray-600 dark:text-gray-400 rounded-2xl flex items-center justify-center group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors">
+                        <i class="ph ph-truck text-2xl"></i>
+                    </div>
+                    @if($shippedCount > 0)
+                        <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white dark:border-gray-900 shadow-sm leading-none">
+                            {{ $shippedCount > 99 ? '99+' : $shippedCount }}
+                        </span>
+                    @endif
                 </div>
                 <span class="text-[10px] md:text-xs font-medium text-gray-600 dark:text-gray-400">{{ __('Dikirim') }}</span>
             </a>
-            <a href="{{ route('dashboard.orders') }}" class="flex flex-col items-center justify-start gap-2 group text-center">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-gray-50 dark:bg-[#121212] text-gray-600 dark:text-gray-400 rounded-2xl flex items-center justify-center group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors">
-                    <i class="ph ph-star text-2xl"></i>
+            <a href="{{ route('dashboard.orders', ['status' => 'completed']) }}" class="flex flex-col items-center justify-start gap-2 group text-center relative">
+                <div class="relative">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-gray-50 dark:bg-[#121212] text-gray-600 dark:text-gray-400 rounded-2xl flex items-center justify-center group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors">
+                        <i class="ph ph-star text-2xl"></i>
+                    </div>
+                    @if($completedCount > 0)
+                        <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white dark:border-gray-900 shadow-sm leading-none">
+                            {{ $completedCount > 99 ? '99+' : $completedCount }}
+                        </span>
+                    @endif
                 </div>
-                <span class="text-[10px] md:text-xs font-medium text-gray-600 dark:text-gray-400">{{ __('Ulasan') }}</span>
+                <span class="text-[10px] md:text-xs font-medium text-gray-600 dark:text-gray-400">{{ __('Selesai/Ulasan') }}</span>
             </a>
             <a href="{{ route('dashboard.loyalty') }}" class="hidden md:flex flex-col items-center justify-start gap-2 group text-center">
                 <div class="w-12 h-12 bg-gray-50 dark:bg-[#121212] text-amber-500 rounded-2xl flex items-center justify-center group-hover:bg-amber-50 transition-colors">

@@ -513,5 +513,64 @@
             }, { passive: true });
         });
     </script>
+
+    <!-- Global iOS-Style Toast Notification -->
+    <div x-data="{ 
+            show: false, 
+            message: '', 
+            type: 'success', 
+            timeout: null,
+            init() {
+                window.addEventListener('notify', (event) => {
+                    this.message = event.detail.message || event.detail[0].message;
+                    this.type = event.detail.type || event.detail[0].type || 'success';
+                    
+                    this.show = true;
+                    
+                    if (this.timeout) {
+                        clearTimeout(this.timeout);
+                    }
+                    
+                    this.timeout = setTimeout(() => {
+                        this.show = false;
+                    }, 3000);
+                });
+            }
+        }" 
+        x-show="show" 
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 -translate-y-10 scale-95"
+        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+        x-transition:leave-end="opacity-0 -translate-y-10 scale-95"
+        class="fixed top-6 left-1/2 transform -translate-x-1/2 z-[100] flex items-center gap-3 px-5 py-3 rounded-full shadow-2xl backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border border-white/40 dark:border-gray-800/60 pointer-events-none"
+        style="display: none;"
+    >
+        <!-- Dynamic Icon based on Type -->
+        <template x-if="type === 'success'">
+            <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 flex-shrink-0 animate-[spin_0.5s_ease-out]">
+                <i class="ph-bold ph-check text-sm"></i>
+            </div>
+        </template>
+        <template x-if="type === 'error'">
+            <div class="w-8 h-8 rounded-full bg-rose-500 flex items-center justify-center text-white shadow-lg shadow-rose-500/30 flex-shrink-0 animate-[shake_0.5s_ease-in-out]">
+                <i class="ph-bold ph-x text-sm"></i>
+            </div>
+        </template>
+        <template x-if="type === 'warning'">
+            <div class="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-white shadow-lg shadow-amber-500/30 flex-shrink-0 animate-[pulse_1s_ease-in-out_infinite]">
+                <i class="ph-bold ph-warning text-sm"></i>
+            </div>
+        </template>
+        <template x-if="type === 'info'">
+            <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 flex-shrink-0">
+                <i class="ph-bold ph-info text-sm"></i>
+            </div>
+        </template>
+
+        <!-- Message -->
+        <span x-text="message" class="text-sm font-bold text-gray-800 dark:text-gray-100 whitespace-nowrap"></span>
+    </div>
 </body>
 </html>

@@ -51,7 +51,7 @@ class UploadReceipt extends Component
             // Reset upload field
             $this->receiptImage = null;
             
-            session()->flash('receipt-uploaded', __('Bukti transfer berhasil diunggah! Mohon tunggu verifikasi admin.'));
+            $this->dispatch('notify', message: __('Bukti transfer berhasil diunggah! Mohon tunggu verifikasi admin.'), type: 'success');
             
             // Refresh order
             $this->order->refresh();
