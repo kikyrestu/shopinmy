@@ -1,9 +1,35 @@
 <div>
     @section('title', __('Shopping Cart'))
 
-    <div class="bg-gray-50 dark:bg-[#121212] py-6 border-b border-gray-100 dark:border-gray-800">
+    <!-- MOBILE NATIVE HEADER (Tokopedia Style) -->
+    <div class="md:hidden sticky top-0 z-50 bg-white dark:bg-[#121212] border-b border-gray-100 dark:border-gray-800 pb-2 pt-2">
+        <!-- Top row: Back, Title, Icons -->
+        <div class="flex items-center justify-between px-4 h-12">
+            <div class="flex items-center gap-4">
+                <a href="{{ url()->previous() }}" class="text-gray-900 dark:text-gray-100">
+                    <i class="ph ph-arrow-left text-2xl"></i>
+                </a>
+                <h1 class="text-lg font-extrabold text-gray-900 dark:text-gray-100">{{ __('Keranjang') }}</h1>
+            </div>
+            <div class="flex items-center gap-4 text-gray-900 dark:text-gray-100">
+                <i class="ph ph-chat-teardrop text-2xl"></i>
+                <i class="ph ph-heart text-2xl"></i>
+                <i class="ph ph-list text-2xl"></i>
+            </div>
+        </div>
+        <!-- Sub row: "1 produk terpilih" and "Hapus" -->
+        <div class="flex items-center justify-between px-4 mt-1">
+            <div class="text-sm text-gray-900 dark:text-gray-100 font-medium">
+                {{ $cart ? $cart->items->count() : 0 }} {{ __('produk terpilih') }}
+            </div>
+            <button class="text-brand-500 font-bold text-sm hover:text-brand-600 transition-colors">{{ __('Hapus') }}</button>
+        </div>
+    </div>
+
+    <!-- DESKTOP HEADER (Hidden on mobile) -->
+    <div class="hidden md:block bg-gray-50 dark:bg-[#121212] py-6 border-b border-gray-100 dark:border-gray-800">
         <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-            <nav class="flex text-sm text-gray-500 dark:text-gray-500 font-medium">
+            <nav class="flex text-sm text-gray-500 dark:text-gray-400 font-medium">
                 <ol class="flex items-center space-x-2">
                     <li><a href="{{ route('home') }}" class="hover:text-brand-600 transition-colors">{{ __('Home') }}</a></li>
                     <li><span class="mx-2">/</span></li>
@@ -13,85 +39,121 @@
         </div>
     </div>
 
-    <main class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-6 md:mb-8 ">{{ __('Shopping Cart') }}</h1>
+    <main class="max-w-[1440px] mx-auto md:px-4 sm:px-6 lg:px-8 py-0 md:py-10 pb-40 md:pb-10 bg-gray-50 dark:bg-[#121212] md:bg-transparent">
+        <h1 class="hidden md:block text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-6 md:mb-8">{{ __('Shopping Cart') }}</h1>
 
         @if($cart && $cart->items->count() > 0)
         <div class="flex flex-col lg:flex-row gap-8">
             <!-- Left: Cart Items -->
             <div class="flex-1">
-                <div class="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
-                    <div class="p-6">
-                        <ul class="divide-y divide-gray-100 dark:divide-gray-800">
-                            @foreach($cart->items as $item)
-                                @php
-                                    // Bug-P01: Use effective_price instead of base price to match checkout
-                                    $price = $item->effective_price;
-                                @endphp
-                                <li class="py-6 flex flex-row gap-4 sm:gap-6 relative">
-                                    <div class="w-20 h-20 sm:w-28 sm:h-28 flex-shrink-0 bg-gray-50 dark:bg-[#121212] rounded-2xl overflow-hidden">
-                                        @if($item->product->primaryImage)
-                                            <img src="{{ $item->product->first_image_url }}" class="w-full h-full object-cover">
-                                        @else
-                                            <div class="w-full h-full flex items-center justify-center text-gray-300">
-                                                <i class="ph ph-image text-3xl"></i>
-                                            </div>
+                <!-- Group By Store -->
+                <div class="bg-white dark:bg-[#18181B] md:rounded-3xl border-y md:border border-gray-100 dark:border-gray-800 md:shadow-sm overflow-hidden mb-2">
+                    <!-- Store Header -->
+                    <div class="p-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
+                        <div class="flex items-center gap-3">
+                            <!-- Green Checkbox -->
+                            <div class="w-5 h-5 rounded flex items-center justify-center bg-brand-500 text-white flex-shrink-0">
+                                <i class="ph-bold ph-check text-xs"></i>
+                            </div>
+                            <span class="font-bold text-gray-900 dark:text-gray-100">{{ \App\Models\Setting::get('site_name', 'All motopart') }}</span>
+                        </div>
+                        <span class="text-[10px] font-extrabold text-brand-500 italic tracking-wider">{{ __('GRATIS ONGKIR') }}</span>
+                    </div>
+
+                    <!-- Items -->
+                    <ul class="divide-y divide-gray-100 dark:divide-gray-800">
+                        @foreach($cart->items as $item)
+                            @php
+                                $price = $item->effective_price;
+                                $basePrice = $item->product->price;
+                                $hasDiscount = $price < $basePrice;
+                                $discountPercent = $hasDiscount ? round((($basePrice - $price) / $basePrice) * 100) : 0;
+                            @endphp
+                            <li class="p-4 flex gap-3 relative">
+                                <!-- Checkbox -->
+                                <div class="pt-6">
+                                    <div class="w-5 h-5 rounded flex items-center justify-center bg-brand-500 text-white flex-shrink-0">
+                                        <i class="ph-bold ph-check text-xs"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Image -->
+                                <div class="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-gray-50 dark:bg-[#121212] rounded-xl overflow-hidden mt-1 border border-gray-100 dark:border-gray-800">
+                                    @if($item->product->primaryImage)
+                                        <img src="{{ $item->product->first_image_url }}" class="w-full h-full object-cover">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-600">
+                                            <i class="ph ph-image text-3xl"></i>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <!-- Content -->
+                                <div class="flex-1 flex flex-col justify-start">
+                                    <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2 leading-snug">
+                                        <a href="{{ route('product.show', $item->product->slug) }}">{{ $item->product->name }}</a>
+                                    </h3>
+                                    
+                                    @if($item->variant)
+                                    <p class="mt-0.5 text-xs text-gray-500 font-medium">{{ $item->variant->name }}: {{ $item->variant->value }}</p>
+                                    @endif
+
+                                    <div class="mt-1 flex items-center gap-1 text-[10px] text-amber-500 font-medium">
+                                        <i class="ph-fill ph-thumbs-up"></i> 100% pembeli merasa puas!
+                                    </div>
+
+                                    <div class="mt-1">
+                                        <div class="text-sm font-extrabold text-gray-900 dark:text-gray-100">
+                                            @if($hasDiscount)
+                                                <span class="bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 text-[9px] px-1 rounded mr-1">Hemat</span>
+                                            @endif
+                                            Rp{{ number_format($price, 0, ',', '.') }}
+                                        </div>
+                                        @if($hasDiscount)
+                                        <div class="flex items-center gap-1 mt-0.5">
+                                            <span class="text-[10px] text-gray-400 dark:text-gray-500 line-through">Rp{{ number_format($basePrice, 0, ',', '.') }}</span>
+                                            <span class="text-[10px] text-rose-500 font-bold">{{ $discountPercent }}%</span>
+                                        </div>
                                         @endif
                                     </div>
 
-                                    <div class="flex-1 flex flex-col justify-between">
-                                        <div>
-                                            <div class="flex justify-between items-start">
-                                                <h3 class="text-base font-bold text-gray-900 dark:text-gray-100 max-w-[80%]">
-                                                    <a href="{{ route('product.show', $item->product->slug) }}" class="hover:text-brand-600 transition-colors">{{ $item->product->name }}</a>
-                                                </h3>
-                                                <button wire:click="removeItem({{ $item->id }})" class="text-gray-400 dark:text-gray-600 hover:text-red-500 transition-colors p-2 -mr-2 -mt-2 rounded-full hover:bg-red-50">
-                                                    <i class="ph ph-trash text-lg"></i>
-                                                </button>
-                                            </div>
-                                            
-                                            @if($item->variant)
-                                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-500 font-medium">
-                                                {{ $item->variant->name }}: <span class="text-gray-900 dark:text-gray-100">{{ $item->variant->value }}</span>
-                                            </p>
-                                            @endif
-                                        </div>
-
-                                        <div class="flex items-end justify-between mt-4">
-                                            <!-- Quantity -->
-                                            <div class="flex items-center bg-gray-50 dark:bg-[#121212] rounded-xl border border-gray-100 dark:border-gray-800 p-1">
-                                                <button wire:click="decrement({{ $item->id }})" class="w-8 h-8 flex items-center justify-center text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:text-gray-100 hover:bg-white dark:bg-gray-900 rounded-lg transition-all disabled:opacity-50" {{ $item->qty <= 1 ? 'disabled' : '' }}>
-                                                    <i class="ph ph-minus font-bold text-xs"></i>
-                                                </button>
-                                                <div class="w-10 text-center font-bold text-sm text-gray-900 dark:text-gray-100">{{ $item->qty }}</div>
-                                                <button wire:click="increment({{ $item->id }})" class="w-8 h-8 flex items-center justify-center text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:text-gray-100 hover:bg-white dark:bg-gray-900 rounded-lg transition-all">
-                                                    <i class="ph ph-plus font-bold text-xs"></i>
-                                                </button>
-                                            </div>
-
-                                            <!-- Price -->
-                                            <div class="text-right">
-                                                <div class="text-sm text-gray-500 dark:text-gray-500 font-medium">RM {{ number_format($price, 2) }} / {{ __('item') }}</div>
-                                                <div class="text-lg font-bold text-gray-900 dark:text-gray-100">RM {{ number_format($price * $item->qty, 2) }}</div>
-                                            </div>
+                                    <div class="flex items-center justify-end gap-3 mt-2">
+                                        <!-- Trash Icon -->
+                                        <button wire:click="removeItem({{ $item->id }})" class="text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                                            <i class="ph ph-trash text-xl"></i>
+                                        </button>
+                                        
+                                        <!-- Quantity -->
+                                        <div class="flex items-center bg-white dark:bg-[#1A1A1A] rounded-full border border-gray-200 dark:border-gray-700 h-8 px-1">
+                                            <button wire:click="decrement({{ $item->id }})" class="w-6 h-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-brand-600 disabled:opacity-50" {{ $item->qty <= 1 ? 'disabled' : '' }}>
+                                                <i class="ph ph-minus text-xs"></i>
+                                            </button>
+                                            <div class="w-6 text-center font-bold text-sm text-gray-900 dark:text-gray-100">{{ $item->qty }}</div>
+                                            <button wire:click="increment({{ $item->id }})" class="w-6 h-full flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-brand-600">
+                                                <i class="ph ph-plus text-xs"></i>
+                                            </button>
                                         </div>
                                     </div>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
+                                </div>
+                            </li>
+                            <li class="px-4 py-2 bg-emerald-50/50 dark:bg-emerald-900/10 flex items-center gap-2 border-t border-dashed border-gray-100 dark:border-gray-800">
+                                <i class="ph-fill ph-truck text-emerald-600 text-lg"></i>
+                                <span class="text-[11px] font-medium text-gray-900 dark:text-gray-300">Kamu dapat s.d. <span class="font-bold">Rp10rb</span> Gratis Ongkir!</span>
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
             </div>
 
-            <!-- Right: Order Summary -->
-            <div class="w-full lg:w-96 flex-shrink-0">
-                <div class="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm sticky top-28">
+            <!-- Right: Order Summary (Desktop) -->
+            <div class="hidden lg:block w-96 flex-shrink-0">
+                <div class="bg-white dark:bg-[#18181B] rounded-3xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm sticky top-28">
                     <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">{{ __('Order Summary') }}</h2>
                     
                     <div class="space-y-4 text-sm mb-6">
                         <div class="flex justify-between items-center text-gray-600 dark:text-gray-400 font-medium">
                             <span>{{ __('Subtotal') }}</span>
-                            <span class="text-gray-900 dark:text-gray-100 font-bold">RM {{ number_format($subtotal, 2) }}</span>
+                            <span class="text-gray-900 dark:text-gray-100 font-bold">Rp{{ number_format($subtotal, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between items-center text-gray-600 dark:text-gray-400 font-medium pb-4 border-b border-gray-100 dark:border-gray-800">
                             <span>{{ __('Shipping') }}</span>
@@ -99,50 +161,63 @@
                         </div>
                         <div class="flex justify-between items-end pt-2">
                             <span class="text-base font-bold text-gray-900 dark:text-gray-100">{{ __('Estimated Total') }}</span>
-                            <span class="text-2xl font-extrabold text-brand-600">RM {{ number_format($subtotal, 2) }}</span>
+                            <span class="text-2xl font-extrabold text-brand-600">Rp{{ number_format($subtotal, 0, ',', '.') }}</span>
                         </div>
                     </div>
 
-                    <a href="{{ route('checkout.index') }}" class="hidden lg:flex w-full py-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-2xl items-center justify-center gap-2 transition-all shadow-lg shadow-brand-500/30 transform active:scale-95 text-lg">
+                    <a href="{{ route('checkout.index') }}" class="w-full py-4 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-brand-500/30 transform active:scale-95 text-lg">
                         {{ __('Proceed to Checkout') }} <i class="ph-bold ph-arrow-right"></i>
                     </a>
-
-                    <div class="mt-6 flex items-center justify-center gap-2 text-xs font-bold text-gray-400 dark:text-gray-600">
-                        <i class="ph-fill ph-lock-key"></i> {{ __('Secure Checkout') }}
-                    </div>
                 </div>
             </div>
         </div>
 
-        @if(count($recommendedProducts) > 0)
         <!-- Cross-Selling Recommendations -->
-        <section class="mt-8 md:mt-16 border-t border-gray-100 dark:border-gray-800 pt-8 md:pt-12 ">
-            <h2 class="text-xl md:text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-6 md:mb-8">{{ __('You may also like') }}</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-6">
+        @if(count($recommendedProducts) > 0)
+        <section class="mt-4 md:mt-16 bg-white dark:bg-[#18181B] md:bg-transparent pt-4 md:pt-12 md:border-t md:border-gray-100 md:dark:border-gray-800 px-4 md:px-0 pb-8">
+            <h2 class="text-[15px] md:text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-4">{{ __('Kamu sempat lihat-lihat ini') }}</h2>
+            
+            <!-- Horizontal scroll on mobile -->
+            <div class="flex md:grid md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 overflow-x-auto hide-scrollbar pb-4 -mx-4 px-4 md:mx-0 md:px-0">
                 @foreach($recommendedProducts as $product)
-                <!-- Product Card -->
-                <a href="{{ route('product.show', $product->slug) }}" class="product-card group bg-white dark:bg-gray-900 rounded-2xl p-3 border border-gray-100 dark:border-gray-800 flex flex-col relative h-full">
+                @php
+                    $hasDiscount = $product->price < $product->base_price;
+                    $discountPercent = $hasDiscount ? round((($product->base_price - $product->price) / $product->base_price) * 100) : 0;
+                @endphp
+                <!-- Product Card Tokopedia Style -->
+                <a href="{{ route('product.show', $product->slug) }}" class="flex-shrink-0 w-36 md:w-auto bg-white dark:bg-[#121212] rounded-xl border border-gray-200 dark:border-gray-800 flex flex-col relative overflow-hidden group shadow-sm">
                     <!-- Image Wrapper -->
-                    <div class="relative w-full aspect-square rounded-xl overflow-hidden bg-gray-50 dark:bg-[#121212] mb-4">
-                        <img src="{{ $product->first_image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="relative w-full aspect-square bg-gray-50 dark:bg-[#1A1A1A]">
+                        <img src="{{ $product->first_image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                        @if($hasDiscount)
+                        <div class="absolute top-0 right-0 bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-bl-lg">
+                            {{ $discountPercent }}%
+                        </div>
+                        @endif
+                        <div class="absolute bottom-0 left-0 bg-emerald-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-tr-lg flex items-center gap-0.5">
+                            <i class="ph-bold ph-truck"></i> GRATIS ONGKIR
+                        </div>
                     </div>
                     <!-- Content -->
-                    <div class="flex flex-col flex-1 justify-between">
+                    <div class="p-2 flex flex-col flex-1 justify-between">
                         <div>
-                            <h3 class="text-sm font-medium text-gray-800 dark:text-gray-200 line-clamp-2 leading-tight group-hover:text-brand-600 transition-colors">{{ $product->name }}</h3>
-                            <div class="mt-2.5 flex items-baseline gap-2">
-                                <span class="text-lg font-bold text-gray-900 dark:text-gray-100">RM {{ number_format($product->price, 2) }}</span>
+                            <div class="flex items-center gap-1 mb-1">
+                                <i class="ph-fill ph-check-circle text-emerald-500 text-[10px]"></i>
+                                <span class="text-[9px] text-emerald-600 font-bold">Power Badge</span>
+                            </div>
+                            <h3 class="text-xs font-medium text-gray-800 dark:text-gray-200 line-clamp-2 leading-snug">{{ $product->name }}</h3>
+                            <div class="mt-1 font-extrabold text-brand-600 dark:text-rose-500 text-sm">
+                                Rp{{ number_format($product->price, 0, ',', '.') }}
                             </div>
                         </div>
-                        <div class="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-500 font-medium">
-                            <div class="flex items-center gap-1">
-                                <i class="ph-fill ph-star text-amber-400 text-sm"></i>
-                                <span class="text-gray-700 dark:text-gray-300 font-bold">{{ number_format($product->reviews_avg_rating ?? 0, 1) }}</span>
-                                <span>| {{ $product->order_items_sum_qty ?? 0 }} {{ __('sold') }}</span>
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <i class="ph ph-map-pin"></i> Malaysia
-                            </div>
+                        <div class="mt-2 text-[10px] text-gray-500 dark:text-gray-500 flex items-center gap-1">
+                            <i class="ph-fill ph-star text-amber-400"></i>
+                            <span class="text-gray-700 dark:text-gray-300 font-bold">{{ number_format($product->reviews_avg_rating ?? 0, 1) }}</span>
+                            <span>| {{ $product->order_items_sum_qty ?? 0 }} terjual</span>
+                        </div>
+                        
+                        <div class="mt-2 md:hidden">
+                            <button class="w-full py-1.5 border border-brand-500 text-brand-500 font-bold text-xs rounded-lg">+ Keranjang</button>
                         </div>
                     </div>
                 </a>
@@ -150,30 +225,56 @@
             </div>
         </section>
         @endif
+        
         @else
         <!-- Empty Cart -->
-        <div class="bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 p-16 flex flex-col items-center justify-center text-center shadow-sm">
-            <div class="w-32 h-32 bg-gray-50 dark:bg-[#121212] rounded-full flex items-center justify-center text-gray-300 mb-8">
+        <div class="bg-white dark:bg-[#18181B] md:rounded-3xl border-b md:border border-gray-100 dark:border-gray-800 p-16 flex flex-col items-center justify-center text-center">
+            <div class="w-32 h-32 bg-gray-50 dark:bg-[#121212] rounded-full flex items-center justify-center text-gray-300 dark:text-gray-600 mb-8">
                 <i class="ph ph-shopping-cart-simple text-6xl"></i>
             </div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">{{ __('Your cart is empty') }}</h2>
-            <p class="text-gray-500 dark:text-gray-500 mb-8 max-w-sm">{{ __('Looks like you have not added anything to your cart yet.') }}</p>
-            <a href="{{ route('products.index') }}" class="px-8 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-full transition-all shadow-lg shadow-brand-500/30 transform hover:-translate-y-0.5">
+            <p class="text-gray-500 dark:text-gray-400 mb-8 max-w-sm">{{ __('Looks like you have not added anything to your cart yet.') }}</p>
+            <a href="{{ route('products.index') }}" class="px-8 py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-full transition-all shadow-lg shadow-brand-500/30">
                 {{ __('Continue Shopping') }}
             </a>
         </div>
         @endif
     </main>
+
     @if($cart && $cart->items->count() > 0)
-    <!-- Sticky Mobile CTA for Cart -->
-    <div class="fixed bottom-14 left-0 w-full bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 p-3 flex gap-3 z-40 md:hidden shadow-[0_-10px_20px_rgba(0,0,0,0.05)] pb-safe">
-        <div class="flex-1 flex flex-col justify-center pl-2">
-            <span class="text-[10px] text-gray-500 dark:text-gray-500 uppercase font-bold tracking-wider">{{ __('Total') }}</span>
-            <span class="text-base font-extrabold text-brand-600 leading-none">RM {{ number_format($subtotal, 2) }}</span>
+    <!-- Sticky Mobile CTA for Cart (Tokopedia Style) -->
+    <div class="fixed bottom-14 left-0 w-full bg-white dark:bg-[#1A1A1A] md:hidden z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.1)] pb-safe">
+        <!-- Promo Bar -->
+        <div class="border-t border-b border-gray-100 dark:border-gray-800 px-4 py-2 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="ph-fill ph-ticket text-brand-500 text-xl"></i>
+                <div class="flex gap-1">
+                    <span class="bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400 text-[10px] font-bold px-1.5 py-0.5 rounded border border-rose-200 dark:border-rose-800">-Rp65rb</span>
+                    <span class="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 text-[10px] font-bold px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">Gratis Ongkir</span>
+                </div>
+            </div>
+            <i class="ph-bold ph-caret-right text-gray-400 dark:text-gray-500"></i>
         </div>
-        <a href="{{ route('checkout.index') }}" class="flex-[1.5] bg-brand-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform text-sm">
-            {{ __('Checkout') }} ({{ $cart->items->sum('qty') }}) <i class="ph-bold ph-arrow-right"></i>
-        </a>
+        <!-- Checkout Bar -->
+        <div class="px-4 py-2 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <div class="w-5 h-5 rounded flex items-center justify-center bg-brand-500 text-white">
+                    <i class="ph-bold ph-check text-xs"></i>
+                </div>
+                <span class="text-sm text-gray-900 dark:text-gray-100 font-medium">Semua</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right">
+                    <div class="text-[15px] font-extrabold text-gray-900 dark:text-gray-100 leading-none">Rp{{ number_format($subtotal, 0, ',', '.') }} <i class="ph-fill ph-ticket text-rose-500 text-[10px]"></i></div>
+                    <div class="text-[9px] text-gray-500 dark:text-gray-400 flex items-center gap-1 justify-end mt-1">
+                        Total Diskon <span class="text-rose-500 font-bold">Rp75rb</span> <i class="ph-bold ph-caret-down text-gray-400"></i>
+                    </div>
+                </div>
+                <a href="{{ route('checkout.index') }}" class="px-5 py-2 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-sm active:scale-95 transition-transform flex-shrink-0">
+                    {{ __('Beli') }} ({{ $cart->items->sum('qty') }})
+                </a>
+            </div>
+        </div>
     </div>
     @endif
 </div>
