@@ -341,8 +341,8 @@
         </div>
     </div>
 
-    <!-- Sticky Mobile CTA (Tokopedia Style) -->
-    <div class="fixed bottom-0 left-0 w-full bg-white dark:bg-[#121212] border-t border-gray-100 dark:border-gray-800 p-3 flex items-center gap-2 z-50 md:hidden shadow-[0_-4px_10px_rgba(0,0,0,0.05)] dark:shadow-none pb-safe">
+    <!-- Mobile Sticky CTA -->
+    <div class="fixed left-0 w-full bg-white dark:bg-[#1A1A1A] border-t border-gray-100 dark:border-gray-800 p-3 flex items-center gap-2 z-40 md:hidden shadow-[0_-4px_10px_rgba(0,0,0,0.05)] dark:shadow-none" style="bottom: calc(3.5rem + env(safe-area-inset-bottom));">
         <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', \App\Models\Setting::get('whatsapp_number', '60123456789')) }}" class="w-[42px] h-[42px] flex-shrink-0 flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 bg-white dark:bg-[#121212]">
             <i class="ph-bold ph-chat-teardrop text-[22px]"></i>
         </a>
