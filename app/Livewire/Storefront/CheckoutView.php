@@ -64,6 +64,18 @@ class CheckoutView extends Component
             return redirect()->route('cart.index');
         }
 
+        // Filter by selected items from cart if any
+        if (session()->has('checkout_items')) {
+            $checkoutItems = session('checkout_items');
+            $this->cart->setRelation('items', $this->cart->items->filter(function($item) use ($checkoutItems) {
+                return in_array((string)$item->id, $checkoutItems) || in_array($item->id, $checkoutItems);
+            }));
+            
+            if ($this->cart->items->isEmpty()) {
+                return redirect()->route('cart.index');
+            }
+        }
+
         // Calculate subtotal
         foreach ($this->cart->items as $item) {
             $price = $item->effective_price;
@@ -313,6 +325,14 @@ class CheckoutView extends Component
         $this->cart = \App\Models\Cart::with(['items.product', 'items.variant'])
             ->where('id', $this->cart->id)->first();
             
+        // Filter by selected items again for safety
+        if (session()->has('checkout_items')) {
+            $checkoutItems = session('checkout_items');
+            $this->cart->setRelation('items', $this->cart->items->filter(function($item) use ($checkoutItems) {
+                return in_array((string)$item->id, $checkoutItems) || in_array($item->id, $checkoutItems);
+            }));
+        }
+
         if (!$this->cart || $this->cart->items->isEmpty()) {
             return redirect()->route('cart.index');
         }
@@ -456,8 +476,18 @@ class CheckoutView extends Component
                     'status' => 'pending', // Would be 'success' after gateway callback
                 ]);
 
-                // 4. Delete Cart
-                $this->cart->delete();
+                // 4. Delete processed items from Cart
+                if (session()->has('checkout_items')) {
+                    $this->cart->items()->whereIn('id', session('checkout_items'))->delete();
+                    session()->forget('checkout_items');
+                    
+                    // Delete cart if empty
+                    if ($this->cart->items()->count() === 0) {
+                        $this->cart->delete();
+                    }
+                } else {
+                    $this->cart->delete();
+                }
 
                 return $order;
             });

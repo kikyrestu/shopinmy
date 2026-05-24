@@ -20,9 +20,9 @@
         <!-- Sub row: "1 produk terpilih" and "Hapus" -->
         <div class="flex items-center justify-between px-4 mt-1">
             <div class="text-sm text-gray-900 dark:text-gray-100 font-medium">
-                {{ $cart ? $cart->items->count() : 0 }} {{ __('produk terpilih') }}
+                {{ count($selectedItems) }} {{ __('produk terpilih') }}
             </div>
-            <button class="text-brand-500 font-bold text-sm hover:text-brand-600 transition-colors">{{ __('Hapus') }}</button>
+            <button wire:click="removeSelectedItems" class="text-brand-500 font-bold text-sm hover:text-brand-600 transition-colors">{{ __('Hapus') }}</button>
         </div>
     </div>
 
@@ -52,10 +52,8 @@
                     <div class="p-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
                         <div class="flex items-center gap-3">
                             <!-- Green Checkbox -->
-                            <div class="w-5 h-5 rounded flex items-center justify-center bg-brand-500 text-white flex-shrink-0">
-                                <i class="ph-bold ph-check text-xs"></i>
-                            </div>
-                            <span class="font-bold text-gray-900 dark:text-gray-100">{{ \App\Models\Setting::get('site_name', 'All motopart') }}</span>
+                            <input type="checkbox" wire:model.live="selectAll" class="w-5 h-5 rounded text-brand-500 focus:ring-brand-500 border-gray-300 dark:border-gray-600 dark:bg-gray-800 cursor-pointer flex-shrink-0">
+                            <span class="font-bold text-gray-900 dark:text-gray-100">{{ \App\Models\Setting::get('site_name', 'Toko Utama') }}</span>
                         </div>
                         <span class="text-[10px] font-extrabold text-brand-500 italic tracking-wider">{{ __('GRATIS ONGKIR') }}</span>
                     </div>
@@ -71,10 +69,8 @@
                             @endphp
                             <li class="p-4 flex gap-3 relative">
                                 <!-- Checkbox -->
-                                <div class="pt-6">
-                                    <div class="w-5 h-5 rounded flex items-center justify-center bg-brand-500 text-white flex-shrink-0">
-                                        <i class="ph-bold ph-check text-xs"></i>
-                                    </div>
+                                <div class="pt-6 flex-shrink-0">
+                                    <input type="checkbox" wire:model.live="selectedItems" value="{{ $item->id }}" class="w-5 h-5 rounded text-brand-500 focus:ring-brand-500 border-gray-300 dark:border-gray-600 dark:bg-gray-800 cursor-pointer">
                                 </div>
                                 
                                 <!-- Image -->
@@ -98,9 +94,15 @@
                                     <p class="mt-0.5 text-xs text-gray-500 font-medium">{{ $item->variant->name }}: {{ $item->variant->value }}</p>
                                     @endif
 
+                                    @if($item->product->reviews_avg_rating >= 4.5)
                                     <div class="mt-1 flex items-center gap-1 text-[10px] text-amber-500 font-medium">
                                         <i class="ph-fill ph-thumbs-up"></i> 100% pembeli merasa puas!
                                     </div>
+                                    @elseif($item->product->reviews_avg_rating > 0)
+                                    <div class="mt-1 flex items-center gap-1 text-[10px] text-amber-500 font-medium">
+                                        <i class="ph-fill ph-star"></i> {{ number_format($item->product->reviews_avg_rating, 1) }} rating rata-rata
+                                    </div>
+                                    @endif
 
                                     <div class="mt-1">
                                         <div class="text-sm font-extrabold text-gray-900 dark:text-gray-100">
@@ -247,32 +249,35 @@
         <!-- Promo Bar -->
         <div class="border-t border-b border-gray-100 dark:border-gray-800 px-4 py-2 flex items-center justify-between">
             <div class="flex items-center gap-2">
+                @if($activeVoucher)
                 <i class="ph-fill ph-ticket text-brand-500 text-xl"></i>
                 <div class="flex gap-1">
-                    <span class="bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400 text-[10px] font-bold px-1.5 py-0.5 rounded border border-rose-200 dark:border-rose-800">-Rp65rb</span>
-                    <span class="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 text-[10px] font-bold px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">Gratis Ongkir</span>
+                    <span class="bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400 text-[10px] font-bold px-1.5 py-0.5 rounded border border-rose-200 dark:border-rose-800">{{ $activeVoucher->code }}</span>
+                    <span class="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 text-[10px] font-bold px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">Tersedia</span>
                 </div>
+                @else
+                <i class="ph-fill ph-ticket text-gray-400 text-xl"></i>
+                <div class="text-xs font-bold text-gray-600 dark:text-gray-400">Cek promo biar makin hemat!</div>
+                @endif
             </div>
             <i class="ph-bold ph-caret-right text-gray-400 dark:text-gray-500"></i>
         </div>
         <!-- Checkout Bar -->
         <div class="px-4 py-2 flex items-center justify-between gap-2">
             <div class="flex items-center gap-2 flex-shrink-0">
-                <div class="w-5 h-5 rounded flex items-center justify-center bg-brand-500 text-white">
-                    <i class="ph-bold ph-check text-xs"></i>
-                </div>
+                <input type="checkbox" wire:model.live="selectAll" class="w-5 h-5 rounded text-brand-500 focus:ring-brand-500 border-gray-300 dark:border-gray-600 dark:bg-gray-800 cursor-pointer">
                 <span class="text-sm text-gray-900 dark:text-gray-100 font-medium">Semua</span>
             </div>
             <div class="flex items-center gap-3">
                 <div class="text-right">
                     <div class="text-[15px] font-extrabold text-gray-900 dark:text-gray-100 leading-none">Rp{{ number_format($subtotal, 0, ',', '.') }} <i class="ph-fill ph-ticket text-rose-500 text-[10px]"></i></div>
                     <div class="text-[9px] text-gray-500 dark:text-gray-400 flex items-center gap-1 justify-end mt-1">
-                        Total Diskon <span class="text-rose-500 font-bold">Rp75rb</span> <i class="ph-bold ph-caret-down text-gray-400"></i>
+                        Total Diskon <span class="text-rose-500 font-bold">Rp{{ number_format($totalDiscount, 0, ',', '.') }}</span> <i class="ph-bold ph-caret-down text-gray-400"></i>
                     </div>
                 </div>
-                <a href="{{ route('checkout.index') }}" class="px-5 py-2 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-sm active:scale-95 transition-transform flex-shrink-0">
-                    {{ __('Beli') }} ({{ $cart->items->sum('qty') }})
-                </a>
+                <button wire:click="proceedToCheckout" class="px-5 py-2 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-sm active:scale-95 transition-transform flex-shrink-0">
+                    {{ __('Beli') }} ({{ count($selectedItems) }})
+                </button>
             </div>
         </div>
     </div>
