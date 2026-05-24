@@ -85,7 +85,7 @@
 
                 <!-- Right: Upload Form -->
                 <div>
-                    <form wire:submit="upload" class="h-full flex flex-col"
+                    <form wire:submit="submitProof" class="h-full flex flex-col"
                           x-data="{ isUploading: false, progress: 0 }"
                           x-on:livewire-upload-start="isUploading = true"
                           x-on:livewire-upload-finish="isUploading = false"
@@ -134,9 +134,9 @@
 
                         <button type="submit" class="mt-4 w-full py-3.5 bg-gray-900 hover:bg-black text-white font-bold rounded-xl transition-all shadow-lg transform active:scale-[0.98] text-sm flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                                 x-bind:disabled="isUploading"
-                                wire:loading.attr="disabled" wire:target="upload">
-                            <span wire:loading.remove wire:target="upload">{{ __('Kirim Bukti Pembayaran') }}</span>
-                            <span wire:loading wire:target="upload">
+                                wire:loading.attr="disabled" wire:target="submitProof">
+                            <span wire:loading.remove wire:target="submitProof">{{ __('Kirim Bukti Pembayaran') }}</span>
+                            <span wire:loading wire:target="submitProof">
                                 <i class="ph-bold ph-spinner animate-spin"></i> {{ __('Mengunggah...') }}
                             </span>
                         </button>

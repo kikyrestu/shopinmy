@@ -23,7 +23,7 @@ class UploadReceipt extends Component
         $this->bankAccounts = BankAccount::where('is_active', true)->orderBy('sort')->get();
     }
 
-    public function upload()
+    public function submitProof()
     {
         $validator = \Illuminate\Support\Facades\Validator::make(
             ['receiptImage' => $this->receiptImage],
