@@ -106,7 +106,7 @@
                                 <span class="text-gray-400 dark:text-gray-600 text-xs mt-1">{{ __('PNG, JPG, max 2MB') }}</span>
                             @endif
                             
-                            <input type="file" id="receipt-upload" wire:model="receiptImage" class="hidden" accept="image/*" required>
+                            <input type="file" id="receipt-upload" wire:model="receiptImage" class="hidden" accept="image/*">
                         </div>
                         
                         @error('receiptImage') 
