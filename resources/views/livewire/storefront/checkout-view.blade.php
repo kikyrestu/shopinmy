@@ -317,7 +317,7 @@
     </main>
 
     <!-- Sticky Mobile CTA for Checkout -->
-    <div class="fixed bottom-0 left-0 w-full bg-white dark:bg-[#121212] border-t border-gray-100 dark:border-gray-800 p-3 flex gap-3 z-50 lg:hidden shadow-[0_-4px_10px_rgba(0,0,0,0.05)] pb-safe">
+    <div class="fixed left-0 w-full bg-white dark:bg-[#121212] border-t border-gray-100 dark:border-gray-800 p-3 flex gap-3 z-50 lg:hidden shadow-[0_-4px_10px_rgba(0,0,0,0.05)]" style="bottom: calc(3.5rem + env(safe-area-inset-bottom));">
         <div class="flex-1 flex flex-col justify-center pl-2">
             <span class="text-[10px] text-gray-500 dark:text-gray-500 uppercase font-bold tracking-wider">{{ __('Total') }}</span>
             <span class="text-base font-extrabold text-brand-600 leading-none">RM {{ number_format($subtotal + $shippingCost + ((\App\Models\Setting::isEnabled('sst_enabled') ? (float) \App\Models\Setting::get('sst_rate', 0) : 0) * $subtotal / 100) - $discountAmount, 2) }}</span>
