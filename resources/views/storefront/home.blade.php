@@ -1,7 +1,7 @@
 @extends('layouts.storefront')
 
 @section('content')
-<main class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+<main class="max-w-[1440px] mx-auto px-0 md:px-4 py-0 md:py-8 space-y-6 md:space-y-12">
         
     <!-- HERO BANNER (Modern Gradient & 3D Vibe) -->
     @if(isset($banners) && $banners->count() > 0)
@@ -10,7 +10,7 @@
         @endphp
 
         @if($useCarousel)
-            <div class="swiper banner-swiper relative w-full rounded-[2rem] overflow-hidden group">
+            <div class="swiper banner-swiper relative w-full rounded-none md:rounded-[2rem] overflow-hidden group">
                 <div class="swiper-wrapper">
                     @foreach($banners as $mainBanner)
                         <div class="swiper-slide">
@@ -130,7 +130,7 @@
         @else
             <!-- Static Single Banner -->
             @php $mainBanner = $banners->first(); @endphp
-            <section class="relative w-full aspect-square md:aspect-auto md:h-[350px] lg:h-[400px] rounded-[2rem] overflow-hidden bg-gray-900 group">
+            <section class="relative w-full aspect-square md:aspect-auto md:h-[350px] lg:h-[400px] rounded-none md:rounded-[2rem] overflow-hidden bg-gray-900 group">
                 <!-- Dynamic Background -->
                 <div class="absolute inset-0 {{ $mainBanner->show_text_overlay ? 'bg-gray-900' : '' }} pointer-events-none">
                     @if($mainBanner->youtube_link)
@@ -202,7 +202,7 @@
 
     <!-- FLASH SALE SECTION -->
     @if(isset($activeFlashSale))
-    <section class="space-y-6 bg-gradient-to-br from-brand-600 to-brand-700 rounded-[2rem] p-6 md:p-8 text-white relative overflow-hidden">
+    <section class="space-y-6 bg-gradient-to-br from-brand-600 to-brand-700 rounded-none md:rounded-[2rem] p-4 md:p-8 text-white relative overflow-hidden">
         <!-- Abstract decorations -->
         <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px]"></div>
         
@@ -245,9 +245,9 @@
             </a>
         </div>
 
-        <div class="flex sm:grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 relative z-10 overflow-x-auto snap-inline hide-scrollbar -mx-6 px-6 sm:mx-0 sm:px-0 pb-4">
+        <div class="flex sm:grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4 relative z-10 overflow-x-auto snap-inline hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 pb-4">
             @foreach($activeFlashSale->products as $product)
-            <a href="{{ route('product.show', $product->slug) }}" class="snap-item w-[150px] flex-shrink-0 sm:w-auto group bg-white rounded-2xl p-3 flex flex-col relative h-full hover:-translate-y-1 transition-transform shadow-sm">
+            <a href="{{ route('product.show', $product->slug) }}" class="snap-item w-[140px] flex-shrink-0 sm:w-auto group bg-white rounded-lg md:rounded-2xl p-2 md:p-3 flex flex-col relative h-full hover:-translate-y-1 transition-transform shadow-sm">
                 <div class="absolute top-0 right-0 z-10 px-3 py-1 bg-accent-500 text-white text-[10px] font-bold rounded-bl-xl rounded-tr-2xl">
                     -{{ round((($product->price - $product->pivot->sale_price) / $product->price) * 100) }}%
                 </div>
@@ -313,7 +313,7 @@
 
     <!-- CATEGORY HIGHLIGHTS -->
     @if(isset($featuredCategories) && $featuredCategories->count() > 0)
-    <section class="space-y-6">
+    <section class="space-y-6 px-4 md:px-0">
         <div class="flex items-end justify-between">
             <div>
                 <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">{{ __('Shop by') }} <span class="text-brand-500">{{ __('Category') }}</span></h2>
@@ -356,7 +356,7 @@
     @endif
 
     <!-- PRODUCT SECTION: FOR YOU -->
-    <section class="space-y-6">
+    <section class="space-y-6 px-4 md:px-0 pb-6 md:pb-0">
         <!-- Section Header -->
         <div class="flex items-end justify-between">
             <div>
@@ -369,10 +369,10 @@
         </div>
 
         <!-- Product Grid -->
-        <div class="flex md:grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 overflow-x-auto snap-inline hide-scrollbar -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 pb-4">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-6 pb-4">
             @foreach($recommendedProducts as $product)
             <!-- Product Card -->
-            <a href="{{ route('product.show', $product->slug) }}" class="snap-item w-[160px] flex-shrink-0 md:w-auto product-card group bg-white rounded-2xl p-3 border border-gray-100 flex flex-col relative h-full">
+            <a href="{{ route('product.show', $product->slug) }}" class="product-card group bg-white rounded-lg md:rounded-2xl p-2 md:p-3 border border-gray-100 flex flex-col relative h-full">
                 @if($product->created_at->diffInDays(now()) < 7)
                 <div class="absolute top-5 left-5 z-10 px-2 py-1 bg-brand-500 text-white text-[10px] font-bold rounded-md uppercase tracking-wider">{{ __('New') }}</div>
                 @endif

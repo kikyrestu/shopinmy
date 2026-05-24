@@ -13,15 +13,15 @@
         </div>
     </div>
 
-    <main class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <h1 class="text-3xl font-extrabold text-gray-900 mb-8">{{ __('Secure Checkout') }}</h1>
+    <main class="max-w-[1440px] mx-auto px-0 md:px-4 sm:px-6 lg:px-8 py-4 md:py-10">
+        <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-6 md:mb-8 px-4 md:px-0">{{ __('Secure Checkout') }}</h1>
 
         <form wire:submit.prevent="placeOrder" class="flex flex-col lg:flex-row gap-8">
             <!-- Left: Checkout Forms -->
             <div class="flex-1 space-y-8">
                 
                 <!-- Contact Info -->
-                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-8">
+                <div class="bg-white rounded-none md:rounded-3xl border-y md:border border-gray-100 shadow-sm p-4 md:p-6 sm:p-8">
                     <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                         <i class="ph-fill ph-user text-brand-500"></i> {{ __('Contact Information') }}
                     </h2>
@@ -46,7 +46,7 @@
                 </div>
 
                 <!-- Shipping Address -->
-                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-8">
+                <div class="bg-white rounded-none md:rounded-3xl border-y md:border border-gray-100 shadow-sm p-4 md:p-6 sm:p-8">
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
                             <i class="ph-fill ph-map-pin text-brand-500"></i> {{ __('Shipping Address') }}
@@ -118,7 +118,7 @@
                 </div>
 
                 <!-- Shipping Courier -->
-                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-8">
+                <div class="bg-white rounded-none md:rounded-3xl border-y md:border border-gray-100 shadow-sm p-4 md:p-6 sm:p-8">
                     <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                         <i class="ph-fill ph-truck text-brand-500"></i> {{ __('Shipping Courier') }}
                     </h2>
@@ -153,7 +153,7 @@
                 </div>
 
                 <!-- Payment Method -->
-                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 sm:p-8">
+                <div class="bg-white rounded-none md:rounded-3xl border-y md:border border-gray-100 shadow-sm p-4 md:p-6 sm:p-8">
                     <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                         <i class="ph-fill ph-credit-card text-brand-500"></i> {{ __('Payment Method') }}
                     </h2>
@@ -211,7 +211,7 @@
 
             <!-- Right: Order Summary -->
             <div class="w-full lg:w-96 flex-shrink-0">
-                <div class="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm sticky top-28">
+                <div class="bg-white rounded-none md:rounded-3xl border-y md:border border-gray-100 p-4 md:p-6 shadow-sm sticky top-28">
                     <h2 class="text-lg font-bold text-gray-900 mb-6">{{ __('Order Summary') }}</h2>
                     
                     <ul class="space-y-4 mb-6">
@@ -309,7 +309,7 @@
     </main>
 
     <!-- Sticky Mobile CTA for Checkout -->
-    <div class="fixed bottom-16 left-0 w-full bg-white border-t border-gray-100 p-3 flex gap-3 z-40 lg:hidden shadow-[0_-10px_20px_rgba(0,0,0,0.05)] pb-safe">
+    <div class="fixed bottom-14 left-0 w-full bg-white border-t border-gray-100 p-3 flex gap-3 z-40 lg:hidden shadow-[0_-10px_20px_rgba(0,0,0,0.05)] pb-safe">
         <div class="flex-1 flex flex-col justify-center pl-2">
             <span class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">{{ __('Total') }}</span>
             <span class="text-base font-extrabold text-brand-600 leading-none">RM {{ number_format($subtotal + $shippingCost + ((\App\Models\Setting::isEnabled('sst_enabled') ? (float) \App\Models\Setting::get('sst_rate', 0) : 0) * $subtotal / 100) - $discountAmount, 2) }}</span>

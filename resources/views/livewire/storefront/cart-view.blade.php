@@ -13,15 +13,15 @@
         </div>
     </div>
 
-    <main class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <h1 class="text-3xl font-extrabold text-gray-900 mb-8">{{ __('Shopping Cart') }}</h1>
+    <main class="max-w-[1440px] mx-auto px-0 md:px-4 sm:px-6 lg:px-8 py-4 md:py-10">
+        <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-6 md:mb-8 px-4 md:px-0">{{ __('Shopping Cart') }}</h1>
 
         @if($cart && $cart->items->count() > 0)
         <div class="flex flex-col lg:flex-row gap-8">
             <!-- Left: Cart Items -->
             <div class="flex-1">
-                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-                    <div class="p-6">
+                <div class="bg-white rounded-none md:rounded-3xl border-y md:border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="p-4 md:p-6">
                         <ul class="divide-y divide-gray-100">
                             @foreach($cart->items as $item)
                                 @php
@@ -116,12 +116,12 @@
 
         @if(count($recommendedProducts) > 0)
         <!-- Cross-Selling Recommendations -->
-        <section class="mt-16 border-t border-gray-100 pt-12">
-            <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-8">{{ __('You may also like') }}</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+        <section class="mt-8 md:mt-16 border-t border-gray-100 pt-8 md:pt-12 px-4 md:px-0">
+            <h2 class="text-xl md:text-3xl font-extrabold text-gray-900 mb-6 md:mb-8">{{ __('You may also like') }}</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-6">
                 @foreach($recommendedProducts as $product)
                 <!-- Product Card -->
-                <a href="{{ route('product.show', $product->slug) }}" class="product-card group bg-white rounded-2xl p-3 border border-gray-100 flex flex-col relative h-full">
+                <a href="{{ route('product.show', $product->slug) }}" class="product-card group bg-white rounded-lg md:rounded-2xl p-2 md:p-3 border border-gray-100 flex flex-col relative h-full">
                     <!-- Image Wrapper -->
                     <div class="relative w-full aspect-square rounded-xl overflow-hidden bg-gray-50 mb-4">
                         <img src="{{ $product->first_image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -166,7 +166,7 @@
     </main>
     @if($cart && $cart->items->count() > 0)
     <!-- Sticky Mobile CTA for Cart -->
-    <div class="fixed bottom-16 left-0 w-full bg-white border-t border-gray-100 p-3 flex gap-3 z-40 md:hidden shadow-[0_-10px_20px_rgba(0,0,0,0.05)] pb-safe">
+    <div class="fixed bottom-14 left-0 w-full bg-white border-t border-gray-100 p-3 flex gap-3 z-40 md:hidden shadow-[0_-10px_20px_rgba(0,0,0,0.05)] pb-safe">
         <div class="flex-1 flex flex-col justify-center pl-2">
             <span class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">{{ __('Total') }}</span>
             <span class="text-base font-extrabold text-brand-600 leading-none">RM {{ number_format($subtotal, 2) }}</span>
