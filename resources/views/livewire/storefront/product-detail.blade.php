@@ -28,7 +28,7 @@
                         <i class="ph-bold ph-arrow-left text-lg"></i>
                     </a>
                     <div class="flex gap-3 pointer-events-auto">
-                        <button class="w-9 h-9 bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-sm shadow-sm"><i class="ph-bold ph-share-network text-lg"></i></button>
+                        <button onclick="if(navigator.share) { navigator.share({title: '{{ addslashes($product->name) }}', url: window.location.href}); } else { navigator.clipboard.writeText(window.location.href); window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'Link berhasil disalin!' } })); }" class="w-9 h-9 bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-sm shadow-sm"><i class="ph-bold ph-share-network text-lg"></i></button>
                         <a href="{{ route('cart.index') }}" class="w-9 h-9 bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-sm shadow-sm relative">
                             <i class="ph-bold ph-shopping-cart text-lg"></i>
                             <livewire:storefront.cart-badge />
@@ -89,7 +89,7 @@
                     <div class="flex items-center gap-1.5 bg-gray-50 dark:bg-[#121212] px-3 py-1 rounded-full">
                         <i class="ph-fill ph-star text-amber-400 text-base"></i>
                         <span class="font-bold text-gray-900 dark:text-gray-100">{{ number_format($product->reviews_avg_rating ?? 0, 1) }}</span>
-                        <span class="text-gray-500 dark:text-gray-500 underline cursor-pointer hover:text-brand-600">({{ $product->reviews_count }} {{ __('Reviews') }})</span>
+                        <span @click="activeTab = 'reviews'; document.getElementById('reviews-section').scrollIntoView({behavior: 'smooth'})" class="text-gray-500 dark:text-gray-500 underline cursor-pointer hover:text-brand-600">({{ $product->reviews_count }} {{ __('Reviews') }})</span>
                     </div>
                     <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
                     <div class="text-gray-600 dark:text-gray-400 font-medium">
@@ -195,7 +195,7 @@
             </div>
         </div>
 
-        <div class="mt-20" x-data="{ activeTab: 'description' }">
+        <div id="reviews-section" class="mt-20 px-4 md:px-0" x-data="{ activeTab: 'description' }">
             <div class="flex items-center gap-8 border-b border-gray-200 dark:border-gray-700 mb-8 overflow-x-auto hide-scrollbar">
                 <button @click="activeTab = 'description'" :class="activeTab === 'description' ? 'text-brand-600 border-brand-600' : 'text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:text-gray-100 border-transparent'" class="pb-4 font-bold border-b-2 transition-colors whitespace-nowrap">{{ __('Description') }}</button>
                 <button @click="activeTab = 'reviews'" :class="activeTab === 'reviews' ? 'text-brand-600 border-brand-600' : 'text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:text-gray-100 border-transparent'" class="pb-4 font-bold border-b-2 transition-colors whitespace-nowrap">{{ __('Reviews') }} ({{ $product->reviews_count }})</button>
@@ -330,16 +330,6 @@
         </div>
         @endif
     </main>
-
-    <!-- Notification Toast (Livewire) -->
-    <div x-data="{ show: false, message: '' }" 
-         x-on:notify.window="show = true; message = $event.detail.message; setTimeout(() => { show = false }, 3000)"
-         class="fixed bottom-24 right-5 z-50">
-        <div x-show="show" x-transition.opacity.duration.300ms class="bg-gray-900 text-white px-6 py-3 rounded-xl shadow-xl font-medium flex items-center gap-3">
-            <i class="ph-fill ph-check-circle text-emerald-400 text-xl"></i>
-            <span x-text="message"></span>
-        </div>
-    </div>
 
     <!-- Mobile Sticky CTA -->
     <div class="fixed left-0 w-full bg-white dark:bg-[#1A1A1A] border-t border-gray-100 dark:border-gray-800 p-3 flex items-center gap-2 z-40 md:hidden shadow-[0_-4px_10px_rgba(0,0,0,0.05)] dark:shadow-none" style="bottom: calc(3.5rem + env(safe-area-inset-bottom));">
