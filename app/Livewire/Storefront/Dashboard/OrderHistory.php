@@ -14,7 +14,8 @@ class OrderHistory extends Component
 
     public function render()
     {
-        $query = Order::where(function($q) {
+        $query = Order::with(['items.product.primaryImage', 'payment', 'reviews'])
+            ->where(function($q) {
                 $q->where('user_id', auth()->id())
                   ->orWhere(function($q2) {
                       $q2->whereNull('user_id')
@@ -30,9 +31,7 @@ class OrderHistory extends Component
             $query->where('status', 'cancelled');
         }
 
-        $orders = $query->with(['items.product'])
-            ->latest()
-            ->paginate(10);
+        $orders = $query->latest()->paginate(10);
 
         return view('livewire.storefront.dashboard.orders', compact('orders'))
             ->extends('components.dashboard-layout')

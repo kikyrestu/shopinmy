@@ -96,6 +96,19 @@
                                 <a href="{{ route('dashboard.orders.track', $order->id) }}" class="px-4 py-1.5 border border-brand-500 text-brand-600 dark:text-brand-400 bg-brand-50/50 dark:bg-brand-500/10 text-xs font-bold rounded-full active:scale-95 transition-transform">
                                     Lacak
                                 </a>
+                            @elseif(in_array($order->status, ['completed', 'delivered']))
+                                @if($order->reviews->count() === 0)
+                                    <a href="{{ route('dashboard.orders.review', $order->id) }}" class="px-4 py-1.5 bg-brand-500 text-white text-xs font-bold rounded-full shadow-sm shadow-brand-500/20 active:scale-95 transition-transform">
+                                        Beri Ulasan
+                                    </a>
+                                @else
+                                    <div class="flex items-center">
+                                        <span class="text-[10px] text-emerald-500 font-bold mr-2 flex items-center gap-1"><i class="ph-fill ph-check-circle"></i> Diulas</span>
+                                        <a href="{{ route('dashboard.orders.show', $order->id) }}" class="px-4 py-1.5 border border-brand-500 text-brand-600 dark:text-brand-400 bg-brand-50/50 dark:bg-brand-500/10 text-xs font-bold rounded-full active:scale-95 transition-transform">
+                                            Beli Lagi
+                                        </a>
+                                    </div>
+                                @endif
                             @else
                                 <a href="{{ route('dashboard.orders.show', $order->id) }}" class="px-4 py-1.5 bg-brand-500 text-white text-xs font-bold rounded-full shadow-sm shadow-brand-500/20 active:scale-95 transition-transform">
                                     Beli Lagi

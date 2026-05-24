@@ -54,6 +54,7 @@ Route::middleware(['auth'])->prefix('dashboard')->group(function () {
     Route::get('/orders', \App\Livewire\Storefront\Dashboard\OrderHistory::class)->name('dashboard.orders');
     Route::get('/orders/{order}', \App\Livewire\Storefront\Dashboard\OrderDetail::class)->name('dashboard.orders.show');
     Route::get('/orders/{order}/track', \App\Livewire\Storefront\Dashboard\TrackOrder::class)->name('dashboard.orders.track');
+    Route::get('/orders/{order}/review', \App\Livewire\Storefront\Dashboard\OrderReview::class)->name('dashboard.orders.review');
     Route::get('/addresses', \App\Livewire\Storefront\Dashboard\AddressBook::class)->name('dashboard.addresses');
     Route::get('/wishlist', \App\Livewire\Storefront\Dashboard\WishlistPage::class)->name('dashboard.wishlist');
     Route::get('/loyalty', \App\Livewire\Storefront\Dashboard\LoyaltyView::class)->name('dashboard.loyalty');
