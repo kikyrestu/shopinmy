@@ -57,6 +57,7 @@ class PaymentForm
                 Section::make('Manual Transfer Verification')->schema([
                     FileUpload::make('proof_image')
                         ->image()
+                        ->disk('public')
                         ->directory('payment-proofs')
                         ->label('Bukti Transfer')
                         ->columnSpanFull(),

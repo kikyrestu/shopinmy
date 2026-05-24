@@ -38,6 +38,7 @@ class PaymentsTable
                         default => 'primary',
                     }),
                 ImageColumn::make('proof_image')
+                    ->disk('public')
                     ->label('Bukti Transfer'),
                 TextColumn::make('verified_at')
                     ->dateTime()
