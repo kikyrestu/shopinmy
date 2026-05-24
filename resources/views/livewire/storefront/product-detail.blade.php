@@ -17,10 +17,25 @@
 
     <main class="max-w-[1440px] mx-auto px-0 md:px-4 sm:px-6 lg:px-8 py-0 md:py-10">
         <!-- Main Product Section -->
-        <div class="flex flex-col lg:flex-row gap-12 lg:gap-16">
+        <div class="flex flex-col lg:flex-row gap-12 lg:gap-16 relative">
             
             <!-- Left: Image Gallery -->
-            <div class="w-full lg:w-1/2 flex flex-col gap-4">
+            <div class="w-full lg:w-1/2 flex flex-col gap-4 relative">
+                
+                <!-- Floating Action Header (Mobile Only) -->
+                <div class="md:hidden absolute top-4 left-4 right-4 z-50 flex justify-between items-center pointer-events-none">
+                    <a href="{{ url()->previous() }}" class="w-9 h-9 bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-sm pointer-events-auto shadow-sm">
+                        <i class="ph-bold ph-arrow-left text-lg"></i>
+                    </a>
+                    <div class="flex gap-3 pointer-events-auto">
+                        <button class="w-9 h-9 bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-sm shadow-sm"><i class="ph-bold ph-share-network text-lg"></i></button>
+                        <a href="{{ route('cart.index') }}" class="w-9 h-9 bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-sm shadow-sm relative">
+                            <i class="ph-bold ph-shopping-cart text-lg"></i>
+                            <livewire:storefront.cart-badge />
+                        </a>
+                    </div>
+                </div>
+
                 <div class="w-full aspect-square bg-gray-50 dark:bg-[#121212] md:rounded-3xl overflow-hidden md:border border-b border-gray-100 dark:border-gray-800 relative group">
                     @if($selectedImage)
                         <img src="{{ $selectedImage }}" alt="{{ $product->name }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
@@ -326,18 +341,17 @@
         </div>
     </div>
 
-    <!-- Sticky Mobile CTA -->
-    <div class="fixed bottom-14 left-0 w-full bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 p-2 flex gap-2 z-40 md:hidden shadow-[0_-10px_20px_rgba(0,0,0,0.05)] pb-safe">
-        <button wire:click="toggleWishlist" class="w-1/4 rounded-xl flex flex-col items-center justify-center transition-all flex-shrink-0 {{ $isWishlisted ? 'text-red-500' : 'text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:text-gray-100' }}">
-            <i class="{{ $isWishlisted ? 'ph-fill' : 'ph' }} ph-heart text-[22px] mb-0.5"></i>
-            <span class="text-[9px]">{{ __('Wishlist') }}</span>
+    <!-- Sticky Mobile CTA (Tokopedia Style) -->
+    <div class="fixed bottom-0 left-0 w-full bg-white dark:bg-[#121212] border-t border-gray-100 dark:border-gray-800 p-3 flex items-center gap-2 z-50 md:hidden shadow-[0_-4px_10px_rgba(0,0,0,0.05)] dark:shadow-none pb-safe">
+        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', \App\Models\Setting::get('whatsapp_number', '60123456789')) }}" class="w-[42px] h-[42px] flex-shrink-0 flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-100 bg-white dark:bg-[#121212]">
+            <i class="ph-bold ph-chat-teardrop text-[22px]"></i>
+        </a>
+        <div class="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-1"></div>
+        <button wire:click="addToCart" class="flex-1 h-[42px] border border-brand-500 text-brand-500 hover:bg-brand-50 dark:hover:bg-brand-900/20 font-bold rounded-xl flex items-center justify-center transition-colors text-sm" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
+            {{ __('Beli') }}
         </button>
-        <div class="w-px h-8 bg-gray-200 self-center mx-1"></div>
-        <button wire:click="addToCart" class="flex-1 border border-brand-600 text-brand-600 font-bold rounded-lg flex flex-col items-center justify-center transition-transform disabled:opacity-50" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
-            <span class="text-sm">+ {{ __('Cart') }}</span>
-        </button>
-        <button wire:click="addToCart" class="flex-1 bg-gradient-to-r from-brand-500 to-brand-600 text-white font-bold rounded-lg flex flex-col items-center justify-center transition-transform disabled:opacity-50" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
-            <span class="text-sm">{{ __('Buy Now') }}</span>
+        <button wire:click="addToCart" class="flex-1 h-[42px] bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl flex items-center justify-center transition-colors text-sm" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
+            + {{ __('Keranjang') }}
         </button>
     </div>
 </div>
