@@ -12,9 +12,15 @@
                 <h1 class="text-lg font-extrabold text-gray-900 dark:text-gray-100">{{ __('Keranjang') }}</h1>
             </div>
             <div class="flex items-center gap-4 text-gray-900 dark:text-gray-100">
-                <i class="ph ph-chat-teardrop text-2xl"></i>
-                <i class="ph ph-heart text-2xl"></i>
-                <i class="ph ph-list text-2xl"></i>
+                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', \App\Models\Setting::get('whatsapp_number', '60123456789')) }}" target="_blank">
+                    <i class="ph ph-chat-teardrop text-2xl"></i>
+                </a>
+                <a href="{{ route('dashboard.wishlist') }}">
+                    <i class="ph ph-heart text-2xl"></i>
+                </a>
+                <a href="{{ route('dashboard') }}">
+                    <i class="ph ph-list text-2xl"></i>
+                </a>
             </div>
         </div>
         <!-- Sub row: "1 produk terpilih" and "Hapus" -->
@@ -76,7 +82,7 @@
                                 </div>
                                 
                                 <!-- Image -->
-                                <div class="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-gray-50 dark:bg-[#121212] rounded-xl overflow-hidden mt-1 border border-gray-100 dark:border-gray-800">
+                                <a href="{{ route('product.show', $item->product->slug) }}" class="block w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-gray-50 dark:bg-[#121212] rounded-xl overflow-hidden mt-1 border border-gray-100 dark:border-gray-800">
                                     @if($item->product->primaryImage)
                                         <img src="{{ $item->product->first_image_url }}" class="w-full h-full object-cover">
                                     @else
@@ -84,7 +90,7 @@
                                             <i class="ph ph-image text-3xl"></i>
                                         </div>
                                     @endif
-                                </div>
+                                </a>
 
                                 <!-- Content -->
                                 <div class="flex-1 flex flex-col justify-start">
@@ -227,7 +233,7 @@
                         </div>
                         
                         <div class="mt-2 md:hidden">
-                            <button class="w-full py-1.5 border border-brand-500 text-brand-500 font-bold text-xs rounded-lg">+ Keranjang</button>
+                            <div class="w-full py-1.5 border border-brand-500 text-brand-500 font-bold text-center text-xs rounded-lg">+ Keranjang</div>
                         </div>
                     </div>
                 </a>
