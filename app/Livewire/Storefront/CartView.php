@@ -211,6 +211,25 @@ class CartView extends Component
 
     public function selectVoucher($id)
     {
+        $voucher = \App\Models\Voucher::find($id);
+        if (!$voucher) return;
+
+        // Calculate subtotal for eligibility check
+        $subtotal = 0;
+        if ($this->cart) {
+            foreach ($this->cart->items as $item) {
+                if (in_array((string)$item->id, $this->selectedItems) || in_array($item->id, $this->selectedItems)) {
+                    $subtotal += ($item->effective_price * $item->qty);
+                }
+            }
+        }
+
+        $error = $voucher->getEligibilityError($subtotal);
+        if ($error) {
+            $this->dispatch('notify', message: $error);
+            return;
+        }
+
         $this->selectedVoucherId = $id;
         session()->put('selected_voucher_id', $id);
         $this->dispatch('notify', message: __('Promo berhasil dipasang!'));

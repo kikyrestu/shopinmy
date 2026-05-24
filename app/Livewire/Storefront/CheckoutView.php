@@ -289,11 +289,6 @@ class CheckoutView extends Component
             return;
         }
 
-        if ($voucher->usage_limit !== null && $voucher->used_count >= $voucher->usage_limit) {
-            $this->addError('voucherCode', 'Voucher limit reached.');
-            return;
-        }
-
         $userId = auth()->id();
 
         // Check Target User
@@ -315,8 +310,9 @@ class CheckoutView extends Component
             }
         }
 
-        if ($this->subtotal < $voucher->min_order) {
-            $this->addError('voucherCode', "Minimum order is RM {$voucher->min_order}");
+        $error = $voucher->getEligibilityError($this->subtotal);
+        if ($error) {
+            $this->addError('voucherCode', $error);
             return;
         }
 
@@ -465,11 +461,9 @@ class CheckoutView extends Component
                     if (!$voucher || !$voucher->isValid()) {
                         throw new \Exception('Voucher is no longer valid.');
                     }
-                    if ($voucher->usage_limit !== null && $voucher->used_count >= $voucher->usage_limit) {
-                        throw new \Exception("Voucher limit reached. Please try again without the voucher.");
-                    }
-                    if ($this->subtotal < ($voucher->min_order ?? 0)) {
-                        throw new \Exception("Minimum order for this voucher is RM {$voucher->min_order}");
+                    $error = $voucher->getEligibilityError($this->subtotal);
+                    if ($error) {
+                        throw new \Exception($error);
                     }
                     $voucher->increment('used_count');
                 }

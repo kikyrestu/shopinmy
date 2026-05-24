@@ -338,24 +338,42 @@
                 </div>
                 
                 <!-- List Voucher Public -->
-                <div class="flex-1 overflow-y-auto space-y-3 hide-scrollbar pb-10">
+                <div class="space-y-3 max-h-[60vh] overflow-y-auto hide-scrollbar pb-20">
                     @forelse($publicVouchers as $voucher)
-                        <div class="bg-white dark:bg-[#1A1A1A] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm relative overflow-hidden">
-                            <div class="absolute top-0 left-0 bottom-0 w-2 bg-brand-500"></div>
-                            <div class="pl-2 flex justify-between items-center gap-2">
-                                <div>
-                                    <div class="font-extrabold text-sm text-gray-900 dark:text-gray-100 mb-1">{{ $voucher->description ?? 'Promo Spesial (' . $voucher->code . ')' }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400 flex flex-col gap-0.5">
-                                        <span>Min. Belanja RM{{ number_format($voucher->min_order, 2) }}</span>
-                                        @if($voucher->expires_at)
-                                        <span>Berlaku s.d. {{ $voucher->expires_at->format('d M Y') }}</span>
-                                        @endif
-                                    </div>
+                        @php
+                            $eligibilityError = $voucher->getEligibilityError($subtotal);
+                            $isEligible = $eligibilityError === null;
+                        @endphp
+                        <div class="border {{ $isEligible ? 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900' : 'border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50 opacity-70' }} rounded-xl p-4 flex items-center justify-between gap-4 transition-all">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1.5">
+                                    <div class="font-extrabold text-sm {{ $isEligible ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400' }}">{{ $voucher->description ?? 'Promo Spesial (' . $voucher->code . ')' }}</div>
+                                    <span class="{{ $isEligible ? 'bg-brand-50 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400 border-brand-200 dark:border-brand-800' : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400 border-gray-200 dark:border-gray-600' }} text-[10px] font-bold px-1.5 py-0.5 rounded border">{{ $voucher->code }}</span>
                                 </div>
-                                <button wire:click="selectVoucher({{ $voucher->id }})" @click="showPromoModal = false" class="px-4 py-1.5 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-lg text-xs transition-colors flex-shrink-0">
+                                <div class="text-[11px] font-medium {{ $isEligible ? 'text-gray-500 dark:text-gray-400' : 'text-gray-400 dark:text-gray-500' }} flex flex-col gap-0.5">
+                                    @if($voucher->min_order > 0)
+                                        <span>Min. Belanja RM{{ number_format($voucher->min_order, 2) }}</span>
+                                    @endif
+                                    @if($voucher->expires_at)
+                                        <span>Berlaku s.d. {{ $voucher->expires_at->format('d M Y') }}</span>
+                                    @endif
+                                </div>
+                                @if(!$isEligible)
+                                    <div class="mt-2 text-[10px] font-bold text-rose-500 flex items-center gap-1">
+                                        <i class="ph-fill ph-warning-circle"></i> {{ $eligibilityError }}
+                                    </div>
+                                @endif
+                            </div>
+                            
+                            @if($isEligible)
+                                <button wire:click="selectVoucher({{ $voucher->id }})" @click="showPromoModal = false" class="px-4 py-1.5 {{ $selectedVoucherId == $voucher->id ? 'bg-brand-100 text-brand-700' : 'bg-brand-500 hover:bg-brand-600 text-white shadow-md' }} font-bold rounded-lg text-xs transition-colors flex-shrink-0">
                                     {{ $selectedVoucherId == $voucher->id ? 'Terpasang' : 'Pakai' }}
                                 </button>
-                            </div>
+                            @else
+                                <button disabled class="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 font-bold rounded-lg text-xs flex-shrink-0 cursor-not-allowed">
+                                    Pakai
+                                </button>
+                            @endif
                         </div>
                     @empty
                         <div class="text-center py-10 flex flex-col items-center">

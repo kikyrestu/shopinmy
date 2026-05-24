@@ -48,7 +48,13 @@ class VoucherForm
                     Tab::make('Limits & Expiry')->icon('heroicon-o-clock')->schema([
                         TextInput::make('usage_limit')
                             ->numeric()
-                            ->nullable(),
+                            ->nullable()
+                            ->label('Global Usage Limit'),
+                        TextInput::make('user_usage_limit')
+                            ->numeric()
+                            ->nullable()
+                            ->label('Usage Limit per User')
+                            ->helperText('Leave empty for unlimited usage per user.'),
                         TextInput::make('used_count')
                             ->numeric()
                             ->default(0)
