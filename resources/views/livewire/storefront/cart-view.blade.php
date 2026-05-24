@@ -55,7 +55,9 @@
                             <input type="checkbox" wire:model.live="selectAll" class="w-5 h-5 rounded text-brand-500 focus:ring-brand-500 border-gray-300 dark:border-gray-600 dark:bg-gray-800 cursor-pointer flex-shrink-0">
                             <span class="font-bold text-gray-900 dark:text-gray-100">{{ \App\Models\Setting::get('site_name', 'Toko Utama') }}</span>
                         </div>
+                        @if(\App\Models\Setting::isEnabled('free_shipping_enabled', true))
                         <span class="text-[10px] font-extrabold text-brand-500 italic tracking-wider">{{ __('GRATIS ONGKIR') }}</span>
+                        @endif
                     </div>
 
                     <!-- Items -->
@@ -138,10 +140,12 @@
                                     </div>
                                 </div>
                             </li>
+                            @if(\App\Models\Setting::isEnabled('free_shipping_enabled', true))
                             <li class="px-4 py-2 bg-emerald-50/50 dark:bg-emerald-900/10 flex items-center gap-2 border-t border-dashed border-gray-100 dark:border-gray-800">
                                 <i class="ph-fill ph-truck text-emerald-600 text-lg"></i>
-                                <span class="text-[11px] font-medium text-gray-900 dark:text-gray-300">Kamu dapat s.d. <span class="font-bold">Rp10rb</span> Gratis Ongkir!</span>
+                                <span class="text-[11px] font-medium text-gray-900 dark:text-gray-300">Kamu dapat s.d. <span class="font-bold">Rp{{ number_format(\App\Models\Setting::get('free_shipping_discount_amount', 10000), 0, ',', '.') }}</span> Gratis Ongkir!</span>
                             </li>
+                            @endif
                         @endforeach
                     </ul>
                 </div>
@@ -196,17 +200,21 @@
                             {{ $discountPercent }}%
                         </div>
                         @endif
+                        @if(\App\Models\Setting::isEnabled('free_shipping_enabled', true))
                         <div class="absolute bottom-0 left-0 bg-emerald-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-tr-lg flex items-center gap-0.5">
                             <i class="ph-bold ph-truck"></i> GRATIS ONGKIR
                         </div>
+                        @endif
                     </div>
                     <!-- Content -->
                     <div class="p-2 flex flex-col flex-1 justify-between">
                         <div>
+                            @if(\App\Models\Setting::isEnabled('enable_power_badge', true))
                             <div class="flex items-center gap-1 mb-1">
                                 <i class="ph-fill ph-check-circle text-emerald-500 text-[10px]"></i>
                                 <span class="text-[9px] text-emerald-600 font-bold">Power Badge</span>
                             </div>
+                            @endif
                             <h3 class="text-xs font-medium text-gray-800 dark:text-gray-200 line-clamp-2 leading-snug">{{ $product->name }}</h3>
                             <div class="mt-1 font-extrabold text-brand-600 dark:text-rose-500 text-sm">
                                 Rp{{ number_format($product->price, 0, ',', '.') }}
