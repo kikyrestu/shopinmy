@@ -181,6 +181,62 @@ class ProductDetail extends Component
         $this->dispatch('notify', message: __('Added to cart successfully!'));
     }
 
+    public function buyNow()
+    {
+        $variant = $this->getSelectedVariantModel();
+        
+        // Prevent adding to cart if product requires variant but none valid is selected
+        if ($this->product->variants->isNotEmpty() && !$variant) {
+            $this->dispatch('notify', message: __('Please select a valid variant combination.'));
+            return;
+        }
+        
+        // Stock Check
+        $maxStock = $this->maxStock;
+        if ($maxStock !== null && $this->qty > $maxStock) {
+            $this->dispatch('notify', message: __('Insufficient stock available.'));
+            return;
+        }
+
+        $sessionId = session()->getId();
+        $userId = auth()->id();
+
+        // Find or create cart
+        $cart = \App\Models\Cart::firstOrCreate(
+            ['user_id' => $userId, 'session_id' => $userId ? null : $sessionId],
+            ['user_id' => $userId, 'session_id' => $userId ? null : $sessionId]
+        );
+
+        $variantId = $variant?->id;
+
+        // Check if item already exists in cart
+        $cartItem = \App\Models\CartItem::where('cart_id', $cart->id)
+            ->where('product_id', $this->product->id)
+            ->where('variant_id', $variantId)
+            ->first();
+
+        if ($cartItem) {
+            if (($cartItem->qty + $this->qty) > $maxStock) {
+                $this->dispatch('notify', message: __('Maximum stock reached in cart.'));
+                return;
+            }
+            $cartItem->increment('qty', $this->qty);
+        } else {
+            $cartItem = \App\Models\CartItem::create([
+                'cart_id' => $cart->id,
+                'product_id' => $this->product->id,
+                'variant_id' => $variantId,
+                'qty' => $this->qty,
+            ]);
+        }
+
+        // Set the session for partial checkout with this specific item
+        session(['checkout_items' => [$cartItem->id]]);
+        
+        // Redirect directly to checkout
+        return redirect()->route('checkout');
+    }
+
     public function toggleWishlist()
     {
         if (!auth()->check()) {

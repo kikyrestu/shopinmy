@@ -161,11 +161,18 @@
 
                     <!-- Action Buttons -->
                     <div class="hidden md:flex flex-1 gap-3">
-                        <button wire:click="addToCart" class="flex-1 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all transform active:scale-95 disabled:opacity-50 disabled:active:scale-100 disabled:cursor-not-allowed {{ $this->maxStock !== null && $this->maxStock <= 0 ? 'bg-gray-400' : 'bg-brand-600 hover:bg-brand-700 shadow-lg shadow-brand-500/30' }}" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
+                        <button wire:click="addToCart" class="flex-1 text-brand-600 bg-brand-50 border-2 border-brand-200 font-bold rounded-2xl flex items-center justify-center gap-2 transition-all transform active:scale-95 hover:bg-brand-100 disabled:opacity-50 disabled:active:scale-100 disabled:cursor-not-allowed" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
                             @if($this->maxStock !== null && $this->maxStock <= 0)
                                 <i class="ph-fill ph-x-circle text-xl"></i> {{ __('Out of Stock') }}
                             @else
-                                <i class="ph ph-shopping-cart-simple text-xl"></i> {{ __('Add to Cart') }}
+                                <i class="ph ph-shopping-cart-simple text-xl"></i> {{ __('Cart') }}
+                            @endif
+                        </button>
+                        <button wire:click="buyNow" class="flex-1 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all transform active:scale-95 disabled:opacity-50 disabled:active:scale-100 disabled:cursor-not-allowed {{ $this->maxStock !== null && $this->maxStock <= 0 ? 'bg-gray-400' : 'bg-brand-600 hover:bg-brand-700 shadow-lg shadow-brand-500/30' }}" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
+                            @if($this->maxStock !== null && $this->maxStock <= 0)
+                                <i class="ph-fill ph-x-circle text-xl"></i> {{ __('Out of Stock') }}
+                            @else
+                                <i class="ph-fill ph-lightning text-xl"></i> {{ __('Buy Now') }}
                             @endif
                         </button>
                         <button wire:click="toggleWishlist" class="w-14 h-14 border rounded-2xl flex items-center justify-center transition-all flex-shrink-0 {{ $isWishlisted ? 'bg-red-50 border-red-200 text-red-500' : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:bg-red-50 hover:text-red-500 hover:border-red-200 text-gray-400 dark:text-gray-600' }}">
@@ -337,7 +344,7 @@
             <i class="ph-bold ph-chat-teardrop text-[22px]"></i>
         </a>
         <div class="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-1"></div>
-        <button wire:click="addToCart" class="flex-1 h-[42px] border border-brand-500 text-brand-500 hover:bg-brand-50 dark:hover:bg-brand-900/20 font-bold rounded-xl flex items-center justify-center transition-colors text-sm" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
+        <button wire:click="buyNow" class="flex-1 h-[42px] border border-brand-500 text-brand-500 hover:bg-brand-50 dark:hover:bg-brand-900/20 font-bold rounded-xl flex items-center justify-center transition-colors text-sm" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
             {{ __('Beli') }}
         </button>
         <button wire:click="addToCart" class="flex-1 h-[42px] bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl flex items-center justify-center transition-colors text-sm" {{ $qty < 1 || ($this->maxStock !== null && $this->maxStock <= 0) ? 'disabled' : '' }}>
