@@ -58,6 +58,26 @@ class VoucherForm
                         Toggle::make('is_active')
                             ->default(true),
                     ])->columns(2),
+
+                    Tab::make('Targeting & Visibility')->icon('heroicon-o-eye')->schema([
+                        TextInput::make('description')
+                            ->label('Voucher Description / Title')
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        Toggle::make('is_public')
+                            ->label('Public Voucher (Show in Cart)')
+                            ->default(true),
+                        Toggle::make('is_new_user_only')
+                            ->label('New User Only')
+                            ->default(false),
+                        Select::make('target_user_id')
+                            ->relationship('targetUser', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->label('Target Specific User (Optional)')
+                            ->helperText('If selected, only this user can use the voucher.')
+                            ->columnSpanFull(),
+                    ])->columns(2),
                 ])->columnSpanFull()
             ]);
     }

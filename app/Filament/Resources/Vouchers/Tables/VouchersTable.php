@@ -42,6 +42,12 @@ class VouchersTable
                     ->sortable(),
                 IconColumn::make('is_active')
                     ->boolean(),
+                IconColumn::make('is_public')
+                    ->label('Public')
+                    ->boolean(),
+                IconColumn::make('is_new_user_only')
+                    ->label('New User Only')
+                    ->boolean(),
             ])
             ->filters([])
             ->recordActions([

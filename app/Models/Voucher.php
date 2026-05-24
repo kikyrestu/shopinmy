@@ -20,4 +20,9 @@ class Voucher extends Model
         if ($this->expires_at && $this->expires_at->isPast()) return false;
         return true;
     }
+
+    public function targetUser()
+    {
+        return $this->belongsTo(User::class, 'target_user_id');
+    }
 }
