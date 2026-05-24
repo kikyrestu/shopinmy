@@ -118,7 +118,7 @@
                                     <div class="mt-1">
                                         <div class="text-sm font-extrabold text-gray-900 dark:text-gray-100">
                                             @if($hasDiscount)
-                                                <span class="bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 text-[9px] px-1 rounded mr-1">Hemat</span>
+                                                <span class="bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 text-[9px] px-1 rounded mr-1">{{ __('Save') }}</span>
                                             @endif
                                             RM{{ number_format($price, 2) }}
                                         </div>
@@ -152,7 +152,7 @@
                             @if(\App\Models\Setting::isEnabled('free_shipping_enabled', true))
                             <li class="px-4 py-2 bg-emerald-50/50 dark:bg-emerald-900/10 flex items-center gap-2 border-t border-dashed border-gray-100 dark:border-gray-800">
                                 <i class="ph-fill ph-truck text-emerald-600 text-lg"></i>
-                                <span class="text-[11px] font-medium text-gray-900 dark:text-gray-300">Kamu dapat s.d. <span class="font-bold">RM{{ number_format(\App\Models\Setting::get('free_shipping_discount_amount', 10), 2) }}</span> Gratis Ongkir!</span>
+                                <span class="text-[11px] font-medium text-gray-900 dark:text-gray-300">{{ __('You can get up to') }} <span class="font-bold">RM{{ number_format(\App\Models\Setting::get('free_shipping_discount_amount', 10), 2) }}</span> {{ __('Free Shipping!') }}</span>
                             </li>
                             @endif
                         @endforeach
@@ -172,7 +172,7 @@
                         </div>
                         @if($voucherDiscount > 0)
                         <div class="flex justify-between items-center text-rose-500 font-medium">
-                            <span>Diskon Voucher</span>
+                            <span>{{ __('Voucher Discount') }}</span>
                             <span class="font-bold">-RM{{ number_format($voucherDiscount, 2) }}</span>
                         </div>
                         @endif
@@ -243,7 +243,7 @@
                         
                         <div class="mt-2 md:hidden z-10 relative">
                             <button wire:click.prevent="addToCart({{ $product->id }})" class="w-full py-1.5 border border-brand-500 text-brand-500 hover:bg-brand-50 dark:hover:bg-brand-900/20 font-bold text-center text-xs rounded-lg transition-colors flex justify-center items-center h-8" wire:loading.attr="disabled">
-                                <span wire:loading.remove wire:target="addToCart({{ $product->id }})">+ Keranjang</span>
+                                <span wire:loading.remove wire:target="addToCart({{ $product->id }})">+ {{ __('Cart') }}</span>
                                 <span wire:loading wire:target="addToCart({{ $product->id }})"><i class="ph-bold ph-spinner animate-spin"></i></span>
                             </button>
                         </div>
@@ -279,11 +279,11 @@
                 <i class="ph-fill ph-ticket text-brand-500 text-xl"></i>
                 <div class="flex gap-1">
                     <span class="bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400 text-[10px] font-bold px-1.5 py-0.5 rounded border border-rose-200 dark:border-rose-800">{{ $activeVoucher->code }}</span>
-                    <span class="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 text-[10px] font-bold px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">Tersedia</span>
+                    <span class="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 text-[10px] font-bold px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">{{ __('Available') }}</span>
                 </div>
                 @else
                 <i class="ph-fill ph-ticket text-gray-400 text-xl"></i>
-                <div class="text-xs font-bold text-gray-600 dark:text-gray-400">Cek promo biar makin hemat!</div>
+                <div class="text-xs font-bold text-gray-600 dark:text-gray-400">{{ __('Check promos to save more!') }}</div>
                 @endif
             </div>
             <i class="ph-bold ph-caret-right text-gray-400 dark:text-gray-500"></i>
@@ -292,7 +292,7 @@
         <div class="px-4 py-2 flex items-center justify-between gap-2">
             <div class="flex items-center gap-2 flex-shrink-0">
                 <input type="checkbox" wire:model.live="selectAll" class="w-5 h-5 rounded text-brand-500 focus:ring-brand-500 border-gray-300 dark:border-gray-600 dark:bg-gray-800 cursor-pointer">
-                <span class="text-sm text-gray-900 dark:text-gray-100 font-medium">Semua</span>
+                <span class="text-sm text-gray-900 dark:text-gray-100 font-medium">{{ __('All') }}</span>
             </div>
             <div class="flex items-center gap-3">
                 <div class="text-right">
@@ -337,7 +337,7 @@
                 </div>
 
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-extrabold text-lg text-gray-900 dark:text-gray-100">Pilih Promo</h3>
+                    <h3 class="font-extrabold text-lg text-gray-900 dark:text-gray-100">{{ __('Select Promo') }}</h3>
                     <button @click="showPromoModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
                         <i class="ph-bold ph-x text-xl"></i>
                     </button>
@@ -384,7 +384,7 @@
                     @empty
                         <div class="text-center py-10 flex flex-col items-center">
                             <i class="ph-fill ph-ticket text-5xl text-gray-300 dark:text-gray-600 mb-3"></i>
-                            <p class="text-gray-500 font-medium">Belum ada promo yang tersedia.</p>
+                            <p class="text-gray-500 font-medium">{{ __('No promos available yet.') }}</p>
                         </div>
                     @endforelse
                 </div>

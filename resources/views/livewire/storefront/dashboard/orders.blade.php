@@ -11,13 +11,13 @@
         <!-- Sliding Tabs (Pill Style) -->
         <div class="px-4 py-3 overflow-x-auto no-scrollbar flex items-center gap-2">
             <button wire:click="$set('activeTab', 'all')" 
-                    class="whitespace-nowrap px-4 py-1.5 font-bold rounded-full text-sm border transition-colors {{ $activeTab === 'all' ? 'bg-brand-500 text-white border-brand-500 shadow-sm shadow-brand-500/20' : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800' }}">Semua</button>
+                    class="whitespace-nowrap px-4 py-1.5 font-bold rounded-full text-sm border transition-colors {{ $activeTab === 'all' ? 'bg-brand-500 text-white border-brand-500 shadow-sm shadow-brand-500/20' : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800' }}">{{ __('All') }}</button>
             <button wire:click="$set('activeTab', 'ongoing')" 
-                    class="whitespace-nowrap px-4 py-1.5 font-bold rounded-full text-sm border transition-colors {{ $activeTab === 'ongoing' ? 'bg-brand-500 text-white border-brand-500 shadow-sm shadow-brand-500/20' : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800' }}">Berlangsung</button>
+                    class="whitespace-nowrap px-4 py-1.5 font-bold rounded-full text-sm border transition-colors {{ $activeTab === 'ongoing' ? 'bg-brand-500 text-white border-brand-500 shadow-sm shadow-brand-500/20' : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800' }}">{{ __('Ongoing') }}</button>
             <button wire:click="$set('activeTab', 'completed')" 
-                    class="whitespace-nowrap px-4 py-1.5 font-bold rounded-full text-sm border transition-colors {{ $activeTab === 'completed' ? 'bg-brand-500 text-white border-brand-500 shadow-sm shadow-brand-500/20' : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800' }}">Selesai</button>
+                    class="whitespace-nowrap px-4 py-1.5 font-bold rounded-full text-sm border transition-colors {{ $activeTab === 'completed' ? 'bg-brand-500 text-white border-brand-500 shadow-sm shadow-brand-500/20' : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800' }}">{{ __('Completed') }}</button>
             <button wire:click="$set('activeTab', 'cancelled')" 
-                    class="whitespace-nowrap px-4 py-1.5 font-bold rounded-full text-sm border transition-colors {{ $activeTab === 'cancelled' ? 'bg-brand-500 text-white border-brand-500 shadow-sm shadow-brand-500/20' : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800' }}">Dibatalkan</button>
+                    class="whitespace-nowrap px-4 py-1.5 font-bold rounded-full text-sm border transition-colors {{ $activeTab === 'cancelled' ? 'bg-brand-500 text-white border-brand-500 shadow-sm shadow-brand-500/20' : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800' }}">{{ __('Cancelled') }}</button>
         </div>
     </div>
 

@@ -165,7 +165,7 @@
             @endif
             @if($order->voucher_id)
                 <div class="flex justify-between text-emerald-600">
-                    <span>Diskon Voucher</span>
+                    <span>{{ __('Voucher Discount') }}</span>
                     <span>- RM {{ number_format(\App\Models\Voucher::find($order->voucher_id)?->value ?? 0, 2) }}</span>
                 </div>
             @endif
@@ -174,7 +174,7 @@
         <div class="my-4 border-t border-dashed border-gray-200 dark:border-gray-700"></div>
         
         <div class="flex justify-between items-center">
-            <span class="text-sm font-bold text-gray-900 dark:text-white">Total Belanja</span>
+            <span class="text-sm font-bold text-gray-900 dark:text-white">{{ __('Total Shopping') }}</span>
             <span class="text-lg font-extrabold text-gray-900 dark:text-white">RM {{ number_format($order->total, 2) }}</span>
         </div>
     </div>
