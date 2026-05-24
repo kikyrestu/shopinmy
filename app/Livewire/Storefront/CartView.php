@@ -10,10 +10,13 @@ class CartView extends Component
     public $recommendedProducts = [];
     public $selectedItems = [];
     public $selectAll = true;
+    public $publicVouchers = [];
+    public $selectedVoucherId = null;
 
     public function mount()
     {
         $this->loadCart();
+        $this->selectedVoucherId = session('selected_voucher_id', null);
     }
 
     public function loadCart()
@@ -206,6 +209,13 @@ class CartView extends Component
         $this->dispatch('notify', message: __('Barang berhasil ditambahkan ke keranjang!'));
     }
 
+    public function selectVoucher($id)
+    {
+        $this->selectedVoucherId = $id;
+        session()->put('selected_voucher_id', $id);
+        $this->dispatch('notify', message: __('Promo berhasil dipasang!'));
+    }
+
     public function render()
     {
         $subtotal = 0;
@@ -225,10 +235,16 @@ class CartView extends Component
             }
         }
 
-        $activeVoucher = \App\Models\Voucher::where('is_active', true)
+        $this->publicVouchers = \App\Models\Voucher::where('is_active', true)
+            ->where('is_public', true)
             ->where(function($q) {
                 $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
-            })->first();
+            })->get();
+
+        $activeVoucher = null;
+        if ($this->selectedVoucherId) {
+            $activeVoucher = $this->publicVouchers->firstWhere('id', $this->selectedVoucherId);
+        }
 
         return view('livewire.storefront.cart-view', compact('subtotal', 'totalDiscount', 'activeVoucher'))
             ->extends('layouts.storefront')

@@ -113,6 +113,17 @@ class CheckoutView extends Component
         } else {
             $this->showNewAddressForm = true;
         }
+
+        // Auto-apply voucher from session
+        if (session()->has('selected_voucher_id')) {
+            $voucherId = session('selected_voucher_id');
+            $voucher = \App\Models\Voucher::find($voucherId);
+            if ($voucher && $voucher->is_active && $voucher->is_public) {
+                $this->voucherCode = $voucher->code;
+                $this->applyVoucher();
+            }
+            session()->forget('selected_voucher_id');
+        }
     }
 
     public function updatedSelectedAddressId($value)

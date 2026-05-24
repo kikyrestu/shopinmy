@@ -265,9 +265,9 @@
 
     @if($cart && $cart->items->count() > 0)
     <!-- Sticky Mobile CTA for Cart (Tokopedia Style) -->
-    <div class="fixed bottom-14 left-0 w-full bg-white dark:bg-[#1A1A1A] md:hidden z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.1)] pb-safe">
+    <div x-data="{ showPromoModal: false }" class="fixed bottom-14 left-0 w-full bg-white dark:bg-[#1A1A1A] md:hidden z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.1)] pb-safe">
         <!-- Promo Bar -->
-        <a href="{{ route('checkout.index') }}" class="border-t border-b border-gray-100 dark:border-gray-800 px-4 py-2 flex items-center justify-between active:bg-gray-50 dark:active:bg-gray-800/50 transition-colors block">
+        <button type="button" @click="showPromoModal = true" class="w-full border-t border-b border-gray-100 dark:border-gray-800 px-4 py-2 flex items-center justify-between active:bg-gray-50 dark:active:bg-gray-800/50 transition-colors">
             <div class="flex items-center gap-2">
                 @if($activeVoucher)
                 <i class="ph-fill ph-ticket text-brand-500 text-xl"></i>
@@ -281,7 +281,7 @@
                 @endif
             </div>
             <i class="ph-bold ph-caret-right text-gray-400 dark:text-gray-500"></i>
-        </a>
+        </button>
         <!-- Checkout Bar -->
         <div class="px-4 py-2 flex items-center justify-between gap-2">
             <div class="flex items-center gap-2 flex-shrink-0">
@@ -298,6 +298,71 @@
                 <button wire:click="proceedToCheckout" class="px-5 py-2 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-sm active:scale-95 transition-transform flex-shrink-0">
                     {{ __('Beli') }} ({{ count($selectedItems) }})
                 </button>
+            </div>
+        </div>
+
+        <!-- Voucher Modal (Bottom Sheet) -->
+        <div x-show="showPromoModal" class="fixed inset-0 z-[100] flex items-end justify-center" x-cloak>
+            <!-- Backdrop -->
+            <div x-show="showPromoModal" 
+                 x-transition:enter="transition-opacity ease-out duration-300" 
+                 x-transition:enter-start="opacity-0" 
+                 x-transition:enter-end="opacity-100" 
+                 x-transition:leave="transition-opacity ease-in duration-200" 
+                 x-transition:leave-start="opacity-100" 
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 bg-black/60 backdrop-blur-sm" 
+                 @click="showPromoModal = false"></div>
+            
+            <!-- Modal Content -->
+            <div x-show="showPromoModal" 
+                 x-transition:enter="transition-transform ease-out duration-300" 
+                 x-transition:enter-start="translate-y-full" 
+                 x-transition:enter-end="translate-y-0" 
+                 x-transition:leave="transition-transform ease-in duration-200" 
+                 x-transition:leave-start="translate-y-0" 
+                 x-transition:leave-end="translate-y-full"
+                 class="bg-gray-50 dark:bg-[#121212] w-full max-w-md rounded-t-2xl p-4 relative z-10 h-[70vh] flex flex-col shadow-2xl">
+                
+                <!-- Pull Handle -->
+                <div class="flex justify-center mb-4">
+                    <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
+                </div>
+
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-extrabold text-lg text-gray-900 dark:text-gray-100">Pilih Promo</h3>
+                    <button @click="showPromoModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                        <i class="ph-bold ph-x text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- List Voucher Public -->
+                <div class="flex-1 overflow-y-auto space-y-3 hide-scrollbar pb-10">
+                    @forelse($publicVouchers as $voucher)
+                        <div class="bg-white dark:bg-[#1A1A1A] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm relative overflow-hidden">
+                            <div class="absolute top-0 left-0 bottom-0 w-2 bg-brand-500"></div>
+                            <div class="pl-2 flex justify-between items-center gap-2">
+                                <div>
+                                    <div class="font-extrabold text-sm text-gray-900 dark:text-gray-100 mb-1">{{ $voucher->description ?? 'Promo Spesial (' . $voucher->code . ')' }}</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400 flex flex-col gap-0.5">
+                                        <span>Min. Belanja RM{{ number_format($voucher->min_order, 2) }}</span>
+                                        @if($voucher->expires_at)
+                                        <span>Berlaku s.d. {{ $voucher->expires_at->format('d M Y') }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <button wire:click="selectVoucher({{ $voucher->id }})" @click="showPromoModal = false" class="px-4 py-1.5 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-lg text-xs transition-colors flex-shrink-0">
+                                    {{ $selectedVoucherId == $voucher->id ? 'Terpasang' : 'Pakai' }}
+                                </button>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="text-center py-10 flex flex-col items-center">
+                            <i class="ph-fill ph-ticket text-5xl text-gray-300 dark:text-gray-600 mb-3"></i>
+                            <p class="text-gray-500 font-medium">Belum ada promo yang tersedia.</p>
+                        </div>
+                    @endforelse
+                </div>
             </div>
         </div>
     </div>
