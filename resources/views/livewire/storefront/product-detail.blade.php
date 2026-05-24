@@ -31,7 +31,7 @@
                         <button onclick="if(navigator.share) { navigator.share({title: '{{ addslashes($product->name) }}', url: window.location.href}); } else { navigator.clipboard.writeText(window.location.href); window.dispatchEvent(new CustomEvent('notify', { detail: { message: 'Link berhasil disalin!' } })); }" class="w-9 h-9 bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-sm shadow-sm"><i class="ph-bold ph-share-network text-lg"></i></button>
                         <a href="{{ route('cart.index') }}" class="w-9 h-9 bg-black/40 text-white rounded-full flex items-center justify-center backdrop-blur-sm shadow-sm relative">
                             <i class="ph-bold ph-shopping-cart text-lg"></i>
-                            <livewire:storefront.cart-badge />
+                            <livewire:storefront.cart-badge :minimal="true" />
                         </a>
                     </div>
                 </div>
