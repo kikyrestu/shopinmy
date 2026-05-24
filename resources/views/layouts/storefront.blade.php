@@ -468,10 +468,6 @@
             <i class="{{ request()->routeIs('home') ? 'ph-fill' : 'ph' }} ph-house text-[22px] mb-0.5"></i>
             <span class="text-[9px] font-semibold">{{ __('Home') }}</span>
         </a>
-        <a href="{{ route('products.index') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('products.index') ? 'text-brand-600' : 'text-gray-400 dark:text-gray-600 hover:text-brand-500' }} transition">
-            <i class="{{ request()->routeIs('products.index') ? 'ph-fill' : 'ph' }} ph-magnifying-glass text-[22px] mb-0.5"></i>
-            <span class="text-[9px] font-medium">{{ __('Search') }}</span>
-        </a>
         <a href="{{ route('dashboard.orders') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('dashboard.orders*') ? 'text-brand-600' : 'text-gray-400 dark:text-gray-600 hover:text-brand-500' }} transition">
             <i class="{{ request()->routeIs('dashboard.orders*') ? 'ph-fill' : 'ph' }} ph-receipt text-[22px] mb-0.5"></i>
             <span class="text-[9px] font-medium">{{ __('Transaksi') }}</span>
