@@ -86,6 +86,6 @@ class PaymentVerification extends Component
 
         return view('livewire.secure-admin.payment-verification', [
             'payments' => $payments
-        ])->layout('layouts.app'); // Use standard layout so it looks good
+        ])->layout('layouts.secure-admin'); // Bypass Vite
     }
 }
