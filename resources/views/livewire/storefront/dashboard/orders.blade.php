@@ -103,7 +103,12 @@
                                     </a>
                                 @else
                                     <div class="flex items-center">
-                                        <span class="text-[10px] text-emerald-500 font-bold mr-2 flex items-center gap-1"><i class="ph-fill ph-check-circle"></i> Diulas</span>
+                                        <div class="flex items-center gap-0.5 mr-3">
+                                            @php $avgRating = $order->reviews->avg('rating') ?? 5; @endphp
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <i class="ph-fill ph-star text-xs {{ $i <= round($avgRating) ? 'text-amber-400' : 'text-gray-200' }}"></i>
+                                            @endfor
+                                        </div>
                                         <a href="{{ route('dashboard.orders.show', $order->id) }}" class="px-4 py-1.5 border border-brand-500 text-brand-600 dark:text-brand-400 bg-brand-50/50 dark:bg-brand-500/10 text-xs font-bold rounded-full active:scale-95 transition-transform">
                                             Beli Lagi
                                         </a>

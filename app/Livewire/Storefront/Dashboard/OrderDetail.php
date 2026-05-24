@@ -18,7 +18,12 @@ class OrderDetail extends Component
             abort(403);
         }
 
-        $this->order = $order->load(['items.product.primaryImage', 'items.variant', 'payment']);
+        $this->order = Order::with(['items.product.primaryImage', 'items.variant', 'payment', 'reviews'])
+            ->where(function($q) {
+                $q->where('user_id', auth()->id())
+                    ->orWhere('guest_email', auth()->user()?->email);
+            })
+            ->findOrFail($order->id);
     }
 
     public function cancelOrder()

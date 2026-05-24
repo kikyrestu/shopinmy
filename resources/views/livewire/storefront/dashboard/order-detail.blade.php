@@ -217,10 +217,20 @@
                 <a href="{{ route('checkout.success', $order->id) }}" class="flex-[1.5] py-2.5 bg-brand-500 text-white font-bold rounded-xl text-center text-sm active:scale-95 transition-transform shadow-sm shadow-brand-500/20">
                     Bayar Sekarang
                 </a>
-            @elseif(in_array($order->status, ['shipped', 'delivered']))
+            @elseif($order->status === 'shipped')
                 <button wire:click="completeOrder" wire:confirm="Yakin pesanan sudah diterima?" class="flex-[1.5] py-2.5 bg-brand-500 text-white font-bold rounded-xl text-center text-sm active:scale-95 transition-transform shadow-sm shadow-brand-500/20">
-                    Selesai & Beri Ulasan
+                    Pesanan Diterima
                 </button>
+            @elseif(in_array($order->status, ['completed', 'delivered']))
+                @if($order->reviews->count() === 0)
+                    <a href="{{ route('dashboard.orders.review', $order->id) }}" class="flex-[1.5] py-2.5 bg-brand-500 text-white font-bold rounded-xl text-center text-sm active:scale-95 transition-transform shadow-sm shadow-brand-500/20">
+                        Beri Ulasan
+                    </a>
+                @else
+                    <button class="flex-1 py-2.5 border border-brand-500 text-brand-600 font-bold rounded-xl text-center text-sm active:scale-95 transition-transform bg-brand-50 dark:bg-transparent">
+                        Beli Lagi
+                    </button>
+                @endif
             @else
                 <button class="flex-1 py-2.5 border border-brand-500 text-brand-600 font-bold rounded-xl text-center text-sm active:scale-95 transition-transform bg-brand-50 dark:bg-transparent">
                     Beli Lagi
