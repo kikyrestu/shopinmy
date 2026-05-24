@@ -10,16 +10,27 @@ class OrderHistory extends Component
 {
     use WithPagination;
 
+    public $activeTab = 'all';
+
     public function render()
     {
-        $orders = Order::where(function($q) {
+        $query = Order::where(function($q) {
                 $q->where('user_id', auth()->id())
                   ->orWhere(function($q2) {
                       $q2->whereNull('user_id')
                          ->where('guest_email', auth()->user()->email);
                   });
-            })
-            ->with(['items.product'])
+            });
+
+        if ($this->activeTab === 'ongoing') {
+            $query->whereIn('status', ['pending', 'processing', 'shipped']);
+        } elseif ($this->activeTab === 'completed') {
+            $query->whereIn('status', ['completed', 'delivered']);
+        } elseif ($this->activeTab === 'cancelled') {
+            $query->where('status', 'cancelled');
+        }
+
+        $orders = $query->with(['items.product'])
             ->latest()
             ->paginate(10);
 

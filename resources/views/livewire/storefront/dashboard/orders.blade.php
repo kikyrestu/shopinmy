@@ -9,18 +9,21 @@
         </div>
         
         <!-- Sliding Tabs (Pill Style) -->
-        <!-- Future: Implement filtering using Livewire component state -->
         <div class="px-4 py-3 overflow-x-auto no-scrollbar flex items-center gap-2">
-            <button class="whitespace-nowrap px-4 py-1.5 bg-brand-500 text-white font-bold rounded-full text-sm border border-brand-500 shadow-sm shadow-brand-500/20">Semua</button>
-            <button class="whitespace-nowrap px-4 py-1.5 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 font-bold rounded-full text-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 transition-colors">Berlangsung</button>
-            <button class="whitespace-nowrap px-4 py-1.5 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 font-bold rounded-full text-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 transition-colors">Selesai</button>
-            <button class="whitespace-nowrap px-4 py-1.5 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 font-bold rounded-full text-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 transition-colors">Dibatalkan</button>
+            <button wire:click="$set('activeTab', 'all')" 
+                    class="whitespace-nowrap px-4 py-1.5 font-bold rounded-full text-sm border transition-colors {{ $activeTab === 'all' ? 'bg-brand-500 text-white border-brand-500 shadow-sm shadow-brand-500/20' : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800' }}">Semua</button>
+            <button wire:click="$set('activeTab', 'ongoing')" 
+                    class="whitespace-nowrap px-4 py-1.5 font-bold rounded-full text-sm border transition-colors {{ $activeTab === 'ongoing' ? 'bg-brand-500 text-white border-brand-500 shadow-sm shadow-brand-500/20' : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800' }}">Berlangsung</button>
+            <button wire:click="$set('activeTab', 'completed')" 
+                    class="whitespace-nowrap px-4 py-1.5 font-bold rounded-full text-sm border transition-colors {{ $activeTab === 'completed' ? 'bg-brand-500 text-white border-brand-500 shadow-sm shadow-brand-500/20' : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800' }}">Selesai</button>
+            <button wire:click="$set('activeTab', 'cancelled')" 
+                    class="whitespace-nowrap px-4 py-1.5 font-bold rounded-full text-sm border transition-colors {{ $activeTab === 'cancelled' ? 'bg-brand-500 text-white border-brand-500 shadow-sm shadow-brand-500/20' : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800' }}">Dibatalkan</button>
         </div>
     </div>
 
-    <div class="max-w-3xl mx-auto px-0 sm:px-4 mt-2 sm:mt-6">
+    <div class="max-w-3xl mx-auto px-0 sm:px-4 mt-4 sm:mt-6">
         @if($orders->isEmpty())
-            <div class="p-16 text-center bg-white dark:bg-gray-900 rounded-none sm:rounded-3xl border-y sm:border border-gray-100 dark:border-gray-800">
+            <div class="p-16 text-center bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 mx-4 sm:mx-0 shadow-sm">
                 <div class="w-24 h-24 bg-gray-50 dark:bg-[#121212] rounded-full flex items-center justify-center text-gray-300 mx-auto mb-6">
                     <i class="ph ph-package text-5xl"></i>
                 </div>
@@ -29,10 +32,10 @@
                 <a href="{{ route('products.index') }}" class="inline-block px-8 py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-brand-500/30 text-sm">{{ __('Mulai Belanja') }}</a>
             </div>
         @else
-            <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-4">
                 @foreach($orders as $order)
                 <!-- Tokopedia Style Order Card -->
-                <div class="bg-white dark:bg-gray-900 rounded-none sm:rounded-2xl border-y sm:border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
+                <div class="bg-white dark:bg-gray-900 mx-4 sm:mx-0 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-visible">
                     
                     <!-- Card Header -->
                     <div class="px-4 py-3 flex items-center justify-between border-b border-gray-50 dark:border-gray-800">
@@ -98,9 +101,29 @@
                                     Beli Lagi
                                 </a>
                             @endif
-                            <button class="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                <i class="ph-bold ph-dots-three text-lg"></i>
-                            </button>
+                            
+                            <!-- 3 Dots Dropdown Menu -->
+                            <div x-data="{ open: false }" class="relative">
+                                <button @click="open = !open" @click.away="open = false" class="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                                    <i class="ph-bold ph-dots-three text-lg"></i>
+                                </button>
+                                
+                                <div x-show="open" style="display: none;" 
+                                     x-transition:enter="transition ease-out duration-100"
+                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter-end="opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-75"
+                                     x-transition:leave-start="opacity-100 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-95"
+                                     class="absolute bottom-full right-0 mb-2 w-48 bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-100 dark:border-gray-800 z-50 overflow-hidden">
+                                    <a href="{{ route('dashboard.orders.show', $order->id) }}" class="block px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium border-b border-gray-50 dark:border-gray-800 last:border-0 flex items-center gap-2">
+                                        <i class="ph-bold ph-file-text"></i> Lihat Detail Pesanan
+                                    </a>
+                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', \App\Models\Setting::get('whatsapp_number', '60123456789')) }}?text=Halo admin, saya mau tanya tentang pesanan {{ $order->order_number }}" target="_blank" class="block px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium border-b border-gray-50 dark:border-gray-800 last:border-0 flex items-center gap-2">
+                                        <i class="ph-bold ph-whatsapp-logo"></i> Tanya Penjual
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
