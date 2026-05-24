@@ -11,9 +11,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+
 #[Fillable(['name', 'email', 'avatar', 'password', 'phone', 'referral_code', 'google_id', 'google_token', 'google_refresh_token'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasRoles;
@@ -90,5 +93,10 @@ class User extends Authenticatable
 
         // Return ui-avatars as fallback
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=random&color=ffffff&size=1024';
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->email === 'admin@nexshop.com' || $this->hasRole(['super_admin', 'admin']);
     }
 }
