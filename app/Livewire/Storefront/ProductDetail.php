@@ -234,7 +234,7 @@ class ProductDetail extends Component
         session(['checkout_items' => [$cartItem->id]]);
         
         // Redirect directly to checkout
-        return redirect()->route('checkout');
+        return redirect()->route('checkout.index');
     }
 
     public function toggleWishlist()
