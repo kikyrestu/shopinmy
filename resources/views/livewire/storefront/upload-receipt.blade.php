@@ -95,7 +95,7 @@
                         <label class="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-3">{{ __('Upload Bukti Transfer') }} <span class="text-red-500">*</span></label>
                         
                         <div class="flex-1 relative group cursor-pointer min-h-[12rem] h-full border-2 border-dashed {{ $receiptImage ? 'border-brand-500 bg-brand-50/30' : 'border-gray-300 bg-gray-50 dark:bg-[#121212] hover:bg-gray-100 dark:bg-gray-800 hover:border-brand-400' }} rounded-2xl flex flex-col items-center justify-center transition-all overflow-hidden" 
-                             onclick="if(!isUploading) document.getElementById('receipt-upload').click()">
+                             @click="if(!isUploading) document.getElementById('receipt-upload').click()">
                             
                             <!-- Loading Overlay for File Upload -->
                             <div x-show="isUploading" style="display: none;" class="absolute inset-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center rounded-2xl">
