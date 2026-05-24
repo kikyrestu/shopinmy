@@ -170,13 +170,19 @@
                             <span>{{ __('Subtotal') }}</span>
                             <span class="text-gray-900 dark:text-gray-100 font-bold">RM{{ number_format($subtotal, 2) }}</span>
                         </div>
+                        @if($voucherDiscount > 0)
+                        <div class="flex justify-between items-center text-rose-500 font-medium">
+                            <span>Diskon Voucher</span>
+                            <span class="font-bold">-RM{{ number_format($voucherDiscount, 2) }}</span>
+                        </div>
+                        @endif
                         <div class="flex justify-between items-center text-gray-600 dark:text-gray-400 font-medium pb-4 border-b border-gray-100 dark:border-gray-800">
                             <span>{{ __('Shipping') }}</span>
                             <span class="text-emerald-600 font-bold">{{ __('Calculated at checkout') }}</span>
                         </div>
                         <div class="flex justify-between items-end pt-2">
                             <span class="text-base font-bold text-gray-900 dark:text-gray-100">{{ __('Estimated Total') }}</span>
-                            <span class="text-2xl font-extrabold text-brand-600">RM{{ number_format($subtotal, 2) }}</span>
+                            <span class="text-2xl font-extrabold text-brand-600">RM{{ number_format($estimatedTotal, 2) }}</span>
                         </div>
                     </div>
 
@@ -290,9 +296,9 @@
             </div>
             <div class="flex items-center gap-3">
                 <div class="text-right">
-                    <div class="text-[15px] font-extrabold text-gray-900 dark:text-gray-100 leading-none">RM{{ number_format($subtotal, 2) }} <i class="ph-fill ph-ticket text-rose-500 text-[10px]"></i></div>
+                    <div class="text-[15px] font-extrabold text-gray-900 dark:text-gray-100 leading-none">RM{{ number_format($estimatedTotal, 2) }} <i class="ph-fill ph-ticket text-rose-500 text-[10px]"></i></div>
                     <div class="text-[9px] text-gray-500 dark:text-gray-400 flex items-center gap-1 justify-end mt-1">
-                        Total Diskon <span class="text-rose-500 font-bold">RM{{ number_format($totalDiscount, 2) }}</span> <i class="ph-bold ph-caret-down text-gray-400"></i>
+                        Total Diskon <span class="text-rose-500 font-bold">RM{{ number_format($totalDiscount + $voucherDiscount, 2) }}</span> <i class="ph-bold ph-caret-down text-gray-400"></i>
                     </div>
                 </div>
                 <button wire:click="proceedToCheckout" class="px-5 py-2 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-sm active:scale-95 transition-transform flex-shrink-0">

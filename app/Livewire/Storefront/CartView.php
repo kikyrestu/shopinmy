@@ -276,11 +276,25 @@ class CartView extends Component
             ->get();
 
         $activeVoucher = null;
+        $voucherDiscount = 0;
         if ($this->selectedVoucherId) {
             $activeVoucher = $this->publicVouchers->firstWhere('id', $this->selectedVoucherId);
+            if ($activeVoucher) {
+                if ($activeVoucher->type === 'fixed') {
+                    $voucherDiscount = $activeVoucher->value;
+                } elseif ($activeVoucher->type === 'percentage') {
+                    $voucherDiscount = $subtotal * ($activeVoucher->value / 100);
+                }
+                
+                if ($voucherDiscount > $subtotal) {
+                    $voucherDiscount = $subtotal;
+                }
+            }
         }
 
-        return view('livewire.storefront.cart-view', compact('subtotal', 'totalDiscount', 'activeVoucher'))
+        $estimatedTotal = $subtotal - $voucherDiscount;
+
+        return view('livewire.storefront.cart-view', compact('subtotal', 'totalDiscount', 'activeVoucher', 'voucherDiscount', 'estimatedTotal'))
             ->extends('layouts.storefront')
             ->section('content');
     }
