@@ -610,14 +610,12 @@
         <span x-text="message" class="text-sm font-bold text-gray-800 dark:text-gray-100 leading-snug break-words"></span>
     </div>
 
+    @if(request()->routeIs('home'))
     <!-- Custom PWA Install Popup -->
     <div x-data="{
             showInstallPrompt: false,
             deferredPrompt: null,
             init() {
-                if (localStorage.getItem('pwa_prompt_dismissed') === 'true') {
-                    return;
-                }
                 // Only show custom prompt if running in browser (not standalone PWA)
                 if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
                     return;
@@ -636,16 +634,12 @@
             },
             dismiss() {
                 this.showInstallPrompt = false;
-                localStorage.setItem('pwa_prompt_dismissed', 'true');
             },
             async install() {
                 this.showInstallPrompt = false;
                 if (this.deferredPrompt) {
                     this.deferredPrompt.prompt();
                     const { outcome } = await this.deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        localStorage.setItem('pwa_prompt_dismissed', 'true');
-                    }
                     this.deferredPrompt = null;
                 }
             }
@@ -676,32 +670,33 @@
                  <i class="ph-fill ph-sparkle text-emerald-300 absolute top-6 left-12 text-xl animate-pulse"></i>
                  <i class="ph-fill ph-sparkle text-emerald-400 absolute top-10 right-16 text-sm animate-pulse" style="animation-delay: 500ms;"></i>
                  
-                 <img src="{{ asset('images/mascot-truck.png') }}" alt="ShopinMy Mascot" class="h-full object-contain drop-shadow-xl z-0 scale-110 origin-bottom" />
+                 <img src="{{ asset('images/mascot-truck.png') }}" alt="{{ \App\Models\Setting::get('site_name', 'ShopinMy') }} Mascot" class="h-full object-contain drop-shadow-xl z-0 scale-110 origin-bottom" />
              </div>
 
              <!-- Content -->
              <div class="px-6 pb-6 text-center mt-3">
                  <h3 class="text-xl font-extrabold text-gray-900 dark:text-white mb-1 flex items-center justify-center gap-2">
                      <i class="ph-fill ph-sparkle text-emerald-500"></i>
-                     Install ShopinMy
+                     {{ __('Install') }} {{ \App\Models\Setting::get('site_name', 'ShopinMy') }}
                      <i class="ph-fill ph-sparkle text-emerald-500"></i>
                  </h3>
-                 <p class="text-[13px] text-gray-500 dark:text-gray-400 font-medium mb-6 leading-relaxed">Install our app for a better<br>shopping experience!</p>
+                 <p class="text-[13px] text-gray-500 dark:text-gray-400 font-medium mb-6 leading-relaxed">{{ __('Install our app for a better shopping experience!') }}</p>
 
                  <!-- Buttons -->
                  <div class="flex items-center gap-3">
                      <button @click="dismiss()" class="flex-1 flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm">
                          <i class="ph-bold ph-upload-simple"></i>
-                         Not now
+                         {{ __('Not now') }}
                      </button>
                      <button @click="install()" class="flex-1 flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-bold shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 transition-all text-sm">
                          <i class="ph-bold ph-download-simple"></i>
-                         Install
+                         {{ __('Install') }}
                      </button>
                  </div>
              </div>
         </div>
     </div>
+    @endif
 
 </body>
 </html>
