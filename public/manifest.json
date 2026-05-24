@@ -3,6 +3,8 @@
     "short_name": "ShopinMy",
     "start_url": "/",
     "display": "standalone",
+    "lang": "ms-MY",
+    "dir": "ltr",
     "background_color": "#ffffff",
     "theme_color": "#10b981",
     "icons": [
