@@ -85,12 +85,30 @@
 
                 <!-- Right: Upload Form -->
                 <div>
-                    <form wire:submit="upload" class="h-full flex flex-col">
+                    <form wire:submit="upload" class="h-full flex flex-col"
+                          x-data="{ isUploading: false, progress: 0 }"
+                          x-on:livewire-upload-start="isUploading = true"
+                          x-on:livewire-upload-finish="isUploading = false"
+                          x-on:livewire-upload-error="isUploading = false"
+                          x-on:livewire-upload-progress="progress = $event.detail.progress">
+                          
                         <label class="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-3">{{ __('Upload Bukti Transfer') }} <span class="text-red-500">*</span></label>
                         
                         <div class="flex-1 relative group cursor-pointer min-h-[12rem] h-full border-2 border-dashed {{ $receiptImage ? 'border-brand-500 bg-brand-50/30' : 'border-gray-300 bg-gray-50 dark:bg-[#121212] hover:bg-gray-100 dark:bg-gray-800 hover:border-brand-400' }} rounded-2xl flex flex-col items-center justify-center transition-all overflow-hidden" 
-                             onclick="document.getElementById('receipt-upload').click()">
+                             onclick="if(!isUploading) document.getElementById('receipt-upload').click()">
                             
+                            <!-- Loading Overlay for File Upload -->
+                            <div x-show="isUploading" style="display: none;" class="absolute inset-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center rounded-2xl">
+                                <i class="ph-bold ph-spinner animate-spin text-3xl text-brand-500 mb-2"></i>
+                                <span class="font-bold text-sm text-gray-800 dark:text-gray-200">{{ __('Sedang Memproses Foto...') }}</span>
+                                
+                                <!-- Progress Bar -->
+                                <div class="w-2/3 bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-3 overflow-hidden">
+                                    <div class="bg-brand-500 h-full rounded-full transition-all duration-150 ease-out" :style="`width: ${progress}%`"></div>
+                                </div>
+                                <span class="text-xs text-brand-600 mt-1 font-extrabold" x-text="`${progress}%`"></span>
+                            </div>
+
                             @if ($receiptImage)
                                 <img src="{{ $receiptImage->temporaryUrl() }}" alt="Preview" class="absolute inset-0 w-full h-full object-cover opacity-60">
                                 <div class="relative z-10 flex flex-col items-center text-brand-700 bg-white dark:bg-gray-900/80 px-4 py-2 rounded-xl backdrop-blur-sm">
@@ -114,7 +132,8 @@
                             <span class="block mt-2 text-xs text-red-500 font-medium">{{ $message }}</span> 
                         @enderror
 
-                        <button type="submit" class="mt-4 w-full py-3.5 bg-gray-900 hover:bg-black text-white font-bold rounded-xl transition-all shadow-lg transform active:scale-[0.98] text-sm flex items-center justify-center gap-2 disabled:opacity-70"
+                        <button type="submit" class="mt-4 w-full py-3.5 bg-gray-900 hover:bg-black text-white font-bold rounded-xl transition-all shadow-lg transform active:scale-[0.98] text-sm flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                x-bind:disabled="isUploading"
                                 wire:loading.attr="disabled" wire:target="upload">
                             <span wire:loading.remove wire:target="upload">{{ __('Kirim Bukti Pembayaran') }}</span>
                             <span wire:loading wire:target="upload">
