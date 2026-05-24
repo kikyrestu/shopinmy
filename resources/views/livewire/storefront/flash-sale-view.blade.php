@@ -1,12 +1,12 @@
 @section('title', __('Flash Sale'))
 
-<div class="bg-gray-50 min-h-screen pb-16">
+<div class="bg-gray-50 dark:bg-[#121212] min-h-screen pb-16">
     <!-- Header -->
     <div class="bg-gradient-to-r from-brand-600 to-brand-700 text-white py-12 md:py-16 relative overflow-hidden">
         <div class="absolute inset-0 bg-black/10"></div>
-        <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px]"></div>
+        <div class="absolute top-0 right-0 w-64 h-64 bg-white dark:bg-gray-900/10 rounded-full blur-[80px]"></div>
         <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center text-center">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-sm font-bold uppercase tracking-wider mb-4">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white dark:bg-gray-900/20 backdrop-blur-md rounded-full text-sm font-bold uppercase tracking-wider mb-4">
                 <i class="ph-fill ph-lightning text-accent-400"></i> {{ __('Flash Sale') }}
             </div>
             
@@ -47,21 +47,21 @@
 
     @if($activeFlashSale && $activeFlashSale->products->isNotEmpty())
     <main class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 -mt-6">
-        <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100">
+        <div class="bg-white dark:bg-gray-900 rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-800">
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
                 @foreach($activeFlashSale->products as $product)
-                <a href="{{ route('product.show', $product->slug) }}" class="product-card group bg-white rounded-2xl p-3 border border-gray-100 flex flex-col relative h-full hover:shadow-lg transition-all duration-300">
+                <a href="{{ route('product.show', $product->slug) }}" class="product-card group bg-white dark:bg-gray-900 rounded-2xl p-3 border border-gray-100 dark:border-gray-800 flex flex-col relative h-full hover:shadow-lg transition-all duration-300">
                     <div class="absolute top-5 right-5 z-10 px-2 py-1 bg-accent-500 text-white text-xs font-bold rounded-md">
                         -{{ round((($product->price - $product->pivot->sale_price) / $product->price) * 100) }}%
                     </div>
                     <!-- Image -->
-                    <div class="relative w-full aspect-square rounded-xl overflow-hidden bg-gray-50 mb-4">
+                    <div class="relative w-full aspect-square rounded-xl overflow-hidden bg-gray-50 dark:bg-[#121212] mb-4">
                         @if($product->primaryImage)
                             <img src="{{ $product->first_image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         @elseif(!empty($product->images) && isset($product->images[0]))
                             <img src="{{ $product->first_image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         @else
-                            <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+                            <div class="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600">
                                 <i class="ph ph-image text-4xl"></i>
                             </div>
                         @endif
@@ -69,10 +69,10 @@
                     <!-- Content -->
                     <div class="flex flex-col flex-1 justify-between">
                         <div>
-                            <h3 class="text-sm font-medium text-gray-800 line-clamp-2 leading-tight group-hover:text-brand-600 transition-colors">{{ $product->name }}</h3>
+                            <h3 class="text-sm font-medium text-gray-800 dark:text-gray-200 line-clamp-2 leading-tight group-hover:text-brand-600 transition-colors">{{ $product->name }}</h3>
                             <div class="mt-2.5 flex flex-col">
                                 <span class="text-xl font-black text-brand-600">RM {{ number_format($product->pivot->sale_price, 2) }}</span>
-                                <span class="text-xs text-gray-400 line-through font-medium">RM {{ number_format($product->price, 2) }}</span>
+                                <span class="text-xs text-gray-400 dark:text-gray-600 line-through font-medium">RM {{ number_format($product->price, 2) }}</span>
                             </div>
                         </div>
                         <!-- Stock Progress -->
@@ -81,11 +81,11 @@
                                 $sold = max(0, 100 - ($product->pivot->qty * 5)); 
                                 if($sold > 95) $sold = 95; 
                             @endphp
-                            <div class="flex justify-between text-[11px] text-gray-500 font-bold mb-1">
+                            <div class="flex justify-between text-[11px] text-gray-500 dark:text-gray-500 font-bold mb-1">
                                 <span>{{ __('Telah Terjual') }}</span>
                                 <span class="text-brand-600">{{ $sold }}%</span>
                             </div>
-                            <div class="w-full bg-gray-100 rounded-full h-2">
+                            <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2">
                                 <div class="bg-gradient-to-r from-brand-500 to-accent-500 h-2 rounded-full" style="width: {{ $sold }}%"></div>
                             </div>
                         </div>

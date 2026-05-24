@@ -9,7 +9,7 @@
         <div class="-mx-6 -mb-6">
             <ul class="divide-y divide-gray-100 dark:divide-white/10">
                 @forelse($this->getTopProducts() as $product)
-                    <li class="px-6 py-4 flex items-center gap-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                    <li class="px-6 py-4 flex items-center gap-4 hover:bg-gray-50 dark:bg-[#121212] dark:hover:bg-white dark:bg-gray-900/5 transition-colors">
                         <div class="w-12 h-12 rounded-lg flex-shrink-0 flex items-center justify-center text-lg font-bold
                             {{ ['bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
                                 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
@@ -29,7 +29,7 @@
                     </li>
                 @empty
                     <li class="px-6 py-8 text-center">
-                        <div class="text-gray-400 dark:text-gray-500">
+                        <div class="text-gray-400 dark:text-gray-400">
                             <x-heroicon-o-shopping-bag class="w-8 h-8 mx-auto mb-2" />
                             <p class="text-sm">Belum ada data penjualan</p>
                         </div>
