@@ -294,6 +294,27 @@ class CheckoutView extends Component
             return;
         }
 
+        $userId = auth()->id();
+
+        // Check Target User
+        if ($voucher->target_user_id !== null && $voucher->target_user_id !== $userId) {
+            $this->addError('voucherCode', 'Voucher ini tidak berlaku untuk akun Anda.');
+            return;
+        }
+
+        // Check New User Only
+        if ($voucher->is_new_user_only) {
+            if (!$userId) {
+                $this->addError('voucherCode', 'Silakan login untuk menggunakan voucher pengguna baru.');
+                return;
+            }
+            $hasOrders = \App\Models\Order::where('user_id', $userId)->exists();
+            if ($hasOrders) {
+                $this->addError('voucherCode', 'Voucher ini hanya berlaku untuk pengguna baru yang belum pernah berbelanja.');
+                return;
+            }
+        }
+
         if ($this->subtotal < $voucher->min_order) {
             $this->addError('voucherCode', "Minimum order is RM {$voucher->min_order}");
             return;

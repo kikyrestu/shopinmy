@@ -235,11 +235,26 @@ class CartView extends Component
             }
         }
 
+        $userId = auth()->id();
+        $hasOrders = $userId ? \App\Models\Order::where('user_id', $userId)->exists() : false;
+
         $this->publicVouchers = \App\Models\Voucher::where('is_active', true)
             ->where('is_public', true)
             ->where(function($q) {
                 $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
-            })->get();
+            })
+            ->where(function($q) use ($hasOrders) {
+                if ($hasOrders) {
+                    $q->where('is_new_user_only', false);
+                }
+            })
+            ->where(function($q) use ($userId) {
+                $q->whereNull('target_user_id');
+                if ($userId) {
+                    $q->orWhere('target_user_id', $userId);
+                }
+            })
+            ->get();
 
         $activeVoucher = null;
         if ($this->selectedVoucherId) {
