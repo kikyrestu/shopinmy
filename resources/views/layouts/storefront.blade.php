@@ -463,7 +463,8 @@
     <!-- ==========================================
          MOBILE BOTTOM NAVIGATION (APP-LIKE UX)
          ========================================== -->
-    <div class="fixed bottom-0 left-0 z-50 w-full h-14 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 md:hidden flex justify-around items-center px-1 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+    @if(request()->routeIs(['home', 'products.index', 'cart.index', 'dashboard']))
+    <div id="smart-bottom-nav" class="fixed bottom-0 left-0 z-50 w-full h-14 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 md:hidden flex justify-around items-center px-1 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.03)] transition-transform duration-300 transform translate-y-0">
         <a href="{{ route('home') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('home') ? 'text-brand-600' : 'text-gray-400 dark:text-gray-600 hover:text-brand-500' }} transition">
             <i class="{{ request()->routeIs('home') ? 'ph-fill' : 'ph' }} ph-house text-[22px] mb-0.5"></i>
             <span class="text-[9px] font-semibold">{{ __('Home') }}</span>
@@ -479,19 +480,21 @@
             </div>
             <span class="text-[9px] font-medium">{{ __('Cart') }}</span>
         </a>
-        <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('dashboard*') ? 'text-brand-600' : 'text-gray-400 dark:text-gray-600 hover:text-brand-500' }} transition">
-            <i class="{{ request()->routeIs('dashboard*') ? 'ph-fill' : 'ph' }} ph-user text-[22px] mb-0.5"></i>
+        <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('dashboard') ? 'text-brand-600' : 'text-gray-400 dark:text-gray-600 hover:text-brand-500' }} transition">
+            <i class="{{ request()->routeIs('dashboard') ? 'ph-fill' : 'ph' }} ph-user text-[22px] mb-0.5"></i>
             <span class="text-[9px] font-medium">{{ __('Account') }}</span>
         </a>
     </div>
+    @endif
 
     @stack('scripts')
 
-    <!-- Smart Header Auto-Hide Script -->
+    <!-- Smart Header & Bottom Nav Auto-Hide Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             let lastScrollTop = 0;
             const header = document.getElementById('smart-header');
+            const bottomNav = document.getElementById('smart-bottom-nav');
             
             window.addEventListener('scroll', function() {
                 let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -499,15 +502,18 @@
                 // Prevent hiding when at the very top (e.g. mobile bouncing)
                 if (scrollTop <= 50) {
                     header.style.transform = 'translateY(0)';
+                    if (bottomNav) bottomNav.style.transform = 'translateY(0)';
                     return;
                 }
                 
                 if (scrollTop > lastScrollTop) {
                     // Scroll Down -> Hide
                     header.style.transform = 'translateY(-100%)';
+                    if (bottomNav) bottomNav.style.transform = 'translateY(100%)';
                 } else {
                     // Scroll Up -> Show
                     header.style.transform = 'translateY(0)';
+                    if (bottomNav) bottomNav.style.transform = 'translateY(0)';
                 }
                 lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
             }, { passive: true });
