@@ -74,7 +74,7 @@
         @endforeach
 
         <!-- Submit Button (Sticky Bottom) -->
-        <div class="fixed left-0 w-full bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 p-4 flex items-center z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] dark:shadow-none" style="bottom: env(safe-area-inset-bottom);">
+        <div class="fixed left-0 w-full bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 p-4 flex items-center z-40 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] dark:shadow-none md:bottom-0" style="bottom: calc(3.5rem + env(safe-area-inset-bottom));">
             <div class="max-w-3xl mx-auto w-full">
                 <button type="submit" class="w-full h-[46px] bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl flex items-center justify-center transition-colors shadow-lg shadow-brand-500/30">
                     Kirim Ulasan

@@ -206,7 +206,7 @@
     </div>
 
     <!-- Sticky Bottom Navigation Bar (Tokopedia Style) -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-3 px-4 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+    <div class="fixed left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-3 px-4 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:bottom-0" style="bottom: calc(3.5rem + env(safe-area-inset-bottom));">
         <div class="max-w-lg mx-auto flex gap-3 items-center">
             
             @if($order->status === 'pending' && optional($order->payment)->method === 'manual_transfer')
