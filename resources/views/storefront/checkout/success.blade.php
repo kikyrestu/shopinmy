@@ -13,23 +13,23 @@
             <h1 class="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-4">{{ __('Thank you for your order!') }}</h1>
             <p class="text-gray-500 dark:text-gray-500 mb-8">{{ __('Your order has been placed successfully and is now being processed. We have sent an email confirmation with the details.') }}</p>
             
-            <div class="bg-gray-50 dark:bg-[#121212] rounded-2xl p-6 mb-8 text-left">
-                <div class="grid grid-cols-2 gap-4 text-sm">
+            <div class="bg-gray-50 dark:bg-[#121212] rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-8 text-left">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div>
-                        <div class="text-gray-500 dark:text-gray-500 font-medium mb-1">{{ __('Order Number') }}</div>
-                        <div class="font-bold text-gray-900 dark:text-gray-100">{{ $order->order_number }}</div>
+                        <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-500 font-medium mb-1">{{ __('Order Number') }}</div>
+                        <div class="text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100 break-words">{{ $order->order_number }}</div>
                     </div>
                     <div>
-                        <div class="text-gray-500 dark:text-gray-500 font-medium mb-1">{{ __('Order Date') }}</div>
-                        <div class="font-bold text-gray-900 dark:text-gray-100">{{ $order->created_at->format('d M Y, H:i') }}</div>
+                        <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-500 font-medium mb-1">{{ __('Order Date') }}</div>
+                        <div class="text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100 break-words">{{ $order->created_at->format('d M Y, H:i') }}</div>
                     </div>
                     <div>
-                        <div class="text-gray-500 dark:text-gray-500 font-medium mb-1">{{ __('Payment Method') }}</div>
-                        <div class="font-bold text-gray-900 dark:text-gray-100 uppercase">{{ $order->payment->method ?? 'N/A' }}</div>
+                        <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-500 font-medium mb-1">{{ __('Payment Method') }}</div>
+                        <div class="text-sm sm:text-base font-bold text-gray-900 dark:text-gray-100 uppercase break-words">{{ str_replace('_', ' ', $order->payment->method ?? 'N/A') }}</div>
                     </div>
                     <div>
-                        <div class="text-gray-500 dark:text-gray-500 font-medium mb-1">{{ __('Total Amount') }}</div>
-                        <div class="font-bold text-brand-600">RM {{ number_format($order->total, 2) }}</div>
+                        <div class="text-xs sm:text-sm text-gray-500 dark:text-gray-500 font-medium mb-1">{{ __('Total Amount') }}</div>
+                        <div class="text-sm sm:text-base font-bold text-brand-600 break-words">RM {{ number_format($order->total, 2) }}</div>
                     </div>
                 </div>
             </div>
