@@ -110,10 +110,24 @@
                             </div>
 
                             @if ($receiptImage)
-                                <img src="{{ $receiptImage->temporaryUrl() }}" alt="Preview" class="absolute inset-0 w-full h-full object-cover opacity-60">
+                                @php
+                                    $previewUrl = null;
+                                    try {
+                                        $previewUrl = $receiptImage->temporaryUrl();
+                                    } catch (\Exception $e) {
+                                        // Ignore preview error for non-image files
+                                    }
+                                @endphp
+                                @if($previewUrl)
+                                    <img src="{{ $previewUrl }}" alt="Preview" class="absolute inset-0 w-full h-full object-cover opacity-60">
+                                @else
+                                    <div class="absolute inset-0 w-full h-full bg-gray-200 dark:bg-gray-800 opacity-60 flex items-center justify-center">
+                                        <i class="ph-fill ph-file text-5xl text-gray-400"></i>
+                                    </div>
+                                @endif
                                 <div class="relative z-10 flex flex-col items-center text-brand-700 bg-white dark:bg-gray-900/80 px-4 py-2 rounded-xl backdrop-blur-sm">
                                     <i class="ph-fill ph-check-circle text-3xl mb-1 text-emerald-500"></i>
-                                    <span class="font-bold text-sm">{{ __('Foto Dipilih') }}</span>
+                                    <span class="font-bold text-sm">{{ __('File Dipilih') }}</span>
                                     <span class="text-xs">{{ __('Klik untuk mengganti') }}</span>
                                 </div>
                             @else
