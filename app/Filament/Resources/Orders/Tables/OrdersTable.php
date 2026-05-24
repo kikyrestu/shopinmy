@@ -63,6 +63,45 @@ class OrdersTable
             ])
             ->recordActions([
                 EditAction::make(),
+                Action::make('verify_payment')
+                    ->label('Verifikasi Pembayaran')
+                    ->icon('heroicon-o-check-badge')
+                    ->color('success')
+                    ->visible(fn ($record) => $record->payment && $record->payment->method === 'manual_transfer' && $record->payment->status === 'pending')
+                    ->modalHeading('Verifikasi Bukti Transfer')
+                    ->modalWidth('2xl')
+                    ->modalContent(fn ($record) => view('filament.components.payment-proof', ['payment' => $record->payment]))
+                    ->modalSubmitActionLabel('Terima (Approve)')
+                    ->action(function ($record, array $data) {
+                        $record->payment->update([
+                            'status' => 'paid',
+                            'verified_at' => now(),
+                            'verified_by' => auth()->id(),
+                        ]);
+                        $record->update(['status' => 'paid']);
+                        Notification::make()->title('Pembayaran Disetujui')->success()->send();
+                    })
+                    ->extraModalFooterActions(fn ($action, $record) => [
+                        Action::make('reject_payment')
+                            ->label('Tolak (Reject)')
+                            ->color('danger')
+                            ->form([
+                                \Filament\Forms\Components\Textarea::make('rejection_reason')
+                                    ->label('Alasan Penolakan')
+                                    ->placeholder('Misal: Foto buram atau nominal tidak sesuai')
+                                    ->required()
+                            ])
+                            ->action(function (array $data) use ($record, $action) {
+                                $record->payment->update([
+                                    'status' => 'failed',
+                                    'rejection_reason' => $data['rejection_reason'],
+                                    'verified_at' => now(),
+                                    'verified_by' => auth()->id(),
+                                ]);
+                                Notification::make()->title('Pembayaran Ditolak')->danger()->send();
+                                $action->cancel();
+                            }),
+                    ]),
                 Action::make('download_invoice')
                     ->label('Invoice PDF')
                     ->icon('heroicon-o-document-arrow-down')

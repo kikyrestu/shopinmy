@@ -49,12 +49,6 @@ Route::get('/storage/payment-proofs/{filename}', function ($filename) {
     return response()->file($path);
 })->where('filename', '.*');
 
-// Custom Secure Admin Route for Payment Verification
-Route::middleware(['auth'])->prefix('secure-admin')->group(function () {
-    Route::get('/payments', \App\Livewire\SecureAdmin\PaymentVerification::class)
-        ->name('secure.admin.payments');
-});
-
 Route::middleware(['auth'])->prefix('dashboard')->group(function () {
     Route::get('/', \App\Livewire\Storefront\Dashboard\Overview::class)->name('dashboard');
     Route::get('/orders', \App\Livewire\Storefront\Dashboard\OrderHistory::class)->name('dashboard.orders');

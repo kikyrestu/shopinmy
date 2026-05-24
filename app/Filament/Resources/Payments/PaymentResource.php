@@ -19,9 +19,9 @@ class PaymentResource extends Resource
 {
     protected static ?string $model = Payment::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCreditCard;
-
-    protected static UnitEnum|string|null $navigationGroup = 'Orders';
+    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static ?string $navigationGroup = 'Sales';
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Schema $schema): Schema
     {
