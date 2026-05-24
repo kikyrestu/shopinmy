@@ -609,5 +609,99 @@
         <!-- Message -->
         <span x-text="message" class="text-sm font-bold text-gray-800 dark:text-gray-100 leading-snug break-words"></span>
     </div>
+
+    <!-- Custom PWA Install Popup -->
+    <div x-data="{
+            showInstallPrompt: false,
+            deferredPrompt: null,
+            init() {
+                if (localStorage.getItem('pwa_prompt_dismissed') === 'true') {
+                    return;
+                }
+                // Only show custom prompt if running in browser (not standalone PWA)
+                if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+                    return;
+                }
+                
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    // Prevent the mini-infobar from appearing on mobile
+                    e.preventDefault();
+                    this.deferredPrompt = e;
+                    
+                    // Show the popup after a small delay for better UX
+                    setTimeout(() => {
+                        this.showInstallPrompt = true;
+                    }, 1500);
+                });
+            },
+            dismiss() {
+                this.showInstallPrompt = false;
+                localStorage.setItem('pwa_prompt_dismissed', 'true');
+            },
+            async install() {
+                this.showInstallPrompt = false;
+                if (this.deferredPrompt) {
+                    this.deferredPrompt.prompt();
+                    const { outcome } = await this.deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        localStorage.setItem('pwa_prompt_dismissed', 'true');
+                    }
+                    this.deferredPrompt = null;
+                }
+            }
+        }"
+        x-show="showInstallPrompt"
+        x-transition.opacity.duration.300ms
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+        style="display: none;">
+        
+        <div x-show="showInstallPrompt"
+             x-transition:enter="transition ease-out duration-300 delay-100"
+             x-transition:enter-start="opacity-0 scale-90 translate-y-8"
+             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+             x-transition:leave-end="opacity-0 scale-95 translate-y-8"
+             @click.away="dismiss()"
+             class="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-[340px] shadow-2xl relative overflow-hidden flex flex-col border border-gray-100 dark:border-gray-800">
+             
+             <!-- Close Button -->
+             <button @click="dismiss()" class="absolute top-4 right-4 z-10 text-gray-400 hover:text-gray-800 dark:text-gray-500 dark:hover:text-gray-200 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full p-1.5 transition-colors">
+                 <i class="ph-bold ph-x text-lg"></i>
+             </button>
+
+             <!-- Image Header -->
+             <div class="w-full bg-gradient-to-b from-emerald-50/50 to-white dark:from-emerald-900/20 dark:to-gray-900 pt-8 pb-2 px-6 flex justify-center items-end h-48 relative">
+                 <!-- Sparkles -->
+                 <i class="ph-fill ph-sparkle text-emerald-300 absolute top-6 left-12 text-xl animate-pulse"></i>
+                 <i class="ph-fill ph-sparkle text-emerald-400 absolute top-10 right-16 text-sm animate-pulse" style="animation-delay: 500ms;"></i>
+                 
+                 <img src="{{ asset('images/mascot-truck.png') }}" alt="ShopinMy Mascot" class="h-full object-contain drop-shadow-xl z-0 scale-110 origin-bottom" />
+             </div>
+
+             <!-- Content -->
+             <div class="px-6 pb-6 text-center mt-3">
+                 <h3 class="text-xl font-extrabold text-gray-900 dark:text-white mb-1 flex items-center justify-center gap-2">
+                     <i class="ph-fill ph-sparkle text-emerald-500"></i>
+                     Install ShopinMy
+                     <i class="ph-fill ph-sparkle text-emerald-500"></i>
+                 </h3>
+                 <p class="text-[13px] text-gray-500 dark:text-gray-400 font-medium mb-6 leading-relaxed">Install our app for a better<br>shopping experience!</p>
+
+                 <!-- Buttons -->
+                 <div class="flex items-center gap-3">
+                     <button @click="dismiss()" class="flex-1 flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm">
+                         <i class="ph-bold ph-upload-simple"></i>
+                         Not now
+                     </button>
+                     <button @click="install()" class="flex-1 flex items-center justify-center gap-2 py-2.5 px-2 rounded-xl bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-bold shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5 transition-all text-sm">
+                         <i class="ph-bold ph-download-simple"></i>
+                         Install
+                     </button>
+                 </div>
+             </div>
+        </div>
+    </div>
+
 </body>
 </html>
