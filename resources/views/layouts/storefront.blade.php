@@ -515,12 +515,26 @@
     </script>
 
     <!-- Global iOS-Style Toast Notification -->
+    <!-- Global iOS-Style Toast Notification -->
     <div x-data="{ 
             show: false, 
             message: '', 
             type: 'success', 
             timeout: null,
             init() {
+                // Catch Laravel Session Flashes automatically
+                @if(session('success'))
+                    this.message = '{{ session('success') }}';
+                    this.type = 'success';
+                    this.show = true;
+                    this.timeout = setTimeout(() => { this.show = false; }, 4000);
+                @elseif(session('error'))
+                    this.message = '{{ session('error') }}';
+                    this.type = 'error';
+                    this.show = true;
+                    this.timeout = setTimeout(() => { this.show = false; }, 4000);
+                @endif
+
                 window.addEventListener('notify', (event) => {
                     this.message = event.detail.message || event.detail[0].message;
                     this.type = event.detail.type || event.detail[0].type || 'success';
@@ -544,7 +558,7 @@
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 translate-y-0 scale-100"
         x-transition:leave-end="opacity-0 -translate-y-10 scale-95"
-        class="fixed top-6 left-1/2 transform -translate-x-1/2 z-[100] flex items-center gap-3 px-5 py-3 rounded-full shadow-2xl backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border border-white/40 dark:border-gray-800/60 pointer-events-none"
+        class="fixed top-6 left-1/2 transform -translate-x-1/2 z-[100] flex items-center gap-3 px-5 py-3 rounded-2xl sm:rounded-full shadow-2xl backdrop-blur-xl bg-white/90 dark:bg-gray-900/90 border border-white/40 dark:border-gray-800/60 pointer-events-none w-[92vw] max-w-sm sm:max-w-md"
         style="display: none;"
     >
         <!-- Dynamic Icon based on Type -->
@@ -570,7 +584,7 @@
         </template>
 
         <!-- Message -->
-        <span x-text="message" class="text-sm font-bold text-gray-800 dark:text-gray-100 whitespace-nowrap"></span>
+        <span x-text="message" class="text-sm font-bold text-gray-800 dark:text-gray-100 leading-snug break-words"></span>
     </div>
 </body>
 </html>
