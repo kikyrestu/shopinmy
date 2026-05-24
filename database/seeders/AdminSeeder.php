@@ -15,7 +15,7 @@ class AdminSeeder extends Seeder
     {
         // Create Super Admin User for Filament Access
         User::firstOrCreate(
-            ['email' => 'admin@nexshop.com'],
+            ['email' => 'admin@shopinmy.com'],
             [
                 'name' => 'Super Admin',
                 'password' => bcrypt('password123'),

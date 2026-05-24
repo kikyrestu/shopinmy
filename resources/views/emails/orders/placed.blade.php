@@ -37,7 +37,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>{{ \App\Models\Setting::get('site_name', 'NexShop') }}</h1>
+            <h1>{{ \App\Models\Setting::get('site_name', 'ShopinMy') }}</h1>
         </div>
         
         <div class="content">
@@ -110,7 +110,7 @@
         </div>
     </div>
     <div class="footer">
-        &copy; {{ date('Y') }} {{ \App\Models\Setting::get('site_name', 'NexShop') }}. All rights reserved.<br>
+        &copy; {{ date('Y') }} {{ \App\Models\Setting::get('site_name', 'ShopinMy') }}. All rights reserved.<br>
         If you have any questions, please contact us at {{ \App\Models\Setting::get('site_email', 'support@example.com') }}.
     </div>
 </body>

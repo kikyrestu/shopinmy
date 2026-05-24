@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- SEO Meta Tags -->
     @php
-        $defaultTitle = \App\Models\Setting::get('site_name', 'NexShop');
+        $defaultTitle = \App\Models\Setting::get('site_name', 'ShopinMy');
         $defaultDesc = \App\Models\Setting::get('site_description', __('A next-generation e-commerce platform delivering a seamless, secure, and user-centric shopping experience.'));
         $defaultLogo = \App\Models\Setting::get('site_logo') ? Storage::url(\App\Models\Setting::get('site_logo')) : asset('logo.png');
     @endphp
@@ -137,13 +137,13 @@
                 <!-- Logo -->
                 <a href="{{ route('home') }}" class="hidden md:flex flex-shrink-0 items-center gap-2 cursor-pointer">
                     @if(\App\Models\Setting::get('site_logo'))
-                        <img src="{{ Storage::url(\App\Models\Setting::get('site_logo')) }}" alt="{{ \App\Models\Setting::get('site_name', 'NexShop') }}" class="h-10 w-auto object-contain">
+                        <img src="{{ Storage::url(\App\Models\Setting::get('site_logo')) }}" alt="{{ \App\Models\Setting::get('site_name', 'ShopinMy') }}" class="h-10 w-auto object-contain">
                     @else
                         <div class="w-10 h-10 rounded-xl bg-gradient-to-b from-brand-400 to-brand-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/20">
                             <i class="ph-bold ph-shopping-bag text-xl"></i>
                         </div>
                     @endif
-                    <span class="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100 hidden sm:block">{{ \App\Models\Setting::get('site_name', 'NexShop') }}</span>
+                    <span class="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100 hidden sm:block">{{ \App\Models\Setting::get('site_name', 'ShopinMy') }}</span>
                 </a>
 
                 <!-- Command-Palette Style Search -->
@@ -408,13 +408,13 @@
                 <div class="col-span-1">
                     <div class="flex items-center gap-2 mb-4">
                         @if(\App\Models\Setting::get('site_logo'))
-                            <img src="{{ Storage::url(\App\Models\Setting::get('site_logo')) }}" alt="{{ \App\Models\Setting::get('site_name', 'NexShop') }}" class="h-8 w-auto object-contain">
+                            <img src="{{ Storage::url(\App\Models\Setting::get('site_logo')) }}" alt="{{ \App\Models\Setting::get('site_name', 'ShopinMy') }}" class="h-8 w-auto object-contain">
                         @else
                             <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white">
                                 <i class="ph-bold ph-shopping-bag"></i>
                             </div>
                         @endif
-                        <span class="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100">{{ \App\Models\Setting::get('site_name', 'NexShop') }}</span>
+                        <span class="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100">{{ \App\Models\Setting::get('site_name', 'ShopinMy') }}</span>
                     </div>
                     <p class="text-gray-500 dark:text-gray-500 text-sm leading-relaxed mb-6">
                         {{ \App\Models\Setting::get('site_description', __('A next-generation e-commerce platform delivering a seamless, secure, and user-centric shopping experience.')) }}
@@ -457,7 +457,7 @@
             </div>
             
             <div class="pt-6 border-t border-gray-100 dark:border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400 dark:text-gray-600 font-medium">
-                <p>&copy; {{ date('Y') }} {{ \App\Models\Setting::get('site_name', 'NexShop') }}. {{ __('All rights reserved.') }}</p>
+                <p>&copy; {{ date('Y') }} {{ \App\Models\Setting::get('site_name', 'ShopinMy') }}. {{ __('All rights reserved.') }}</p>
                 <div class="flex items-center gap-1">
                     {!! \App\Models\Setting::get('footer_tagline', __('Made with <i class="ph-fill ph-heart text-red-500 mx-1"></i> in Malaysia')) !!}
                 </div>

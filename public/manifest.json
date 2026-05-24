@@ -1,6 +1,6 @@
 {
-    "name": "NexShop E-Commerce",
-    "short_name": "NexShop",
+    "name": "ShopinMy by BuildyWeb",
+    "short_name": "ShopinMy",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
