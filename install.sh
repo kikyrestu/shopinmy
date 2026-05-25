@@ -162,6 +162,8 @@ docker compose -f docker-compose.prod.yml exec -T ecommerce_app composer install
 
 # 10. Persiapkan Database & Symlink
 echo "🗃️ Melakukan migrasi database dan menyambungkan gambar..."
+echo "⏳ Menunggu database siap (15 detik)..."
+sleep 15
 docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan migrate --force || { echo "❌ ERROR: Migrasi database gagal! Pastikan volume database lama sudah dihapus jika ingin install ulang dengan password berbeda."; exit 1; }
 docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan storage:link
 
