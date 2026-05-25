@@ -26,18 +26,18 @@ echo -e "\n⏳ Mengupdate $STORE_CODE... Web Anda tidak akan mati selama proses 
 
 cd "$APP_DIR"
 
-echo "📥 Menarik kode terbaru dari GitHub..."
-git pull origin main
+# 1. Tarik pembaruan kode terbaru dari GitHub
+echo "🔄 Mengambil update terbaru dari repository..."
+git reset --hard || { echo "❌ ERROR: Git reset gagal!"; exit 1; }
+git pull origin main || { echo "❌ ERROR: Git pull gagal!"; exit 1; }
 
-echo "📦 Mengupdate pustaka PHP (Composer)..."
-docker compose -f docker-compose.prod.yml exec -T ecommerce_app composer install --no-dev --optimize-autoloader
+# 2. Update dependensi (Jika ada tambahan library)
+echo "📦 Mengupdate dependensi Composer..."
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app composer install --no-dev --optimize-autoloader || { echo "❌ ERROR: Composer install gagal!"; exit 1; }
 
-echo "📦 Mengupdate pustaka Node (NPM) & Rebuild Assets..."
-docker compose -f docker-compose.prod.yml exec -T ecommerce_app npm install
-docker compose -f docker-compose.prod.yml exec -T ecommerce_app npm run build
-
-echo "🗃️ Menjalankan migrasi database (jika ada struktur tabel baru)..."
-docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan migrate --force
+# 3. Jalankan Migrasi Database (Jika ada tabel baru)
+echo "🗃️ Menjalankan migrasi database..."
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan migrate --force || { echo "❌ ERROR: Migrasi database gagal!"; exit 1; }
 
 echo "⚡ Menyegarkan semua Cache Laravel..."
 docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan optimize:clear

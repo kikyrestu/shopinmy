@@ -156,23 +156,21 @@ echo "🚀 Menyalakan kontainer toko ${STORE_CODE}..."
 # Kita jalankan pakai docker-compose.prod.yml yang dirancang khusus untuk Multi-Tenant Reverse Proxy
 docker compose -f docker-compose.prod.yml up -d --build
 
-# 9. Install dependensi Composer & NPM di dalam container app
-echo "📦 Menginstall pustaka PHP & Node..."
-docker compose -f docker-compose.prod.yml exec -T ecommerce_app composer install --no-dev --optimize-autoloader
-docker compose -f docker-compose.prod.yml exec -T ecommerce_app npm install
-docker compose -f docker-compose.prod.yml exec -T ecommerce_app npm run build
+# 9. Install dependensi Composer di dalam container app
+echo "📦 Menginstall pustaka PHP..."
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app composer install --no-dev --optimize-autoloader || { echo "❌ ERROR: Composer install gagal!"; exit 1; }
 
 # 10. Persiapkan Database & Symlink
 echo "🗃️ Melakukan migrasi database dan menyambungkan gambar..."
-docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan migrate --force
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan migrate --force || { echo "❌ ERROR: Migrasi database gagal! Pastikan volume database lama sudah dihapus jika ingin install ulang dengan password berbeda."; exit 1; }
 docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan storage:link
 
 # 11. Optimasi Cache Laravel
 echo "⚡ Mengoptimalkan sistem cache..."
-docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan optimize:clear
-docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan config:cache
-docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan route:cache
-docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan view:cache
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan optimize:clear || true
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan config:cache || { echo "❌ ERROR: Config cache gagal!"; exit 1; }
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan route:cache || true
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan view:cache || true
 
 # 12. Mendaftarkan Cron Job ke Sistem VPS
 echo "⏱️ Memasang jadwal Cron Job otomatis..."
