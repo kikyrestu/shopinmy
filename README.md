@@ -1,58 +1,84 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<h1 align="center">🚀 Panduan Lengkap Instalasi ShopinMy (Dari Nol Sampai Online)</h1>
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+Panduan ini dirancang khusus untuk pemula. Ikuti langkah-langkah di bawah ini secara perlahan, dan website toko online Anda akan siap digunakan dalam hitungan menit!
 </p>
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📌 Tahap 1: Persiapan Domain (Wajib)
+Sebelum menyentuh server, pastikan domain Anda sudah diarahkan ke server VPS.
+1. Buka panel pengelolaan Domain Anda (seperti Niagahoster, Hostinger, Idwebhost, atau Cloudflare).
+2. Cari menu **DNS Management** atau **Pengaturan DNS**.
+3. Buat catatan baru dengan tipe **A Record**.
+4. Isi kolom `Name` dengan `@` (untuk domain utama) atau nama subdomain (misal: `toko1`).
+5. Isi kolom `IPv4 address` atau `Points to` dengan **IP Server VPS Anda**.
+6. Simpan. *(Catatan: Perubahan DNS kadang butuh waktu beberapa menit hingga 1 jam untuk menyebar ke seluruh dunia).*
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 💻 Tahap 2: Cara Masuk ke VPS (Khusus Pemula)
+Anda harus masuk ke dalam server VPS Anda untuk menjalankan perintah instalasi.
 
-## Learning Laravel
+1. Buka aplikasi Terminal di komputer Anda:
+   - **Pengguna Windows**: Buka aplikasi `Command Prompt` (CMD) atau `PowerShell`.
+   - **Pengguna Mac/Linux**: Buka aplikasi `Terminal`.
+2. Ketik perintah di bawah ini, lalu tekan **Enter**:
+   ```bash
+   ssh root@IP_VPS_ANDA
+   ```
+   *(Contoh: `ssh root@217.216.33.192`)*
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. Jika muncul pertanyaan `Are you sure you want to continue connecting (yes/no/[fingerprint])?`, ketik **yes** lalu tekan Enter.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### ⚠️ PERHATIAN SANGAT PENTING SAAT MENGISI PASSWORD:
+Sistem akan meminta Anda memasukkan password VPS Anda.
+Ketika Anda mulai mengetik password, **huruf, angka, atau tanda bintang (***) TIDAK AKAN MUNCUL di layar!** 
+Layar akan terlihat seperti diam / nge-lag. JANGAN PANIK! Ini **BUKAN ERROR**, melainkan fitur keamanan tingkat tinggi bawaan sistem operasi Linux agar tidak ada orang di sebelah Anda yang bisa menebak panjang password Anda. 
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+**Cara yang benar:** Ketik saja password Anda dengan percaya diri sampai selesai (meskipun tidak terlihat ada yang berubah di layar), lalu tekan **Enter**.
 
-## Agentic Development
+---
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## 🚀 Tahap 3: Menjalankan Auto-Installer (Sihir Dimulai)
+Setelah berhasil masuk (biasanya ditandai dengan tulisan hijau seperti `root@vmi...:~#`), Anda hanya perlu **Copy dan Paste** satu baris kode ajaib ini ke terminal, lalu tekan Enter:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+bash <(curl -s https://raw.githubusercontent.com/kikyrestu/shopinmy/main/install.sh)
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+## ❓ Tahap 4: Menjawab Pertanyaan Instalasi
+Sistem akan secara otomatis mendownload semua kebutuhan server (Nginx, Docker, Certbot) dan menanyakan 4 hal mudah:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. **🛒 KODE TOKO**: Nama unik atau ID untuk toko Anda. Gunakan huruf kecil tanpa spasi (misal: `toko1`, `tokosepatuku`).
+2. **🌐 NAMA DOMAIN**: Domain atau Subdomain yang sudah Anda setting di Tahap 1 (misal: `toko1.com` atau `toko1.shopinmy.com`).
+3. **📧 EMAIL**: Alamat email aktif Anda. Email ini dibutuhkan oleh *Let's Encrypt* untuk memberikan Anda sertifikat Gembok Hijau (HTTPS/SSL) secara gratis dan resmi.
+4. **🔑 PASSWORD DATABASE**: Buat password yang kuat untuk mengamankan *database* toko ini.
 
-## Code of Conduct
+Setelah menjawab 4 pertanyaan tersebut, Anda tinggal **Duduk Manis dan Ngopi ☕**.
+Script akan bekerja menginstall aplikasi, membuat database, menyambungkan jaringan, dan mengaktifkan sertifikat gembok hijau HTTPS!
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 🛠️ Fitur Ekstra (Untuk Admin Server)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 🔄 Cara Mengupdate Toko ke Versi Terbaru
+Jika ada pembaruan kode, fitur baru, atau perbaikan *bug* dari pusat (GitHub), Anda tidak perlu menginstall ulang! Cukup masuk ke VPS Anda dan jalankan:
+```bash
+bash <(curl -s https://raw.githubusercontent.com/kikyrestu/shopinmy/main/update.sh)
+```
+Toko Anda akan otomatis diperbarui dalam hitungan detik tanpa mematikan website (Zero Downtime).
 
-## License
+### 🗑️ Cara Menghapus Toko (Uninstall Permanen)
+Jika masa sewa klien Anda habis atau Anda ingin membersihkan *server* dari toko tertentu, jalankan perintah pemusnah ini:
+```bash
+bash <(curl -s https://raw.githubusercontent.com/kikyrestu/shopinmy/main/uninstall.sh)
+```
+Script ini akan membersihkan semua *file*, *database*, *docker container*, dan *setting* Nginx yang berhubungan dengan toko tersebut sampai tak bersisa, mengembalikan memori dan kapasitas penyimpanan VPS Anda.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+<p align="center">
+Dibuat dengan ❤️ untuk sistem SaaS ShopinMy Multi-Tenant.
+</p>
