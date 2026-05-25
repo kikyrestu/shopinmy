@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==============================================================================
-# ShopinMy MULTI-TENANT VPS Auto Installer (Nginx Proxy + Let's Encrypt)
+# ShopinMy MULTI-TENANT VPS Auto Installer (Native Nginx + Dockerized App)
 # ==============================================================================
 
 # 1. Cek Root Privilege
@@ -30,7 +30,7 @@ echo -e "\n⏳ Memulai proses instalasi otomatis. Silakan tunggu..."
 # 3. Update System & Install Dependensi Dasar
 echo "📦 Mengupdate sistem dan menginstal dependensi dasar..."
 apt-get update -y
-apt-get install -y curl git unzip wget
+apt-get install -y curl git unzip wget nginx python3-certbot-nginx
 
 # 4. Install Docker jika belum ada
 if ! command -v docker &> /dev/null; then
@@ -42,67 +42,13 @@ else
     echo "✅ Docker sudah terinstal."
 fi
 
-# 5. Menyiapkan Global Nginx Reverse Proxy (Jalan 1x saja di server)
-PROXY_DIR="/var/www/nginx-proxy"
-if [ ! -d "$PROXY_DIR" ]; then
-    echo "🚦 Menyiapkan Global Nginx Reverse Proxy (Polisi Lalu Lintas)..."
-    mkdir -p "$PROXY_DIR"
-    
-    # Buat docker network global
-    docker network create nginx-proxy || true
-
-    cat > "$PROXY_DIR/docker-compose.yml" <<EOF
-version: '3'
-services:
-  nginx-proxy:
-    image: nginxproxy/nginx-proxy:alpine
-    container_name: nginx-proxy
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - certs:/etc/nginx/certs
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-    networks:
-      - default
-    restart: always
-
-  acme-companion:
-    image: nginxproxy/acme-companion
-    container_name: nginx-proxy-acme
-    environment:
-      - DEFAULT_EMAIL=${ADMIN_EMAIL}
-      - NGINX_PROXY_CONTAINER=nginx-proxy
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - acme:/etc/acme.sh
-      - certs:/etc/nginx/certs
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-    depends_on:
-      - nginx-proxy
-    networks:
-      - default
-    restart: always
-
-volumes:
-  certs:
-  vhost:
-  html:
-  acme:
-
-networks:
-  default:
-    external:
-      name: nginx-proxy
-EOF
-    cd "$PROXY_DIR"
-    docker compose up -d
-else
-    echo "✅ Global Nginx Proxy sudah berjalan."
-fi
+# 5. Mencari Port Kosong untuk Kontainer Web Toko Ini
+echo "🔍 Mencari port lokal yang tersedia..."
+APP_PORT=8000
+while ss -tuln | grep -q ":$APP_PORT "; do
+    APP_PORT=$((APP_PORT+1))
+done
+echo "✅ Mendapatkan port lokal: $APP_PORT"
 
 # 6. Clone Repository untuk Toko Baru
 APP_DIR="/var/www/stores/$STORE_CODE"
@@ -129,6 +75,7 @@ echo "" >> .env
 echo "STORE_CODE=${STORE_CODE}" >> .env
 echo "DOMAIN_NAME=${DOMAIN_NAME}" >> .env
 echo "ADMIN_EMAIL=${ADMIN_EMAIL}" >> .env
+echo "APP_PORT=${APP_PORT}" >> .env
 
 sed -i "s|^APP_NAME=.*|APP_NAME=ShopinMy_${STORE_CODE}|" .env
 sed -i "s|^APP_ENV=.*|APP_ENV=production|" .env
@@ -153,7 +100,7 @@ EOT
 
 # 8. Start Docker Containers khusus untuk Toko ini
 echo "🚀 Menyalakan kontainer toko ${STORE_CODE}..."
-# Kita jalankan pakai docker-compose.prod.yml yang dirancang khusus untuk Multi-Tenant Reverse Proxy
+# Kita jalankan pakai docker-compose.prod.yml
 docker compose -f docker-compose.prod.yml up -d --build
 
 # 9. Install dependensi Composer di dalam container app
@@ -185,7 +132,32 @@ docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan conf
 docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan route:cache || true
 docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan view:cache || true
 
-# 12. Mendaftarkan Cron Job ke Sistem VPS
+# 12. Mengkonfigurasi Native Nginx & Certbot SSL
+echo "🌐 Mengatur Virtual Host Nginx Asli..."
+NGINX_CONF="/etc/nginx/sites-available/${STORE_CODE}.conf"
+cat > "$NGINX_CONF" <<EOF
+server {
+    listen 80;
+    server_name ${DOMAIN_NAME};
+
+    location / {
+        proxy_pass http://127.0.0.1:${APP_PORT};
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+}
+EOF
+
+# Aktifkan konfigurasi
+ln -sf "$NGINX_CONF" "/etc/nginx/sites-enabled/${STORE_CODE}.conf"
+systemctl restart nginx || { echo "❌ ERROR: Gagal me-restart Nginx!"; exit 1; }
+
+echo "🔒 Mengaktifkan SSL / HTTPS dengan Certbot..."
+certbot --nginx -d "${DOMAIN_NAME}" --non-interactive --agree-tos -m "${ADMIN_EMAIL}" --redirect || { echo "❌ ERROR: Gagal menerbitkan SSL Certbot! Pastikan DNS sudah mengarah ke IP Server ini."; }
+
+# 13. Mendaftarkan Cron Job ke Sistem VPS
 echo "⏱️ Memasang jadwal Cron Job otomatis..."
 CRON_CMD="* * * * * cd $APP_DIR && docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan schedule:run >> /dev/null 2>&1"
 (crontab -l 2>/dev/null | grep -v "$APP_DIR"; echo "$CRON_CMD") | crontab -
@@ -193,9 +165,7 @@ CRON_CMD="* * * * * cd $APP_DIR && docker compose -f docker-compose.prod.yml exe
 echo -e "\n======================================================="
 echo "🎉 INSTALASI TOKO '${STORE_CODE}' SELESAI! 🎉"
 echo "======================================================="
-echo "Website Anda sedang diterbitkan di: https://${DOMAIN_NAME}"
-echo "Sertifikat HTTPS (Gembok Hijau) sedang diterbitkan secara otomatis di background."
-echo "Proses penerbitan SSL memakan waktu sekitar 1-2 menit. Jika masih error, tunggu sejenak dan refresh."
+echo "Website Anda sudah live di: https://${DOMAIN_NAME}"
 echo ""
 echo "Lokasi Folder Instalasi: ${APP_DIR}"
 echo "Untuk mengimpor database lama (jika ada), silakan jalan perintah ini:"

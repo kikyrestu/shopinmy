@@ -34,8 +34,19 @@ echo -e "\n🧹 Memulai proses pemusnahan toko $STORE_CODE..."
 
 cd "$APP_DIR"
 
+DOMAIN_NAME=$(grep "^DOMAIN_NAME=" .env | cut -d '=' -f2)
+
 echo "🛑 Mematikan mesin kontainer dan menghapus database volume..."
 docker compose -f docker-compose.prod.yml down -v
+
+echo "🌐 Menghapus konfigurasi Nginx dan SSL..."
+rm -f "/etc/nginx/sites-available/${STORE_CODE}.conf"
+rm -f "/etc/nginx/sites-enabled/${STORE_CODE}.conf"
+systemctl reload nginx || true
+
+if [ -n "$DOMAIN_NAME" ]; then
+    certbot delete --cert-name "$DOMAIN_NAME" --non-interactive || true
+fi
 
 echo "🗑️ Menghapus jadwal Cron Job milik toko ini..."
 crontab -l | grep -v "/var/www/stores/$STORE_CODE/" | crontab -
