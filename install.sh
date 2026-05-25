@@ -161,10 +161,21 @@ echo "📦 Menginstall pustaka PHP..."
 docker compose -f docker-compose.prod.yml exec -T ecommerce_app composer install --no-dev --optimize-autoloader || { echo "❌ ERROR: Composer install gagal!"; exit 1; }
 
 # 10. Persiapkan Database & Symlink
-echo "🗃️ Melakukan migrasi database dan menyambungkan gambar..."
-echo "⏳ Menunggu database siap (15 detik)..."
-sleep 15
-docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan migrate --force || { echo "❌ ERROR: Migrasi database gagal! Pastikan volume database lama sudah dihapus jika ingin install ulang dengan password berbeda."; exit 1; }
+echo "🗃️ Menjalankan migrasi database (Menunggu MySQL siap, maksimal 90 detik)..."
+MIGRATION_SUCCESS=false
+for i in {1..30}; do
+    if docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan migrate --force; then
+        MIGRATION_SUCCESS=true
+        break
+    fi
+    echo "⚠️ Database sedang proses booting... (Mencoba lagi dalam 3 detik - Percobaan $i/30)"
+    sleep 3
+done
+
+if [ "$MIGRATION_SUCCESS" = false ]; then
+    echo "❌ ERROR: Migrasi database gagal setelah mencoba selama 90 detik! Pastikan volume database lama sudah dihapus jika ini install ulang."
+    exit 1
+fi
 docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan storage:link
 
 # 11. Optimasi Cache Laravel
