@@ -114,7 +114,7 @@ docker compose -f docker-compose.prod.yml exec -T ecommerce_app composer install
 echo "🗃️ Menjalankan migrasi database (Menunggu MySQL siap, maksimal 90 detik)..."
 MIGRATION_SUCCESS=false
 for i in {1..30}; do
-    if docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan migrate --force; then
+    if docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan migrate --seed --force; then
         MIGRATION_SUCCESS=true
         break
     fi
