@@ -15,6 +15,22 @@ services:
     networks:
       - ${STORE_CODE}_network
 
+  ecommerce_queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${STORE_CODE}_queue
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: php artisan queue:work --tries=3 --timeout=90
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - ecommerce_db
+      - ecommerce_app
+    networks:
+      - ${STORE_CODE}_network
+
   ecommerce_web:
     image: nginx:alpine
     container_name: ${STORE_CODE}_web

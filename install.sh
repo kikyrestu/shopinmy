@@ -165,6 +165,11 @@ docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan conf
 docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan route:cache
 docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan view:cache
 
+# 12. Mendaftarkan Cron Job ke Sistem VPS
+echo "⏱️ Memasang jadwal Cron Job otomatis..."
+CRON_CMD="* * * * * cd $APP_DIR && docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan schedule:run >> /dev/null 2>&1"
+(crontab -l 2>/dev/null | grep -v "$APP_DIR"; echo "$CRON_CMD") | crontab -
+
 echo -e "\n======================================================="
 echo "🎉 INSTALASI TOKO '${STORE_CODE}' SELESAI! 🎉"
 echo "======================================================="
