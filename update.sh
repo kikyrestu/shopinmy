@@ -40,7 +40,10 @@ docker compose -f docker-compose.prod.yml exec -T ecommerce_app composer install
 
 # 3. Jalankan Migrasi Database (Jika ada tabel baru)
 echo "🗃️ Menjalankan migrasi database..."
-docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan migrate --seed --force || { echo "❌ ERROR: Migrasi database gagal!"; exit 1; }
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan migrate --force || { echo "❌ ERROR: Migrasi database gagal!"; exit 1; }
+
+echo "🌱 Menjalankan Seeder Database secara terpisah..."
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan db:seed --force || echo "⚠️ Peringatan: Seeder gagal dijalankan, namun migrasi berhasil."
 
 echo "⚡ Menyegarkan semua Cache Laravel..."
 docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan optimize:clear

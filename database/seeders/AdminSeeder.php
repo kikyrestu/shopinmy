@@ -15,10 +15,10 @@ class AdminSeeder extends Seeder
     {
         // Create Super Admin User for Filament Access
         User::firstOrCreate(
-            ['email' => 'admin@shopinmy.com'],
+            ['email' => env('ADMIN_EMAIL', 'admin@shopinmy.com')],
             [
                 'name' => 'Super Admin',
-                'password' => bcrypt('password123'),
+                'password' => bcrypt(env('DEFAULT_ADMIN_PASSWORD', 'password123')),
                 // If you use Spatie Permission, you can assign role here:
                 // ->assignRole('super_admin')
             ]

@@ -19,9 +19,10 @@ read -p "🛒 Masukkan KODE TOKO (tanpa spasi, misal: toko1, bajuku): " STORE_CO
 read -p "🌐 Masukkan NAMA DOMAIN atau SUBDOMAIN (misal: toko1.com atau cabang.toko1.com): " DOMAIN_NAME
 read -p "📧 Masukkan EMAIL (untuk SSL/HTTPS Let's Encrypt): " ADMIN_EMAIL
 read -p "🔑 Masukkan PASSWORD DATABASE yang diinginkan: " DB_PASS
+read -p "🔐 Masukkan PASSWORD ADMIN PANEL (untuk login dashboard): " ADMIN_PASS
 
-if [ -z "$STORE_CODE" ] || [ -z "$DOMAIN_NAME" ] || [ -z "$ADMIN_EMAIL" ] || [ -z "$DB_PASS" ]; then
-    echo "❌ Error: Semua isian (Kode Toko, Domain, Email, Password) wajib diisi!"
+if [ -z "$STORE_CODE" ] || [ -z "$DOMAIN_NAME" ] || [ -z "$ADMIN_EMAIL" ] || [ -z "$DB_PASS" ] || [ -z "$ADMIN_PASS" ]; then
+    echo "❌ Error: Semua isian (Kode Toko, Domain, Email, Password DB, Password Admin) wajib diisi!"
     exit 1
 fi
 
@@ -78,6 +79,7 @@ echo "" >> .env
 echo "STORE_CODE=${STORE_CODE}" >> .env
 echo "DOMAIN_NAME=${DOMAIN_NAME}" >> .env
 echo "ADMIN_EMAIL=${ADMIN_EMAIL}" >> .env
+echo "DEFAULT_ADMIN_PASSWORD=${ADMIN_PASS}" >> .env
 echo "APP_PORT=${APP_PORT}" >> .env
 
 sed -i "s|^APP_NAME=.*|APP_NAME=ShopinMy_${STORE_CODE}|" .env
@@ -114,7 +116,7 @@ docker compose -f docker-compose.prod.yml exec -T ecommerce_app composer install
 echo "🗃️ Menjalankan migrasi database (Menunggu MySQL siap, maksimal 90 detik)..."
 MIGRATION_SUCCESS=false
 for i in {1..30}; do
-    if docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan migrate --seed --force; then
+    if docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan migrate --force; then
         MIGRATION_SUCCESS=true
         break
     fi
@@ -126,6 +128,10 @@ if [ "$MIGRATION_SUCCESS" = false ]; then
     echo "❌ ERROR: Migrasi database gagal setelah mencoba selama 90 detik! Pastikan volume database lama sudah dihapus jika ini install ulang."
     exit 1
 fi
+
+echo "🌱 Menjalankan Seeder Database secara terpisah..."
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan db:seed --force || echo "⚠️ Peringatan: Seeder gagal dijalankan, namun migrasi berhasil."
+
 docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan storage:link
 
 # 11. Optimasi Cache Laravel
