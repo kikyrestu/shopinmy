@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==============================================================================
-# ShopinMy VPS Auto Installer (Docker)
+# ShopinMy MULTI-TENANT VPS Auto Installer (Nginx Proxy + Let's Encrypt)
 # ==============================================================================
 
 # 1. Cek Root Privilege
@@ -11,20 +11,21 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 echo -e "\n======================================================="
-echo "🚀 SELAMAT DATANG DI SHOPINMY AUTO-INSTALLER (VPS) 🚀"
+echo "🚀 SELAMAT DATANG DI SHOPINMY MULTI-STORE INSTALLER 🚀"
 echo "======================================================="
 
 # 2. Minta Input dari User
-read -p "🌐 Masukkan Nama Domain Anda (contoh: tokoku.com): " DOMAIN_NAME
-read -p "📧 Masukkan Email Anda (untuk SSL/HTTPS Let's Encrypt): " ADMIN_EMAIL
-read -p "🔑 Masukkan Password Database yang diinginkan: " DB_PASS
+read -p "🛒 Masukkan KODE TOKO (tanpa spasi, misal: toko1, bajuku): " STORE_CODE
+read -p "🌐 Masukkan NAMA DOMAIN (misal: toko1.com): " DOMAIN_NAME
+read -p "📧 Masukkan EMAIL (untuk SSL/HTTPS Let's Encrypt): " ADMIN_EMAIL
+read -p "🔑 Masukkan PASSWORD DATABASE yang diinginkan: " DB_PASS
 
-if [ -z "$DOMAIN_NAME" ] || [ -z "$ADMIN_EMAIL" ] || [ -z "$DB_PASS" ]; then
-    echo "❌ Error: Semua isian (Domain, Email, Password) wajib diisi!"
+if [ -z "$STORE_CODE" ] || [ -z "$DOMAIN_NAME" ] || [ -z "$ADMIN_EMAIL" ] || [ -z "$DB_PASS" ]; then
+    echo "❌ Error: Semua isian (Kode Toko, Domain, Email, Password) wajib diisi!"
     exit 1
 fi
 
-echo -e "\n⏳ Memulai proses instalasi otomatis. Silakan tunggu santai..."
+echo -e "\n⏳ Memulai proses instalasi otomatis. Silakan tunggu..."
 
 # 3. Update System & Install Dependensi Dasar
 echo "📦 Mengupdate sistem dan menginstal dependensi dasar..."
@@ -41,28 +42,94 @@ else
     echo "✅ Docker sudah terinstal."
 fi
 
-# 5. Clone Repository
-APP_DIR="/var/www/shopinmy"
-echo "📥 Mengunduh kode aplikasi ke $APP_DIR..."
+# 5. Menyiapkan Global Nginx Reverse Proxy (Jalan 1x saja di server)
+PROXY_DIR="/var/www/nginx-proxy"
+if [ ! -d "$PROXY_DIR" ]; then
+    echo "🚦 Menyiapkan Global Nginx Reverse Proxy (Polisi Lalu Lintas)..."
+    mkdir -p "$PROXY_DIR"
+    
+    # Buat docker network global
+    docker network create nginx-proxy || true
+
+    cat > "$PROXY_DIR/docker-compose.yml" <<EOF
+version: '3'
+services:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy:alpine
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - certs:/etc/nginx/certs
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+    networks:
+      - default
+    restart: always
+
+  acme-companion:
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
+    environment:
+      - DEFAULT_EMAIL=${ADMIN_EMAIL}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - acme:/etc/acme.sh
+      - certs:/etc/nginx/certs
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+    depends_on:
+      - nginx-proxy
+    networks:
+      - default
+    restart: always
+
+volumes:
+  certs:
+  vhost:
+  html:
+  acme:
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
+EOF
+    cd "$PROXY_DIR"
+    docker compose up -d
+else
+    echo "✅ Global Nginx Proxy sudah berjalan."
+fi
+
+# 6. Clone Repository untuk Toko Baru
+APP_DIR="/var/www/stores/$STORE_CODE"
+echo "📥 Menyiapkan folder untuk toko $STORE_CODE di $APP_DIR..."
 
 if [ -d "$APP_DIR" ]; then
-    echo "⚠️ Folder $APP_DIR sudah ada. Membackup folder lama ke $APP_DIR-backup..."
+    echo "⚠️ Folder $APP_DIR sudah ada. Membackup folder lama..."
     mv "$APP_DIR" "${APP_DIR}-backup-$(date +%s)"
 fi
 
-mkdir -p /var/www
+mkdir -p /var/www/stores
 git clone https://github.com/kikyrestu/shopinmy.git "$APP_DIR"
 cd "$APP_DIR"
 
-# 6. Setup .env
-echo "⚙️ Menyiapkan file .env..."
+# 7. Setup .env
+echo "⚙️ Menyiapkan konfigurasi .env..."
 cp .env.example .env
 
 # Generate string acak untuk APP_KEY
 APP_KEY="base64:$(openssl rand -base64 32)"
 
-# Manipulasi file .env
-sed -i "s|^APP_NAME=.*|APP_NAME=ShopinMy|" .env
+# Menyisipkan variabel ekstra yang dipakai oleh docker-compose.prod.yml
+echo "" >> .env
+echo "STORE_CODE=${STORE_CODE}" >> .env
+echo "DOMAIN_NAME=${DOMAIN_NAME}" >> .env
+echo "ADMIN_EMAIL=${ADMIN_EMAIL}" >> .env
+
+sed -i "s|^APP_NAME=.*|APP_NAME=ShopinMy_${STORE_CODE}|" .env
 sed -i "s|^APP_ENV=.*|APP_ENV=production|" .env
 sed -i "s|^APP_KEY=.*|APP_KEY=${APP_KEY}|" .env
 sed -i "s|^APP_DEBUG=.*|APP_DEBUG=false|" .env
@@ -75,102 +142,37 @@ sed -i "s|^DB_DATABASE=.*|DB_DATABASE=shopinmy|" .env
 sed -i "s|^DB_USERNAME=.*|DB_USERNAME=shopinmy_user|" .env
 sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=${DB_PASS}|" .env
 
-# 7. Setup Nginx Configuration untuk Domain (Non-SSL sementara)
-echo "🌐 Mengatur konfigurasi Nginx..."
-cp docker/nginx/production.conf docker/nginx/default.conf
-sed -i "s/yourdomain.com/${DOMAIN_NAME}/g" docker/nginx/default.conf
-
-# 8. Start Docker Containers
-echo "🚀 Mengaktifkan layanan Docker..."
-export DB_PASSWORD=$DB_PASS
-docker compose up -d --build
+# 8. Start Docker Containers khusus untuk Toko ini
+echo "🚀 Menyalakan kontainer toko ${STORE_CODE}..."
+# Kita jalankan pakai docker-compose.prod.yml yang dirancang khusus untuk Multi-Tenant Reverse Proxy
+docker compose -f docker-compose.prod.yml up -d --build
 
 # 9. Install dependensi Composer & NPM di dalam container app
-echo "📦 Menginstall modul sistem (Composer & NPM)..."
-docker compose exec -T ecommerce_app composer install --no-dev --optimize-autoloader
-docker compose exec -T ecommerce_app npm install
-docker compose exec -T ecommerce_app npm run build
+echo "📦 Menginstall pustaka PHP & Node..."
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app composer install --no-dev --optimize-autoloader
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app npm install
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app npm run build
 
 # 10. Persiapkan Database & Symlink
 echo "🗃️ Melakukan migrasi database dan menyambungkan gambar..."
-docker compose exec -T ecommerce_app php artisan migrate --force
-docker compose exec -T ecommerce_app php artisan storage:link
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan migrate --force
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan storage:link
 
 # 11. Optimasi Cache Laravel
 echo "⚡ Mengoptimalkan sistem cache..."
-docker compose exec -T ecommerce_app php artisan optimize:clear
-docker compose exec -T ecommerce_app php artisan config:cache
-docker compose exec -T ecommerce_app php artisan route:cache
-docker compose exec -T ecommerce_app php artisan view:cache
-
-# 12. Setup Auto-SSL Let's Encrypt dengan Certbot
-echo "🔒 Memasang Sertifikat SSL (HTTPS Gembok Hijau)..."
-apt-get install -y certbot python3-certbot-nginx
-
-# Menggunakan certbot webroot untuk verifikasi tanpa mematikan Nginx
-docker compose exec -T ecommerce_web mkdir -p /var/www/html/public/.well-known/acme-challenge
-certbot certonly --webroot -w "$APP_DIR/public" -d "$DOMAIN_NAME" --email "$ADMIN_EMAIL" --agree-tos --non-interactive
-
-# Jika sertifikat berhasil dibuat, update Nginx config untuk support HTTPS
-if [ -d "/etc/letsencrypt/live/${DOMAIN_NAME}" ]; then
-    echo "✅ SSL Berhasil! Mengupdate konfigurasi Nginx untuk menggunakan SSL..."
-    
-    cat > docker/nginx/default.conf <<EOF
-server {
-    listen 80;
-    server_name ${DOMAIN_NAME};
-    return 301 https://\$host\$request_uri;
-}
-
-server {
-    listen 443 ssl http2;
-    server_name ${DOMAIN_NAME};
-    root /var/www/html/public;
-
-    ssl_certificate /etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem;
-
-    index index.php;
-    charset utf-8;
-
-    location / {
-        try_files \$uri \$uri/ /index.php?\$query_string;
-    }
-
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location = /robots.txt  { access_log off; log_not_found off; }
-
-    error_page 404 /index.php;
-
-    location ~ \.php$ {
-        fastcgi_pass ecommerce_app:9000;
-        fastcgi_param SCRIPT_FILENAME \$realpath_root\$fastcgi_script_name;
-        include fastcgi_params;
-        fastcgi_hide_header X-Powered-By;
-    }
-
-    location ~ /\.(?!well-known).* {
-        deny all;
-    }
-}
-EOF
-    
-    # Supaya docker nginx bisa baca /etc/letsencrypt, kita perlu binding volume di docker-compose
-    # Kita modif file docker-compose.yml menggunakan sed
-    sed -i '/- .\/docker\/nginx\/default.conf:\/etc\/nginx\/conf.d\/default.conf/a \      - /etc/letsencrypt:/etc/letsencrypt:ro' docker-compose.yml
-    
-    # Restart nginx container
-    docker compose up -d ecommerce_web
-else
-    echo "⚠️ Peringatan: Pemasangan SSL gagal (Mungkin DNS domain belum diarahkan ke IP VPS ini)."
-fi
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan optimize:clear
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan config:cache
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan route:cache
+docker compose -f docker-compose.prod.yml exec -T ecommerce_app php artisan view:cache
 
 echo -e "\n======================================================="
-echo "🎉 INSTALASI SELESAI DENGAN SUKSES! 🎉"
+echo "🎉 INSTALASI TOKO '${STORE_CODE}' SELESAI! 🎉"
 echo "======================================================="
-echo "Website Anda sekarang sudah live di: https://${DOMAIN_NAME}"
+echo "Website Anda sedang diterbitkan di: https://${DOMAIN_NAME}"
+echo "Sertifikat HTTPS (Gembok Hijau) sedang diterbitkan secara otomatis di background."
+echo "Proses penerbitan SSL memakan waktu sekitar 1-2 menit. Jika masih error, tunggu sejenak dan refresh."
 echo ""
 echo "Lokasi Folder Instalasi: ${APP_DIR}"
-echo "Untuk mengimpor database lama (jika ada), silakan buka phpMyAdmin atau import via terminal:"
-echo "👉 docker exec -i shopinmy_db mysql -u shopinmy_user -p'${DB_PASS}' shopinmy < shopinmy_db.sql"
+echo "Untuk mengimpor database lama (jika ada), silakan jalan perintah ini:"
+echo "👉 docker exec -i ${STORE_CODE}_db mysql -u shopinmy_user -p'${DB_PASS}' shopinmy < database_lama.sql"
 echo "======================================================="

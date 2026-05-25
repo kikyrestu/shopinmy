@@ -1,25 +1,48 @@
-# Panduan Cepat Deploy ke VPS (Docker)
+# Panduan Ternak Website di VPS (Multi-Toko)
 
-Panduan ini didesain sesederhana mungkin untuk Klien Anda yang tidak mengerti koding. Seluruh proses sudah diotomatisasi menggunakan *script installer*.
+Panduan ini didesain khusus agar Anda bisa membuat **Puluhan Toko Online Berbeda** di dalam **1 VPS yang sama**. Sistem sudah dilengkapi "Polisi Lalu Lintas" (*Reverse Proxy*) yang akan mengatur rute otomatis dan memberikan gembok hijau (HTTPS/SSL) ke masing-masing toko.
 
-## Tahap 1: Persiapan Domain & Server
-1. Beli layanan VPS (Rekomendasi: Ubuntu 22.04 LTS atau Ubuntu 24.04 LTS).
-2. Dapatkan **Alamat IP Public** dari VPS tersebut (contoh: `192.168.1.100`).
-3. Buka pengaturan DNS pada panel Domain Anda, buat **A Record** baru, lalu masukkan Alamat IP VPS tersebut. Tunggu sekitar 5-10 menit agar DNS menyebar (*Propagasi*).
+## Tahap 1: Mengarahkan Domain ke VPS (Wajib)
+Sebelum menginstall, pastikan domain toko Anda sudah menunjuk ke VPS.
+1. Beli VPS kosong (Rekomendasi: Ubuntu 22.04 LTS atau 24.04 LTS). Catat **IP VPS** Anda (contoh: `123.45.67.89`).
+2. Login ke tempat Anda membeli domain (Niagahoster, Cloudflare, dll).
+3. Buka menu **DNS Management / DNS Zone**.
+4. Buat Record baru dengan format:
+   - Type: **A**
+   - Name/Host: **@** (atau kosongkan)
+   - IPv4 Address: **Masukkan IP VPS Anda**
+   - *Simpan.*
+5. *(Opsional)* Buat satu Record lagi untuk "www":
+   - Type: **CNAME**
+   - Name/Host: **www**
+   - Target: **namadomainanda.com**
+   - *Simpan.*
+6. Tunggu 5-10 menit agar sistem DNS global menyebar.
 
 ## Tahap 2: Menjalankan Auto-Installer
+Setelah domain siap, Anda bisa langsung menginstall toko.
 1. Hubungkan komputer Anda ke VPS menggunakan Terminal, Putty, atau Termius (Login sebagai `root`).
-2. Setelah masuk ke layar hitam, **Salin (Copy) dan Tempel (Paste)** kode di bawah ini lalu tekan Enter:
+2. **Salin (Copy) dan Tempel (Paste)** satu baris kode di bawah ini lalu tekan Enter:
    ```bash
    bash <(curl -s https://raw.githubusercontent.com/kikyrestu/shopinmy/main/install.sh)
    ```
-3. Script akan meminta Anda memasukkan **Nama Domain**, **Email** (untuk sertifikat SSL), dan **Password Database** yang Anda inginkan.
-4. Duduk manis! Script akan otomatis mengunduh Docker, menata sistem, dan mengamankan website Anda dengan gembok hijau (HTTPS).
+3. Script akan meminta Anda memasukkan 4 data:
+   - **Kode Toko**: Gunakan kata unik tanpa spasi (contoh: `toko1`, `tokobaju`, `cabangbali`). Ini untuk memisahkan folder mesin toko Anda.
+   - **Nama Domain**: Masukkan domain yang sudah di-setting di Tahap 1 (contoh: `toko1.com`).
+   - **Email**: Masukkan email Anda (Hanya dipakai untuk menerbitkan sertifikat HTTPS gratis).
+   - **Password Database**: Bebas.
+4. Duduk manis! Sistem akan men-download aplikasi, menyalakan web, dan memasang gembok hijau secara ajaib.
 
-## Tahap 3: Import Database (Bila Ada)
-Jika Anda memiliki data dari server lama (file `.sql`), upload file tersebut ke server VPS Anda (misalnya menggunakan FileZilla/SFTP ke folder `/var/www/shopinmy`), lalu jalankan perintah ini di layar hitam:
+## Tahap 3: Menambah Toko Baru (Toko Ke-2, Ke-3, dst)
+Ingin membuat toko baru dengan domain `toko2.com`?
+Gampang! Ulangi saja Tahap 1 dan Tahap 2 di atas.
+Penting: Pastikan Anda memasukkan **Kode Toko yang BERBEDA** (contoh: `toko2`) dan **Domain yang BERBEDA**. Sistem tidak akan bentrok dan toko baru akan hidup berdampingan dengan damai.
+
+## Tahap 4: Import Database Lama (Bila Ada)
+Jika Anda memiliki data pelanggan dari server lama (file `.sql`), upload file tersebut ke folder VPS Anda (misalnya ke `/var/www/stores/toko1`), lalu jalankan perintah ini:
 ```bash
-docker exec -i shopinmy_db mysql -u shopinmy_user -p'PASSWORD_DATABASE_ANDA_TADI' shopinmy < nama_file_database_lama.sql
+# Ganti 'toko1' dengan KODE TOKO Anda, dan masukkan password database Anda.
+docker exec -i toko1_db mysql -u shopinmy_user -p'PASSWORD_DATABASE_ANDA' shopinmy < nama_file_database_lama.sql
 ```
 
-Selesai! Website Anda sudah online dan siap digunakan di VPS baru.
+Selesai! Anda resmi menjadi Juragan Website!
