@@ -63,6 +63,9 @@ mkdir -p /var/www/stores
 git clone https://github.com/kikyrestu/shopinmy.git "$APP_DIR"
 cd "$APP_DIR"
 
+# Buka gembok agar Apache dalam kontainer bisa menulis file cache/session
+chmod -R 777 storage bootstrap/cache
+
 # 7. Setup .env
 echo "⚙️ Menyiapkan konfigurasi .env..."
 cp .env.example .env

@@ -31,6 +31,9 @@ echo "🔄 Mengambil update terbaru dari repository..."
 git reset --hard || { echo "❌ ERROR: Git reset gagal!"; exit 1; }
 git pull origin main || { echo "❌ ERROR: Git pull gagal!"; exit 1; }
 
+# Pastikan permission folder tetap aman setelah update
+chmod -R 777 storage bootstrap/cache
+
 # 2. Update dependensi (Jika ada tambahan library)
 echo "📦 Mengupdate dependensi Composer..."
 docker compose -f docker-compose.prod.yml exec -T ecommerce_app composer install --no-dev --optimize-autoloader || { echo "❌ ERROR: Composer install gagal!"; exit 1; }
