@@ -3,180 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panduan Ternak Website di VPS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Panduan Instalasi ShopinMy VPS</title>
     <style>
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: #f3f4f6; }
-        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
-        .gradient-text { background: linear-gradient(135deg, #059669, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .code-block { position: relative; }
-        .copy-btn { position: absolute; top: 0.5rem; right: 0.5rem; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+        }
+        .alert {
+            background-color: #fef3c7;
+            border-left: 5px solid #f59e0b;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .alert-danger {
+            background-color: #fee2e2;
+            border-left: 5px solid #ef4444;
+        }
+        .code-block {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 15px 0;
+        }
+        .copy-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            float: right;
+            font-size: 12px;
+        }
+        .copy-btn:hover {
+            background-color: #2980b9;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .step-number {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            border-radius: 50%;
+            line-height: 25px;
+            margin-right: 10px;
+        }
     </style>
 </head>
-<body class="text-gray-800 antialiased p-4 md:p-8 selection:bg-emerald-200 selection:text-emerald-900">
+<body>
+    <div class="container">
+        <h1>🚀 Panduan Lengkap Instalasi ShopinMy <br><small>(Dari Nol Sampai Online)</small></h1>
+        
+        <p style="text-align: center; font-size: 1.1em; color: #7f8c8d;">
+            Panduan ini dirancang khusus untuk pemula. Ikuti langkah-langkah di bawah ini secara perlahan, dan website toko online Anda akan siap digunakan dalam hitungan menit!
+        </p>
 
-    <div class="max-w-4xl mx-auto">
-        <!-- Header -->
-        <header class="text-center mb-10">
-            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 mb-6 shadow-inner">
-                <i class="fa-solid fa-server text-3xl"></i>
-            </div>
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">Panduan <span class="gradient-text">Ternak Website</span> di VPS</h1>
-            <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                Panduan ini didesain khusus agar Anda bisa membuat <strong>Puluhan Toko Online Berbeda</strong> di dalam <strong>1 VPS yang sama</strong>. Sistem sudah dilengkapi "Polisi Lalu Lintas" (Reverse Proxy) yang akan mengatur rute otomatis dan memberikan gembok hijau (HTTPS/SSL) ke masing-masing toko.
-            </p>
-        </header>
+        <h2>📌 Tahap 1: Persiapan Domain (Wajib)</h2>
+        <p>Sebelum menyentuh server, pastikan domain Anda sudah diarahkan ke server VPS.</p>
+        <ul>
+            <li>Buka panel pengelolaan Domain Anda (seperti Niagahoster, Hostinger, Idwebhost, atau Cloudflare).</li>
+            <li>Cari menu <strong>DNS Management</strong> atau <strong>Pengaturan DNS</strong>.</li>
+            <li>Buat catatan baru dengan tipe <strong>A Record</strong>.</li>
+            <li>Isi kolom <code>Name</code> dengan <code>@</code> (untuk domain utama) atau nama subdomain (misal: <code>toko1</code>).</li>
+            <li>Isi kolom <code>IPv4 address</code> atau <code>Points to</code> dengan <strong>IP Server VPS Anda</strong>.</li>
+            <li>Simpan. <em>(Catatan: Perubahan DNS kadang butuh waktu beberapa menit hingga 1 jam untuk menyebar).</em></li>
+        </ul>
 
-        <!-- Steps Container -->
-        <div class="space-y-8">
-            
-            <!-- Tahap 1 -->
-            <div class="glass-card rounded-2xl p-6 md:p-10 shadow-lg shadow-gray-200/50 relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                    <span class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-emerald-600 mr-4 text-lg">1</span>
-                    Tahap 1: Mengarahkan Domain / Subdomain ke VPS <span class="ml-3 text-xs font-bold uppercase tracking-wider bg-red-100 text-red-600 px-2 py-1 rounded-md">Wajib</span>
-                </h2>
-                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 text-blue-800 text-sm">
-                    <i class="fa-solid fa-circle-info text-blue-500 mr-2"></i> Sistem ini bebas menggunakan <strong>Domain Utama</strong> (contoh: <code>toko1.com</code>) maupun <strong>Subdomain</strong> (contoh: <code>cabang.toko1.com</code>).
-                </div>
-                <p class="text-gray-600 mb-6 border-b border-gray-100 pb-4">Sebelum menginstall, pastikan domain tersebut sudah menunjuk ke VPS.</p>
-                <ol class="list-decimal list-outside ml-5 space-y-4 text-gray-700">
-                    <li>Beli VPS kosong (Rekomendasi: Ubuntu 22.04 LTS atau 24.04 LTS). Catat <strong>IP VPS</strong> Anda (contoh: <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded text-sm">123.45.67.89</code>).</li>
-                    <li>Login ke tempat Anda membeli domain (Niagahoster, Cloudflare, dll).</li>
-                    <li>Buka menu <strong>DNS Management / DNS Zone</strong>.</li>
-                    <li>Buat Record baru dengan format:
-                        <ul class="list-disc list-inside mt-2 p-4 bg-gray-50 rounded-lg text-sm border border-gray-100">
-                            <li>Type: <strong>A</strong></li>
-                            <li>Name/Host: 
-                                <ul class="list-[circle] list-inside ml-4 mt-1 text-gray-600">
-                                    <li>Isi dengan <strong><code>@</code></strong> (jika pakai Domain Utama)</li>
-                                    <li>Isi dengan <strong>kata depannya saja</strong> (contoh: isi <code>cabang</code> jika ingin membuat <code>cabang.toko1.com</code>)</li>
-                                </ul>
-                            </li>
-                            <li class="mt-2">IPv4 Address: <strong>Masukkan IP VPS Anda</strong></li>
-                            <li class="text-emerald-600 italic mt-1">Simpan.</li>
-                        </ul>
-                    </li>
-                    <li><em class="text-gray-500">(Opsional)</em> Jika pakai Domain Utama, buat satu Record lagi untuk "www":
-                        <ul class="list-disc list-inside mt-2 p-4 bg-gray-50 rounded-lg text-sm border border-gray-100">
-                            <li>Type: <strong>CNAME</strong></li>
-                            <li>Name/Host: <strong>www</strong></li>
-                            <li>Target: <strong>namadomainanda.com</strong></li>
-                            <li class="text-emerald-600 italic mt-1">Simpan.</li>
-                        </ul>
-                    </li>
-                    <li>Tunggu 5-10 menit agar sistem DNS global menyebar.</li>
-                </ol>
-            </div>
+        <h2>💻 Tahap 2: Cara Masuk ke VPS (Khusus Pemula)</h2>
+        <p>Anda harus masuk ke dalam server VPS Anda untuk menjalankan perintah instalasi.</p>
+        
+        <ul>
+            <li>Buka aplikasi Terminal di komputer Anda:
+                <ul>
+                    <li><strong>Windows</strong>: Buka aplikasi <code>Command Prompt</code> (CMD) atau <code>PowerShell</code>.</li>
+                    <li><strong>Mac/Linux</strong>: Buka aplikasi <code>Terminal</code>.</li>
+                </ul>
+            </li>
+            <li>Ketik perintah di bawah ini, lalu tekan <strong>Enter</strong>:</li>
+        </ul>
 
-            <!-- Tahap 2 -->
-            <div class="glass-card rounded-2xl p-6 md:p-10 shadow-lg shadow-gray-200/50 relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                    <span class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-emerald-600 mr-4 text-lg">2</span>
-                    Tahap 2: Menjalankan Auto-Installer
-                </h2>
-                <p class="text-gray-600 mb-6 border-b border-gray-100 pb-4">Setelah domain siap, Anda bisa langsung menginstall toko dengan 1 baris kode.</p>
-                <ol class="list-decimal list-outside ml-5 space-y-6 text-gray-700">
-                    <li>Hubungkan komputer Anda ke VPS menggunakan Terminal, Putty, atau Termius (Login sebagai <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded text-sm">root</code>).</li>
-                    <li>
-                        <strong>Salin (Copy) dan Tempel (Paste)</strong> kode di bawah ini lalu tekan Enter:
-                        <div class="code-block mt-3 bg-gray-900 rounded-xl p-5 shadow-inner">
-                            <button onclick="copyCode(this)" class="copy-btn text-gray-400 hover:text-white bg-gray-800 hover:bg-gray-700 p-2 rounded transition-colors text-sm" title="Copy to clipboard">
-                                <i class="fa-regular fa-copy"></i>
-                            </button>
-                            <pre class="overflow-x-auto text-emerald-400 text-sm font-mono leading-relaxed">bash <(curl -s https://raw.githubusercontent.com/kikyrestu/shopinmy/main/install.sh)</pre>
-                        </div>
-                    </li>
-                    <li>Script akan meminta Anda memasukkan 4 data:
-                        <ul class="mt-3 space-y-3 p-5 bg-blue-50/50 rounded-xl border border-blue-100 text-sm">
-                            <li class="flex items-start"><i class="fa-solid fa-store text-blue-500 mt-1 mr-3"></i> <div><strong>Kode Toko:</strong> Gunakan kata unik tanpa spasi (contoh: <code class="bg-white border text-pink-600 px-1 rounded">toko1</code>). Ini untuk memisahkan folder mesin toko Anda.</div></li>
-                            <li class="flex items-start"><i class="fa-solid fa-globe text-blue-500 mt-1 mr-3"></i> <div><strong>Nama Domain:</strong> Masukkan domain yang sudah di-setting di Tahap 1 (contoh: <code class="bg-white border text-pink-600 px-1 rounded">toko1.com</code>).</div></li>
-                            <li class="flex items-start"><i class="fa-solid fa-envelope text-blue-500 mt-1 mr-3"></i> <div><strong>Email:</strong> Masukkan email Anda (Hanya dipakai untuk menerbitkan sertifikat HTTPS gratis).</div></li>
-                            <li class="flex items-start"><i class="fa-solid fa-key text-blue-500 mt-1 mr-3"></i> <div><strong>Password Database:</strong> Bebas, gunakan kombinasi aman.</div></li>
-                        </ul>
-                    </li>
-                    <li class="flex items-center text-lg font-medium text-emerald-700 bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-                        <i class="fa-solid fa-mug-hot text-2xl mr-4"></i>
-                        Duduk manis! Sistem akan men-download aplikasi, menyalakan web, dan memasang gembok hijau secara ajaib.
-                    </li>
-                </ol>
-            </div>
-
-            <!-- Tahap 3 -->
-            <div class="glass-card rounded-2xl p-6 md:p-10 shadow-lg shadow-gray-200/50 relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                    <span class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-emerald-600 mr-4 text-lg">3</span>
-                    Tahap 3: Menambah Toko Baru (Toko Ke-2, Ke-3, dst)
-                </h2>
-                <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-4 text-amber-800">
-                    <p class="font-medium mb-2"><i class="fa-solid fa-lightbulb text-amber-500 mr-2"></i> Ingin membuat toko baru dengan domain <strong>toko2.com</strong>?</p>
-                    <p class="text-sm">Gampang! Ulangi saja <strong>Tahap 1</strong> dan <strong>Tahap 2</strong> di atas. Sistem tidak akan bentrok dan toko baru akan hidup berdampingan dengan damai.</p>
-                </div>
-                <p class="text-sm text-red-600 font-bold bg-red-50 p-4 rounded-lg border border-red-100">
-                    <i class="fa-solid fa-triangle-exclamation mr-2"></i> PENTING: Pastikan Anda memasukkan <u>Kode Toko yang BERBEDA</u> (contoh: toko2) dan <u>Domain yang BERBEDA</u>!
-                </p>
-            </div>
-
-            <!-- Tahap 4 -->
-            <div class="glass-card rounded-2xl p-6 md:p-10 shadow-lg shadow-gray-200/50 relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                    <span class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 text-emerald-600 mr-4 text-lg">4</span>
-                    Tahap 4: Import Database Lama (Bila Ada)
-                </h2>
-                <p class="text-gray-700 mb-4">Jika Anda memiliki data pelanggan dari server lama (file <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded text-sm">.sql</code>), upload file tersebut ke folder VPS Anda (misalnya menggunakan SFTP/FileZilla ke <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded text-sm">/var/www/stores/toko1</code>), lalu jalankan perintah ini:</p>
-                
-                <div class="code-block bg-gray-900 rounded-xl p-5 shadow-inner">
-                    <button onclick="copyCode(this)" class="copy-btn text-gray-400 hover:text-white bg-gray-800 hover:bg-gray-700 p-2 rounded transition-colors text-sm" title="Copy to clipboard">
-                        <i class="fa-regular fa-copy"></i>
-                    </button>
-                    <pre class="overflow-x-auto text-emerald-400 text-sm font-mono leading-relaxed"><span class="text-gray-500"># Ganti 'toko1' dengan KODE TOKO Anda, dan masukkan password database Anda.</span>
-docker exec -i toko1_db mysql -u shopinmy_user -p'PASSWORD_DATABASE_ANDA' shopinmy < nama_file_database_lama.sql</pre>
-                </div>
-            </div>
-
-            <!-- Maintenance Box -->
-            <div class="bg-gray-900 rounded-3xl p-8 md:p-12 text-center shadow-2xl relative overflow-hidden mt-12">
-                <div class="absolute -right-10 -top-10 text-gray-800 opacity-20">
-                    <i class="fa-solid fa-gears text-9xl"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-white mb-4 relative z-10"><i class="fa-solid fa-wrench text-emerald-400 mr-2"></i> Script Perawatan Jangka Panjang</h2>
-                <p class="text-gray-400 mb-8 max-w-2xl mx-auto relative z-10">Server ini dilengkapi dengan script operasi cerdas untuk memudahkan Anda me-maintenance ratusan toko tanpa perlu keahlian koding.</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10 text-left">
-                    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
-                        <div class="text-emerald-400 font-bold mb-2 font-mono">bash update.sh</div>
-                        <p class="text-gray-400 text-sm">Menarik update fitur/kode terbaru dari pusat (GitHub) ke toko Anda tanpa membuat web mati.</p>
-                    </div>
-                    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
-                        <div class="text-red-400 font-bold mb-2 font-mono">bash uninstall.sh</div>
-                        <p class="text-gray-400 text-sm">Menghapus salah satu toko hingga bersih ke akar (database, wadah, cache) jika Anda ingin menutup cabang.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer -->
-            <div class="text-center mt-12 text-gray-500 py-8">
-                <i class="fa-solid fa-rocket text-3xl mb-4 text-emerald-500 animate-bounce"></i>
-                <h3 class="text-2xl font-bold text-gray-800">Selesai! Anda resmi menjadi Juragan Website!</h3>
-            </div>
-
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <code id="code1">ssh root@IP_VPS_ANDA</code>
         </div>
+        <p><em>(Contoh: <code>ssh root@217.216.33.192</code>)</em></p>
+
+        <div class="alert alert-danger">
+            <h3 style="margin-top:0; color: #b91c1c;">⚠️ PERHATIAN SANGAT PENTING SAAT MENGISI PASSWORD:</h3>
+            <p>Sistem akan meminta Anda memasukkan password VPS Anda.</p>
+            <p>Ketika Anda mulai mengetik password, <strong>huruf, angka, atau tanda bintang (***) TIDAK AKAN MUNCUL di layar!</strong></p>
+            <p>Layar akan terlihat seperti diam / nge-lag. <strong>JANGAN PANIK!</strong> Ini BUKAN ERROR, melainkan fitur keamanan tingkat tinggi bawaan sistem operasi Linux agar tidak ada orang di sebelah Anda yang bisa menebak panjang password Anda.</p>
+            <p><strong>Cara yang benar:</strong> Ketik saja password Anda dengan percaya diri sampai selesai (meskipun tidak terlihat ada yang berubah di layar), lalu tekan <strong>Enter</strong>.</p>
+        </div>
+
+        <h2>🚀 Tahap 3: Menjalankan Auto-Installer (Sihir Dimulai)</h2>
+        <p>Setelah berhasil masuk (biasanya ditandai dengan tulisan hijau seperti <code>root@vmi...:~#</code>), Anda hanya perlu <strong>Copy dan Paste</strong> satu baris kode ajaib ini ke terminal, lalu tekan Enter:</p>
+
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <code id="code2">bash <(curl -s https://raw.githubusercontent.com/kikyrestu/shopinmy/main/install.sh)</code>
+        </div>
+
+        <h2>❓ Tahap 4: Menjawab Pertanyaan Instalasi</h2>
+        <p>Sistem akan secara otomatis mendownload semua kebutuhan server dan menanyakan 4 hal mudah:</p>
+
+        <ul>
+            <li><span class="step-number">1</span> <strong>KODE TOKO</strong>: Nama unik atau ID untuk toko Anda. Gunakan huruf kecil tanpa spasi (misal: <code>toko1</code>).</li>
+            <li><span class="step-number">2</span> <strong>NAMA DOMAIN</strong>: Domain atau Subdomain yang sudah Anda setting di Tahap 1 (misal: <code>toko1.com</code>).</li>
+            <li><span class="step-number">3</span> <strong>EMAIL</strong>: Alamat email aktif Anda (dibutuhkan untuk sertifikat HTTPS/SSL gratis).</li>
+            <li><span class="step-number">4</span> <strong>PASSWORD DATABASE</strong>: Buat password yang kuat untuk mengamankan database toko ini.</li>
+        </ul>
+
+        <div class="alert">
+            <strong>Selesai!</strong> Setelah menjawab 4 pertanyaan tersebut, Anda tinggal Duduk Manis dan Ngopi ☕. Script akan bekerja otomatis dan website Anda akan online dengan gembok hijau.
+        </div>
+
+        <hr style="margin: 40px 0; border: 0; border-top: 1px solid #eee;">
+
+        <h2>🛠️ Fitur Ekstra (Untuk Admin Server)</h2>
+
+        <h3>🔄 Cara Mengupdate Toko ke Versi Terbaru</h3>
+        <p>Jika ada pembaruan dari pusat, cukup jalankan perintah ini di VPS:</p>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <code id="code3">bash <(curl -s https://raw.githubusercontent.com/kikyrestu/shopinmy/main/update.sh)</code>
+        </div>
+
+        <h3>🗑️ Cara Menghapus Toko (Uninstall Permanen)</h3>
+        <p>Jika ingin membersihkan server dari toko tertentu, jalankan perintah pemusnah ini:</p>
+        <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <code id="code4">bash <(curl -s https://raw.githubusercontent.com/kikyrestu/shopinmy/main/uninstall.sh)</code>
+        </div>
+
     </div>
 
     <script>
-        function copyCode(button) {
-            const pre = button.nextElementSibling;
-            const text = pre.innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                const icon = button.querySelector('i');
-                icon.className = 'fa-solid fa-check text-emerald-400';
+        function copyCode(btn) {
+            const codeBlock = btn.nextElementSibling;
+            const textToCopy = codeBlock.innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = btn.innerText;
+                btn.innerText = 'Copied!';
+                btn.style.backgroundColor = '#2ecc71';
                 setTimeout(() => {
-                    icon.className = 'fa-regular fa-copy';
+                    btn.innerText = originalText;
+                    btn.style.backgroundColor = '#3498db';
                 }, 2000);
             });
         }

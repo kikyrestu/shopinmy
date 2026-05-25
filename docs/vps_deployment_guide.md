@@ -1,50 +1,77 @@
-# Panduan Ternak Website di VPS (Multi-Toko)
+# 🚀 Panduan Lengkap Instalasi ShopinMy (Dari Nol Sampai Online)
 
-Panduan ini didesain khusus agar Anda bisa membuat **Puluhan Toko Online Berbeda** di dalam **1 VPS yang sama**. Sistem sudah dilengkapi "Polisi Lalu Lintas" (*Reverse Proxy*) yang akan mengatur rute otomatis dan memberikan gembok hijau (HTTPS/SSL) ke masing-masing toko.
+Panduan ini dirancang khusus untuk pemula. Ikuti langkah-langkah di bawah ini secara perlahan, dan website toko online Anda akan siap digunakan dalam hitungan menit!
 
-## Tahap 1: Mengarahkan Domain / Subdomain ke VPS (Wajib)
-Sistem ini bebas menggunakan **Domain Utama** (contoh: `toko1.com`) maupun **Subdomain** (contoh: `cabang.toko1.com`). Sebelum menginstall, pastikan domain tersebut sudah menunjuk ke VPS.
-1. Beli VPS kosong (Rekomendasi: Ubuntu 22.04 LTS atau 24.04 LTS). Catat **IP VPS** Anda (contoh: `123.45.67.89`).
-2. Login ke tempat Anda membeli domain (Niagahoster, Cloudflare, dll).
-3. Buka menu **DNS Management / DNS Zone**.
-4. Buat Record baru dengan format:
-   - Type: **A**
-   - Name/Host:
-     - Isi dengan **`@`** (jika pakai Domain Utama).
-     - Isi dengan **kata depannya saja** (contoh: isi `cabang` jika ingin membuat `cabang.toko1.com`).
-   - IPv4 Address: **Masukkan IP VPS Anda**
-   - *Simpan.*
-5. *(Opsional)* Jika pakai Domain Utama, buat satu Record lagi untuk "www":
-   - Type: **CNAME**
-   - Name/Host: **www**
-   - Target: **namadomainanda.com**
-   - *Simpan.*
-6. Tunggu 5-10 menit agar sistem DNS global menyebar.
+---
 
-## Tahap 2: Menjalankan Auto-Installer
-Setelah domain siap, Anda bisa langsung menginstall toko.
-1. Hubungkan komputer Anda ke VPS menggunakan Terminal, Putty, atau Termius (Login sebagai `root`).
-2. **Salin (Copy) dan Tempel (Paste)** satu baris kode di bawah ini lalu tekan Enter:
+## 📌 Tahap 1: Persiapan Domain (Wajib)
+Sebelum menyentuh server, pastikan domain Anda sudah diarahkan ke server VPS.
+1. Buka panel pengelolaan Domain Anda (seperti Niagahoster, Hostinger, Idwebhost, atau Cloudflare).
+2. Cari menu **DNS Management** atau **Pengaturan DNS**.
+3. Buat catatan baru dengan tipe **A Record**.
+4. Isi kolom `Name` dengan `@` (untuk domain utama) atau nama subdomain (misal: `toko1`).
+5. Isi kolom `IPv4 address` atau `Points to` dengan **IP Server VPS Anda**.
+6. Simpan. *(Catatan: Perubahan DNS kadang butuh waktu beberapa menit hingga 1 jam untuk menyebar ke seluruh dunia).*
+
+---
+
+## 💻 Tahap 2: Cara Masuk ke VPS (Khusus Pemula)
+Anda harus masuk ke dalam server VPS Anda untuk menjalankan perintah instalasi.
+
+1. Buka aplikasi Terminal di komputer Anda:
+   - **Pengguna Windows**: Buka aplikasi `Command Prompt` (CMD) atau `PowerShell`.
+   - **Pengguna Mac/Linux**: Buka aplikasi `Terminal`.
+2. Ketik perintah di bawah ini, lalu tekan **Enter**:
    ```bash
-   bash <(curl -s https://raw.githubusercontent.com/kikyrestu/shopinmy/main/install.sh)
+   ssh root@IP_VPS_ANDA
    ```
-3. Script akan meminta Anda memasukkan 4 data:
-   - **Kode Toko**: Gunakan kata unik tanpa spasi (contoh: `toko1`, `tokobaju`, `cabangbali`). Ini untuk memisahkan folder mesin toko Anda.
-   - **Nama Domain**: Masukkan domain yang sudah di-setting di Tahap 1 (contoh: `toko1.com`).
-   - **Email**: Masukkan email Anda (Hanya dipakai untuk menerbitkan sertifikat HTTPS gratis).
-   - **Password Database**: Bebas.
-4. Duduk manis! Sistem akan men-download aplikasi, menyalakan web, dan memasang gembok hijau secara ajaib.
+   *(Contoh: `ssh root@217.216.33.192`)*
 
-## Tahap 3: Menambah Toko Baru (Toko Ke-2, Ke-3, dst)
-Ingin membuat toko baru dengan domain `toko2.com`?
-Gampang! Ulangi saja Tahap 1 dan Tahap 2 di atas.
-Penting: Pastikan Anda memasukkan **Kode Toko yang BERBEDA** (contoh: `toko2`) dan **Domain yang BERBEDA**. Sistem tidak akan bentrok dan toko baru akan hidup berdampingan dengan damai.
+3. Jika muncul pertanyaan `Are you sure you want to continue connecting (yes/no/[fingerprint])?`, ketik **yes** lalu tekan Enter.
 
-## Tahap 4: Import Database Lama (Bila Ada)
-Jika Anda memiliki data pelanggan dari server lama (file `.sql`), upload file tersebut ke folder VPS Anda (misalnya ke `/var/www/stores/toko1`), lalu jalankan perintah ini:
+### ⚠️ PERHATIAN SANGAT PENTING SAAT MENGISI PASSWORD:
+Sistem akan meminta Anda memasukkan password VPS Anda.
+Ketika Anda mulai mengetik password, **huruf, angka, atau tanda bintang (***) TIDAK AKAN MUNCUL di layar!** 
+Layar akan terlihat seperti diam / nge-lag. JANGAN PANIK! Ini **BUKAN ERROR**, melainkan fitur keamanan tingkat tinggi bawaan sistem operasi Linux agar tidak ada orang di sebelah Anda yang bisa menebak panjang password Anda. 
+
+**Cara yang benar:** Ketik saja password Anda dengan percaya diri sampai selesai (meskipun tidak terlihat ada yang berubah di layar), lalu tekan **Enter**.
+
+---
+
+## 🚀 Tahap 3: Menjalankan Auto-Installer (Sihir Dimulai)
+Setelah berhasil masuk (biasanya ditandai dengan tulisan hijau seperti `root@vmi...:~#`), Anda hanya perlu **Copy dan Paste** satu baris kode ajaib ini ke terminal, lalu tekan Enter:
+
 ```bash
-# Ganti 'toko1' dengan KODE TOKO Anda, dan masukkan password database Anda.
-docker exec -i toko1_db mysql -u shopinmy_user -p'PASSWORD_DATABASE_ANDA' shopinmy < nama_file_database_lama.sql
+bash <(curl -s https://raw.githubusercontent.com/kikyrestu/shopinmy/main/install.sh)
 ```
 
-Selesai! Anda resmi menjadi Juragan Website!
+---
+
+## ❓ Tahap 4: Menjawab Pertanyaan Instalasi
+Sistem akan secara otomatis mendownload semua kebutuhan server (Nginx, Docker, Certbot) dan menanyakan 4 hal mudah:
+
+1. **🛒 KODE TOKO**: Nama unik atau ID untuk toko Anda. Gunakan huruf kecil tanpa spasi (misal: `toko1`, `tokosepatuku`).
+2. **🌐 NAMA DOMAIN**: Domain atau Subdomain yang sudah Anda setting di Tahap 1 (misal: `toko1.com` atau `toko1.shopinmy.com`).
+3. **📧 EMAIL**: Alamat email aktif Anda. Email ini dibutuhkan oleh *Let's Encrypt* untuk memberikan Anda sertifikat Gembok Hijau (HTTPS/SSL) secara gratis dan resmi.
+4. **🔑 PASSWORD DATABASE**: Buat password yang kuat untuk mengamankan *database* toko ini.
+
+Setelah menjawab 4 pertanyaan tersebut, Anda tinggal **Duduk Manis dan Ngopi ☕**.
+Script akan bekerja menginstall aplikasi, membuat database, menyambungkan jaringan, dan mengaktifkan sertifikat gembok hijau HTTPS!
+
+---
+
+## 🛠️ Fitur Ekstra (Untuk Admin Server)
+
+### 🔄 Cara Mengupdate Toko ke Versi Terbaru
+Jika ada pembaruan kode, fitur baru, atau perbaikan *bug* dari pusat (GitHub), Anda tidak perlu menginstall ulang! Cukup masuk ke VPS Anda dan jalankan:
+```bash
+bash <(curl -s https://raw.githubusercontent.com/kikyrestu/shopinmy/main/update.sh)
+```
+Toko Anda akan otomatis diperbarui dalam hitungan detik tanpa mematikan website (Zero Downtime).
+
+### 🗑️ Cara Menghapus Toko (Uninstall Permanen)
+Jika masa sewa klien Anda habis atau Anda ingin membersihkan *server* dari toko tertentu, jalankan perintah pemusnah ini:
+```bash
+bash <(curl -s https://raw.githubusercontent.com/kikyrestu/shopinmy/main/uninstall.sh)
+```
+Script ini akan membersihkan semua *file*, *database*, *docker container*, dan *setting* Nginx yang berhubungan dengan toko tersebut sampai tak bersisa, mengembalikan memori dan kapasitas penyimpanan VPS Anda.
