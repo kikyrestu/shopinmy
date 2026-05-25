@@ -13,7 +13,7 @@ services:
     depends_on:
       - ecommerce_db
     networks:
-      - ${STORE_CODE}_network
+      - app_network
 
   ecommerce_queue:
     build:
@@ -29,7 +29,7 @@ services:
       - ecommerce_db
       - ecommerce_app
     networks:
-      - ${STORE_CODE}_network
+      - app_network
 
   ecommerce_web:
     image: nginx:alpine
@@ -45,7 +45,7 @@ services:
     depends_on:
       - ecommerce_app
     networks:
-      - ${STORE_CODE}_network
+      - app_network
       - nginx-proxy
 
   ecommerce_db:
@@ -60,13 +60,13 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     networks:
-      - ${STORE_CODE}_network
+      - app_network
 
 volumes:
   db_data:
 
 networks:
-  ${STORE_CODE}_network:
+  app_network:
     driver: bridge
   nginx-proxy:
     external: true
