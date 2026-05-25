@@ -16,7 +16,7 @@ echo "======================================================="
 
 # 2. Minta Input dari User
 read -p "🛒 Masukkan KODE TOKO (tanpa spasi, misal: toko1, bajuku): " STORE_CODE
-read -p "🌐 Masukkan NAMA DOMAIN (misal: toko1.com): " DOMAIN_NAME
+read -p "🌐 Masukkan NAMA DOMAIN atau SUBDOMAIN (misal: toko1.com atau cabang.toko1.com): " DOMAIN_NAME
 read -p "📧 Masukkan EMAIL (untuk SSL/HTTPS Let's Encrypt): " ADMIN_EMAIL
 read -p "🔑 Masukkan PASSWORD DATABASE yang diinginkan: " DB_PASS
 

@@ -2,17 +2,19 @@
 
 Panduan ini didesain khusus agar Anda bisa membuat **Puluhan Toko Online Berbeda** di dalam **1 VPS yang sama**. Sistem sudah dilengkapi "Polisi Lalu Lintas" (*Reverse Proxy*) yang akan mengatur rute otomatis dan memberikan gembok hijau (HTTPS/SSL) ke masing-masing toko.
 
-## Tahap 1: Mengarahkan Domain ke VPS (Wajib)
-Sebelum menginstall, pastikan domain toko Anda sudah menunjuk ke VPS.
+## Tahap 1: Mengarahkan Domain / Subdomain ke VPS (Wajib)
+Sistem ini bebas menggunakan **Domain Utama** (contoh: `toko1.com`) maupun **Subdomain** (contoh: `cabang.toko1.com`). Sebelum menginstall, pastikan domain tersebut sudah menunjuk ke VPS.
 1. Beli VPS kosong (Rekomendasi: Ubuntu 22.04 LTS atau 24.04 LTS). Catat **IP VPS** Anda (contoh: `123.45.67.89`).
 2. Login ke tempat Anda membeli domain (Niagahoster, Cloudflare, dll).
 3. Buka menu **DNS Management / DNS Zone**.
 4. Buat Record baru dengan format:
    - Type: **A**
-   - Name/Host: **@** (atau kosongkan)
+   - Name/Host:
+     - Isi dengan **`@`** (jika pakai Domain Utama).
+     - Isi dengan **kata depannya saja** (contoh: isi `cabang` jika ingin membuat `cabang.toko1.com`).
    - IPv4 Address: **Masukkan IP VPS Anda**
    - *Simpan.*
-5. *(Opsional)* Buat satu Record lagi untuk "www":
+5. *(Opsional)* Jika pakai Domain Utama, buat satu Record lagi untuk "www":
    - Type: **CNAME**
    - Name/Host: **www**
    - Target: **namadomainanda.com**
