@@ -74,6 +74,7 @@ services:
     container_name: nginx-proxy-acme
     environment:
       - DEFAULT_EMAIL=${ADMIN_EMAIL}
+      - NGINX_PROXY_CONTAINER=nginx-proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - acme:/etc/acme.sh
@@ -134,13 +135,21 @@ sed -i "s|^APP_ENV=.*|APP_ENV=production|" .env
 sed -i "s|^APP_KEY=.*|APP_KEY=${APP_KEY}|" .env
 sed -i "s|^APP_DEBUG=.*|APP_DEBUG=false|" .env
 sed -i "s|^APP_URL=.*|APP_URL=https://${DOMAIN_NAME}|" .env
+sed -i "s|^QUEUE_CONNECTION=.*|QUEUE_CONNECTION=database|" .env
 
-sed -i "s|^DB_CONNECTION=.*|DB_CONNECTION=mysql|" .env
-sed -i "s|^DB_HOST=.*|DB_HOST=ecommerce_db|" .env
-sed -i "s|^DB_PORT=.*|DB_PORT=3306|" .env
-sed -i "s|^DB_DATABASE=.*|DB_DATABASE=shopinmy|" .env
-sed -i "s|^DB_USERNAME=.*|DB_USERNAME=shopinmy_user|" .env
-sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=${DB_PASS}|" .env
+# Hapus pengaturan DB lama (termasuk yang di-comment)
+sed -i '/^DB_/d' .env
+sed -i '/^# DB_/d' .env
+
+# Tambahkan pengaturan DB baru
+cat <<EOT >> .env
+DB_CONNECTION=mysql
+DB_HOST=ecommerce_db
+DB_PORT=3306
+DB_DATABASE=shopinmy
+DB_USERNAME=shopinmy_user
+DB_PASSWORD=${DB_PASS}
+EOT
 
 # 8. Start Docker Containers khusus untuk Toko ini
 echo "🚀 Menyalakan kontainer toko ${STORE_CODE}..."
