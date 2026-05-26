@@ -13,15 +13,21 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create Super Admin User for Filament Access
-        User::firstOrCreate(
-            ['email' => env('ADMIN_EMAIL', 'admin@shopinmy.com')],
+        // Pastikan role 'super_admin' ada di database
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'super_admin']);
+
+        // Buat atau Update akun Super Admin untuk Filament Access
+        $admin = User::updateOrCreate(
+            ['email' => config('app.admin_email', 'admin@shopinmy.com')],
             [
                 'name' => 'Super Admin',
-                'password' => bcrypt(env('DEFAULT_ADMIN_PASSWORD', 'password123')),
-                // If you use Spatie Permission, you can assign role here:
-                // ->assignRole('super_admin')
+                'password' => config('app.admin_password', 'password123'), // TANPA bcrypt! Laravel Auto-Cast handles hashing.
             ]
         );
+
+        // Beri role super_admin jika belum punya
+        if (!$admin->hasRole('super_admin')) {
+            $admin->assignRole('super_admin');
+        }
     }
 }

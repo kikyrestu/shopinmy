@@ -97,6 +97,6 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->email === 'admin@nexshop.com' || $this->hasRole(['super_admin', 'admin']);
+        return $this->email === config('app.admin_email', 'admin@shopinmy.com') || $this->hasRole(['super_admin', 'admin']);
     }
 }

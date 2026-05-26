@@ -123,4 +123,13 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Credentials (Dynamic, from install.sh)
+    |--------------------------------------------------------------------------
+    */
+
+    'admin_email' => env('ADMIN_EMAIL', 'admin@shopinmy.com'),
+    'admin_password' => env('DEFAULT_ADMIN_PASSWORD', 'password123'),
+
 ];
