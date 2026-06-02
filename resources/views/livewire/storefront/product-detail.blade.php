@@ -217,7 +217,7 @@
             <div x-show="activeTab === 'description'" class="max-w-4xl">
                 <div class="prose prose-brand max-w-none text-gray-600 dark:text-gray-400 leading-relaxed">
                     @if($product->description)
-                        {!! nl2br(e($product->description)) !!}
+                        {!! $product->description !!}
                     @else
                         <p class="text-gray-400 dark:text-gray-600 italic">{{ __('No description available.') }}</p>
                     @endif
