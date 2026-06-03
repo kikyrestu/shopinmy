@@ -28,8 +28,8 @@
                                                     frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                                         @endif
                                     @elseif($mainBanner->image)
-                                        <img src="{{ Storage::disk('public')->url($mainBanner->mobile_image ?? $mainBanner->image) }}" class="block md:hidden w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
-                                        <img src="{{ Storage::disk('public')->url($mainBanner->image) }}" class="hidden md:block w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
+                                        <img src="{{ $mainBanner->mobile_image_url }}" class="block md:hidden w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
+                                        <img src="{{ $mainBanner->image_url }}" class="hidden md:block w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
                                     @endif
                                 </div>
                                 <!-- Abstract decorative circles -->
@@ -145,8 +145,8 @@
                                     frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                         @endif
                     @elseif($mainBanner->image)
-                        <img src="{{ Storage::disk('public')->url($mainBanner->mobile_image ?? $mainBanner->image) }}" class="block md:hidden w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
-                        <img src="{{ Storage::disk('public')->url($mainBanner->image) }}" class="hidden md:block w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
+                        <img src="{{ $mainBanner->mobile_image_url }}" class="block md:hidden w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
+                        <img src="{{ $mainBanner->image_url }}" class="hidden md:block w-full h-full object-cover {{ $mainBanner->show_text_overlay ? 'opacity-40' : '' }}">
                     @endif
                 </div>
                 <!-- Abstract decorative circles -->
