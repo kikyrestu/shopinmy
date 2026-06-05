@@ -137,7 +137,7 @@
                                     <a href="{{ route('dashboard.orders.show', $order->id) }}" class="block px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium border-b border-gray-50 dark:border-gray-800 last:border-0 flex items-center gap-2">
                                         <i class="ph-bold ph-file-text"></i> Lihat Detail Pesanan
                                     </a>
-                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', \App\Models\Setting::get('whatsapp_number', '60123456789')) }}?text=Halo admin, saya mau tanya tentang pesanan {{ $order->order_number }}" target="_blank" class="block px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium border-b border-gray-50 dark:border-gray-800 last:border-0 flex items-center gap-2">
+                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', \App\Models\Setting::get('site_phone', '60123456789')) }}?text=Halo admin, saya mau tanya tentang pesanan {{ $order->order_number }}" target="_blank" class="block px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium border-b border-gray-50 dark:border-gray-800 last:border-0 flex items-center gap-2">
                                         <i class="ph-bold ph-whatsapp-logo"></i> Tanya Penjual
                                     </a>
                                 </div>

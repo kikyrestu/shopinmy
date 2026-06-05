@@ -12,7 +12,7 @@
                 <h1 class="text-lg font-extrabold text-gray-900 dark:text-gray-100">{{ __('Keranjang') }}</h1>
             </div>
             <div class="flex items-center gap-4 text-gray-900 dark:text-gray-100">
-                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', \App\Models\Setting::get('whatsapp_number', '60123456789')) }}" target="_blank">
+                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', \App\Models\Setting::get('site_phone', '60123456789')) }}" target="_blank">
                     <i class="ph ph-chat-teardrop text-2xl"></i>
                 </a>
                 <a href="{{ route('dashboard.wishlist') }}">
